@@ -34,7 +34,6 @@ public class UnitStat
 
     [Header("Gather")]
     [SerializeField] private int gatherAmount;
-    [SerializeField] private float gatherInterval;
 
     public UnitType UnitType => unitType;
 
@@ -53,10 +52,9 @@ public class UnitStat
     public float BuildTime => buildTime;
 
     public int GatherAmount => gatherAmount;
-    public float GatherInterval => gatherInterval;
 
     public UnitStat(UnitType unitType, int maxHP, int attackDamage, int defense, int population, float moveSpeed, float attackRange, 
-        float attackCooldown,float vision, int woodCost, int goldCost, float buildTime, int gatherAmount, float gatherInterval)
+        float attackCooldown,float vision, int woodCost, int goldCost, float buildTime, int gatherAmount)
     {
         this.unitType = unitType;
 
@@ -75,11 +73,10 @@ public class UnitStat
         this.buildTime = buildTime;
 
         this.gatherAmount = gatherAmount;
-        this.gatherInterval = gatherInterval;
     }
     public UnitStat Clone()
     {
-        return new UnitStat(unitType, maxHp, attackDamage, defense, population, moveSpeed, attackRange, attackCooldown, vision, woodCost, goldCost, buildTime, gatherAmount, gatherInterval);
+        return new UnitStat(unitType, maxHp, attackDamage, defense, population, moveSpeed, attackRange, attackCooldown, vision, woodCost, goldCost, buildTime, gatherAmount);
     }
 }
 
