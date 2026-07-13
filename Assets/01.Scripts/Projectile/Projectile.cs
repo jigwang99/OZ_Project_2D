@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public abstract class Projectile : MonoBehaviour
+public abstract class Projectile : MonoBehaviour, IPoolable
 {
     protected ProjectileStat projectileStat;
     protected float timer;
@@ -13,10 +13,9 @@ public abstract class Projectile : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
     }
-
     protected void OnEnable()
     {
-        timer = 0f;
+        Init();
     }
     protected void Update()
     {
@@ -29,5 +28,6 @@ public abstract class Projectile : MonoBehaviour
         rb.linearVelocity = transform.right * projectileStat.Speed;
     }
     protected abstract void OnCollisionEnter2D(Collision2D collision);
-    protected abstract void ReturnToPool();
+    public abstract void Init();
+    public abstract void ReturnToPool();
 }

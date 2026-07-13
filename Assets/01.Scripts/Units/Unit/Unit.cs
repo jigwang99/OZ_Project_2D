@@ -10,7 +10,7 @@ public enum Layer
     EnemyBuilding = 11,
 }
 
-public abstract class Unit : MonoBehaviour
+public abstract class Unit : MonoBehaviour, IPoolable
 {
     protected UnitStat unitStat;
     protected Collider2D hit;
@@ -59,5 +59,13 @@ public abstract class Unit : MonoBehaviour
     {
         IsAlive = false;
         gameObject.SetActive(false);
+    }
+    public void Init()
+    {
+
+    }
+    public void ReturnToPool()
+    {
+
     }
 }

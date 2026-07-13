@@ -19,6 +19,17 @@ public class ProjectileStat
     public ProjectileType ProjectileType => projectileType;
     public float Speed => speed;
     public float LifeTime => lifeTime;
+
+    public ProjectileStat(ProjectileType projectileType, float speed, float lifeTime)
+    {
+        this.projectileType = projectileType;
+        this.speed = speed;
+        this.lifeTime = lifeTime;
+    }
+    public ProjectileStat Clone()
+    {
+        return new ProjectileStat(projectileType, speed, lifeTime);
+    }
 }
 
 [CreateAssetMenu(fileName = "ProjectileData", menuName = "RTS/Projectile Data")]

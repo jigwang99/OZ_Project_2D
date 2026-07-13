@@ -5,7 +5,7 @@ public class Warrior : Unit
     protected override void Awake()
     {
         base.Awake();
-        //Attack = GetComponent<MeleeAttack>();
+        Attack = GetComponent<MeleeAttack>();
     }
     protected void OnEnable()
     {
