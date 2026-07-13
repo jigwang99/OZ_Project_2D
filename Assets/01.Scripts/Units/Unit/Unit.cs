@@ -1,53 +1,49 @@
 ﻿using UnityEngine;
 
+public enum Layer
+{
+    Player = 6,
+    Enemy = 7,
+}
+
 public abstract class Unit : MonoBehaviour
 {
-    [Header("Data")]
-    [SerializeField] protected UnitData data;
+    protected UnitStat unitStat;
+    protected Collider2D hit;
+    protected int allianceMask;
+    protected int enemyMask;
 
-    public Unit Target {  get; protected set; }
-    public UnitData Data => data;
+    public int CurrentHp { get; protected set; }
+    public bool IsAlive { get; protected set; }
+    public UnitStat UnitStat => unitStat;
     public UnitMovement Movement { get; protected set; }
     public UnitAttack Attack { get; protected set; }
-    public int CurrentHp { get; protected set; }
+    
 
     public StateMachine StateMachine { get; protected set; }
     public IdleState IdleState { get; protected set; }
     public MoveState MoveState { get; protected set; }
+    public ChaseState ChaseState { get; protected set; }
     public AttackState AttackState { get; protected set; }
-    protected void Awake()
+    protected virtual void Awake()
     {
-        
         Movement = GetComponent<UnitMovement>();
-        Attack = GetComponent<UnitAttack>();
 
         StateMachine = new StateMachine();
         IdleState = new IdleState(this);
         MoveState = new MoveState(this);
+        ChaseState = new ChaseState(this);
         AttackState = new AttackState(this);
-    }
-    protected void OnEnable()
-    {
-        CurrentHp = Data.MaxHp;
-    }
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    protected void Start()
-    {
-        
     }
 
     // Update is called once per frame
-    protected void Update()
+    protected void Update() => StateMachine.Update();
+    protected void FixedUpdate() => StateMachine.FixedUpdate();
+    public void TakeDamage(int attackDamage)
     {
-        StateMachine.Update();
-    }
-    protected void FixedUpdate()
-    {
-        StateMachine.FixedUpdate();
-    }
-    public void TakeDamage(int damage)
-    {
-        CurrentHp -= damage - Data.Defense;
+        int damage = Mathf.Max(1, attackDamage - UnitStat.Defense);
+
+        CurrentHp -= damage;
 
         if(CurrentHp <= 0)
         {
@@ -57,6 +53,7 @@ public abstract class Unit : MonoBehaviour
     }
     protected void Die()
     {
-
+        IsAlive = false;
+        gameObject.SetActive(false);
     }
 }

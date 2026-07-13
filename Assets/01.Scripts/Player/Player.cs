@@ -8,6 +8,7 @@ public class Player : MonoBehaviour
 
     [SerializeField] private List<Unit> selectUnitList = new List<Unit>();
     [SerializeField] Camera camera;
+    [SerializeField] LayerMask enemyLayerMask;
 
     private const float spacing = 1.1f;
 
@@ -16,7 +17,9 @@ public class Player : MonoBehaviour
         if (instance == null)
             instance = this;
         else
+        {
             Destroy(gameObject);
+        }
         DontDestroyOnLoad(gameObject);
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -33,9 +36,22 @@ public class Player : MonoBehaviour
             // 선택한 유닛이 없을 경우
             if (selectUnitList == null || selectUnitList.Count == 0)
                 return;
+            Vector2 worldPos = camera.ScreenToWorldPoint(Mouse.current.position.ReadValue());
 
-            Vector2 destination =
-                camera.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+            Collider2D hit = Physics2D.OverlapCircle(worldPos, 0.2f, enemyLayerMask);
+            Unit target = hit != null ? hit.GetComponent<Unit>() : null;
+
+            if (target != null && target.IsAlive)
+            {
+                foreach(Unit unit in selectUnitList)
+                {
+                    unit.Attack.SetTarget(target);
+                    unit.StateMachine.ChangeState(unit.ChaseState);
+                }
+                return;
+            }
+
+            Vector2 destination = worldPos;
 
             int column = Mathf.CeilToInt(Mathf.Sqrt(selectUnitList.Count));
             int row = Mathf.CeilToInt((float)selectUnitList.Count / column);
