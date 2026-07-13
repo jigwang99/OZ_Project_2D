@@ -1,16 +1,25 @@
-using UnityEngine;
+﻿using UnityEngine;
 
-public class Archer : MonoBehaviour
+public class Archer : Unit
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    protected override void Awake()
     {
-        
+        base.Awake();
+        Attack = GetComponent<RangedAttack>();
     }
-
-    // Update is called once per frame
-    void Update()
+    protected void Start()
+    {
+        unitStat = UnitManager.instance.GetUnitStat(UnitType.Archer);
+    }
+    public override void Init()
+    {
+        CurrentHp = unitStat.MaxHp;
+        IsAlive = true;
+        StateMachine.ChangeState(IdleState);
+    }
+    public override void ReturnToPool()
     {
         
+        ObjectPoolManager.instance.ReturnObject("Archer", this.gameObject);
     }
 }

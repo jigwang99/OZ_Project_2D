@@ -7,10 +7,18 @@ public class Warrior : Unit
         base.Awake();
         Attack = GetComponent<MeleeAttack>();
     }
-    protected void OnEnable()
+    protected void Start()
     {
         unitStat = UnitManager.instance.GetUnitStat(UnitType.Warrior);
+    }
+    public override void Init()
+    {
         CurrentHp = unitStat.MaxHp;
         IsAlive = true;
+        StateMachine.ChangeState(IdleState);
+    }
+    public override void ReturnToPool()
+    {
+        ObjectPoolManager.instance.ReturnObject("Warrior", this.gameObject);
     }
 }

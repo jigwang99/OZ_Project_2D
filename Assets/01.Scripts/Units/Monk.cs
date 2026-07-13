@@ -1,16 +1,24 @@
-using UnityEngine;
+﻿using UnityEngine;
 
-public class Monk : MonoBehaviour
+public class Monk : Unit
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    protected override void Awake()
     {
-        
+        base.Awake();
+        Attack = GetComponent<MeleeAttack>();
     }
-
-    // Update is called once per frame
-    void Update()
+    protected void Start()
     {
-        
+        unitStat = UnitManager.instance.GetUnitStat(UnitType.Monk);
+    }
+    public override void Init()
+    {
+        CurrentHp = unitStat.MaxHp;
+        IsAlive = true;
+        StateMachine.ChangeState(IdleState);
+    }
+    public override void ReturnToPool()
+    {
+        ObjectPoolManager.instance.ReturnObject("Monk", this.gameObject);
     }
 }

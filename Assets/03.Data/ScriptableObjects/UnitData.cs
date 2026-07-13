@@ -32,38 +32,54 @@ public class UnitStat
     [SerializeField] private int goldCost;
     [SerializeField] private float buildTime;
 
+    [Header("Gather")]
+    [SerializeField] private int gatherAmount;
+    [SerializeField] private float gatherInterval;
+
     public UnitType UnitType => unitType;
 
     public int MaxHp => maxHp;
     public int AttackDamage => attackDamage;
     public int Defense => defense;
     public int Population => population;
+
     public float MoveSpeed => moveSpeed;
     public float AttackRange => attackRange;
     public float AttackCooldown => attackCooldown;
     public float Vision => vision;
+
     public int GoldCost => goldCost;
     public int WoodCost => woodCost;
     public float BuildTime => buildTime;
 
+    public int GatherAmount => gatherAmount;
+    public float GatherInterval => gatherInterval;
+
     public UnitStat(UnitType unitType, int maxHP, int attackDamage, int defense, int population, float moveSpeed, float attackRange, 
-        float attackCooldown, int woodCost, int goldCost, float buildTime)
+        float attackCooldown,float vision, int woodCost, int goldCost, float buildTime, int gatherAmount, float gatherInterval)
     {
         this.unitType = unitType;
+
         this.maxHp = maxHP;
         this.attackDamage = attackDamage;
         this.defense = defense;
         this.population = population;
+
         this.moveSpeed = moveSpeed;
         this.attackRange = attackRange;
         this.attackCooldown = attackCooldown;
+        this.vision = vision;
+
         this.woodCost = woodCost;
         this.goldCost = goldCost;
         this.buildTime = buildTime;
+
+        this.gatherAmount = gatherAmount;
+        this.gatherInterval = gatherInterval;
     }
     public UnitStat Clone()
     {
-        return new UnitStat(unitType, maxHp, attackDamage, defense, population, moveSpeed, attackRange, attackCooldown, woodCost, goldCost, buildTime);
+        return new UnitStat(unitType, maxHp, attackDamage, defense, population, moveSpeed, attackRange, attackCooldown, vision, woodCost, goldCost, buildTime, gatherAmount, gatherInterval);
     }
 }
 

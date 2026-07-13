@@ -7,7 +7,7 @@ public class Barrack : MonoBehaviour
 
     private void Update()
     {
-        if(Keyboard.current.aKey.wasPressedThisFrame)
+        if (Keyboard.current.aKey.wasPressedThisFrame)
             Instantiate(warrior, transform.position, Quaternion.identity);
     }
 }

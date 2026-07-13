@@ -1,6 +1,6 @@
-﻿public class MoveState : BaseState
+﻿public class UnitMoveState : UnitBaseState
 {
-    public MoveState(Unit unit) : base(unit) { }
+    public UnitMoveState(Unit unit) : base(unit) { }
 
     public override void Enter()
     {

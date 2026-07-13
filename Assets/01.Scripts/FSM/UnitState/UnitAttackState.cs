@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-public class AttackState : BaseState
+public class UnitAttackState : UnitBaseState
 {
-    public AttackState(Unit unit) : base(unit)
+    public UnitAttackState(Unit unit) : base(unit)
     {
     }
 

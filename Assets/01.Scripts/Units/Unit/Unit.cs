@@ -25,21 +25,24 @@ public abstract class Unit : MonoBehaviour, IPoolable
     
 
     public StateMachine StateMachine { get; protected set; }
-    public IdleState IdleState { get; protected set; }
-    public MoveState MoveState { get; protected set; }
-    public ChaseState ChaseState { get; protected set; }
-    public AttackState AttackState { get; protected set; }
+    public UnitIdleState IdleState { get; protected set; }
+    public UnitMoveState MoveState { get; protected set; }
+    public UnitChaseState ChaseState { get; protected set; }
+    public UnitAttackState AttackState { get; protected set; }
     protected virtual void Awake()
     {
         Movement = GetComponent<UnitMovement>();
 
         StateMachine = new StateMachine();
-        IdleState = new IdleState(this);
-        MoveState = new MoveState(this);
-        ChaseState = new ChaseState(this);
-        AttackState = new AttackState(this);
+        IdleState = new UnitIdleState(this);
+        MoveState = new UnitMoveState(this);
+        ChaseState = new UnitChaseState(this);
+        AttackState = new UnitAttackState(this);
     }
-
+    protected void OnEnable()
+    {
+        Init();
+    }
     // Update is called once per frame
     protected void Update() => StateMachine.Update();
     protected void FixedUpdate() => StateMachine.FixedUpdate();
@@ -58,14 +61,8 @@ public abstract class Unit : MonoBehaviour, IPoolable
     protected void Die()
     {
         IsAlive = false;
-        gameObject.SetActive(false);
+        ReturnToPool();
     }
-    public void Init()
-    {
-
-    }
-    public void ReturnToPool()
-    {
-
-    }
+    public abstract void Init();
+    public abstract void ReturnToPool();
 }

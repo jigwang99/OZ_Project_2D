@@ -1,16 +1,24 @@
-using UnityEngine;
+﻿using UnityEngine;
 
-public class Lancer : MonoBehaviour
+public class Lancer : Unit
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    protected override void Awake()
     {
-        
+        base.Awake();
+        Attack = GetComponent<MeleeAttack>();
     }
-
-    // Update is called once per frame
-    void Update()
+    protected void Start()
     {
-        
+        unitStat = UnitManager.instance.GetUnitStat(UnitType.Lancer);
+    }
+    public override void Init()
+    {
+        CurrentHp = unitStat.MaxHp;
+        IsAlive = true;
+        StateMachine.ChangeState(IdleState);
+    }
+    public override void ReturnToPool()
+    {
+        ObjectPoolManager.instance.ReturnObject("Lancer", this.gameObject);
     }
 }

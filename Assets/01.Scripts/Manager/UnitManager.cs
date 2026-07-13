@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-
-
 public class UnitManager : MonoBehaviour
 {
     public static UnitManager instance;

@@ -1,16 +1,29 @@
-using UnityEngine;
+﻿using UnityEngine;
 
-public class Pawn : MonoBehaviour
+public class Pawn : Unit
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public UnitGather Gather {  get; private set; }
+    public UnitGatherState GatherState {  get;  private set; }
+    protected override void Awake()
     {
-        
-    }
+        base.Awake();
+        Attack = GetComponent<MeleeAttack>();
+        Gather = GetComponent<UnitGather>();
 
-    // Update is called once per frame
-    void Update()
+        GatherState = new UnitGatherState(this);
+    }
+    protected void Start()
     {
-        
+        unitStat = UnitManager.instance.GetUnitStat(UnitType.Pawn);
+    }
+    public override void Init()
+    {
+        CurrentHp = unitStat.MaxHp;
+        IsAlive = true;
+        StateMachine.ChangeState(IdleState);
+    }
+    public override void ReturnToPool()
+    {
+        ObjectPoolManager.instance.ReturnObject("Pawn", this.gameObject);
     }
 }

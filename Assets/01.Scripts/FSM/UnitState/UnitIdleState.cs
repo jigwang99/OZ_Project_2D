@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-public class IdleState : BaseState
+public class UnitIdleState : UnitBaseState
 {
-    public IdleState(Unit unit) : base(unit)
+    public UnitIdleState(Unit unit) : base(unit)
     {
     }
     public override void Enter()

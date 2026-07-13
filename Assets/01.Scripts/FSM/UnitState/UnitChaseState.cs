@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 
-public class ChaseState : BaseState
+public class UnitChaseState : UnitBaseState
 {
     private float scout;
     private const float repathInterval = 0.25f;
 
-    public ChaseState(Unit unit) : base(unit)
+    public UnitChaseState(Unit unit) : base(unit)
     {
     }
 

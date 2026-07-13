@@ -11,7 +11,7 @@ public class Player : MonoBehaviour
     [SerializeField] LayerMask enemyLayerMask;
 
     private const float spacing = 1.1f;
-
+    
     private void Awake()
     {
         if (instance == null)
