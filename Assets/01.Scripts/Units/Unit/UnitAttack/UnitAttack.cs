@@ -14,10 +14,10 @@ public abstract class UnitAttack : MonoBehaviour
     {
         remainCooldown = 0;
     }
-    private void Update()
+    private void FixedUpdate()
     {
-        if (remainCooldown > 0)
-            remainCooldown -= Time.deltaTime;
+        if (remainCooldown > 0f)
+            remainCooldown -= Time.fixedDeltaTime;
     }
     public bool CanAttack()
     {

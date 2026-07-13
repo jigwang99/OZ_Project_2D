@@ -13,8 +13,8 @@ TagManager:
   - UI
   - PlayerUnit
   - EnemyUnit
-  - 
-  - 
+  - PlayerProjectile
+  - EnemyProjectile
   - 
   - 
   - 

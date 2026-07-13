@@ -1,0 +1,33 @@
+﻿using UnityEngine;
+
+public abstract class Projectile : MonoBehaviour
+{
+    protected ProjectileStat projectileStat;
+    protected float timer;
+    protected Rigidbody2D rb;
+
+    public Vector2 Direction { get; protected set; }
+
+    public int Damage { get; set; }
+    protected void Start()
+    {
+        rb = GetComponent<Rigidbody2D>();
+    }
+
+    protected void OnEnable()
+    {
+        timer = 0f;
+    }
+    protected void Update()
+    {
+        if(timer > projectileStat.LifeTime)
+            ReturnToPool();
+    }
+    protected void FixedUpdate()
+    {
+        timer += Time.fixedDeltaTime;
+        rb.linearVelocity = transform.right * projectileStat.Speed;
+    }
+    protected abstract void OnCollisionEnter2D(Collision2D collision);
+    protected abstract void ReturnToPool();
+}

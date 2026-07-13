@@ -2,13 +2,13 @@
 
 public class RangedAttack : UnitAttack
 {
-    [SerializeField] private GameObject arrow;
     public override void Attack()
     {
-        //GameObject arrow = ObjectPoolManager.instance.GetObject("arrow");
-        //arrow.transfrom.position = unit.transform.position;
-        //arrow.transform.rotation = transform.rotation;
-        //arrow.GetComponent<Arrow>().SetDamage(unit.UnitStat.AttackDamage);
+        Transform arrowTransform = ObjectPoolManager.instance.GetObject<Transform>("Arrow");
+        arrowTransform.position = unit.transform.position;
+        arrowTransform.rotation = unit.transform.rotation;
+        arrowTransform.GetComponent<Arrow>().Damage = unit.UnitStat.AttackDamage;
+        remainCooldown = unit.UnitStat.AttackCooldown;
     }
 }
     
