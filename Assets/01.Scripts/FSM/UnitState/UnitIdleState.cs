@@ -19,6 +19,18 @@ public class UnitIdleState : UnitBaseState
     }
     public override void Update()
     {
+        // Monk 힐 탐지
+        if(Unit is Monk monk)
+        {
+            Unit sick = monk.Heal.FindTarget();
+
+            if(sick != null && sick.IsAlive)
+            {
+                monk.Heal.SetTarget(sick);
+                monk.StateMachine.ChangeState(monk.HealState);
+            }
+            return;
+        }
         // 대기 상태시 적 탐지
         if(!(Unit is Pawn))
         {

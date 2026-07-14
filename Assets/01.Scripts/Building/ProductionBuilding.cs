@@ -32,6 +32,13 @@ public abstract class ProductionBuilding : Building
         productList.Add(unitType);
         return true;
     }
+    public bool EnqueueUnitByIndex(int index)
+    {
+        if (index < 0 || index >= producibleUnits.Count)
+            return false;
+
+        return EnqueueUnit(producibleUnits[index]);
+    }
     public void CancelLastProduct()
     {
         if (productList.Count == 0)

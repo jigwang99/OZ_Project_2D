@@ -5,8 +5,10 @@ public abstract class Building : MonoBehaviour, IPoolable
     protected BuildingStat buildingStat;
     
     public BuildingStat BuildingStat => buildingStat;
+
     public int CurrentHp {  get; protected set; }
     public bool IsAlive { get; protected set; }
+    public bool IsSelected { get; protected set; }
 
     public BuildingIdleState IdleState { get; protected set; }
     public BuildingBuildedState BuildedState { get; protected set; }
@@ -20,10 +22,15 @@ public abstract class Building : MonoBehaviour, IPoolable
     }
     protected virtual void OnEnable()
     {
+        SetSelected(false);
         Init();
     }
     protected void Update() => StateMachine.Update();
     protected void FixedUpdate() => StateMachine.FixedUpdate();
+    public void SetSelected(bool selected)
+    {
+        IsSelected = selected;
+    }
     public void TakeDamage(int attackDamage)
     {
         int damage = Mathf.Max(1, attackDamage - buildingStat.Defense);

@@ -9,7 +9,11 @@ public enum Layer
     PlayerBuilding = 10,
     EnemyBuilding = 11,
 }
-
+public interface IAttackable
+{
+    public UnitAttack Attack {  get; protected set; }
+    public UnitAttackState AttackState { get; protected set; }
+}
 public abstract class Unit : MonoBehaviour, IPoolable
 {
     protected UnitStat unitStat;
@@ -50,6 +54,12 @@ public abstract class Unit : MonoBehaviour, IPoolable
     public void SetSelected(bool selected)
     {
         IsSelected = selected;
+    }
+    public void RestoreHP(int amount)
+    {
+        if (!IsAlive)
+            return;
+        CurrentHp = Mathf.Min(CurrentHp + amount, unitStat.MaxHp);
     }
     public void TakeDamage(int attackDamage)
     {

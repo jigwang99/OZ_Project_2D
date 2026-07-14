@@ -8,12 +8,15 @@ public class Player : MonoBehaviour
 
     [SerializeField] private List<Unit> selectUnitList = new List<Unit>();
     [SerializeField] Camera camera;
+    [SerializeField] LayerMask allyLayerMask;
     [SerializeField] LayerMask enemyLayerMask;
     [SerializeField] LayerMask resourceLayerMask;
 
     private const float spacing = 1.1f;
-    
-    
+
+    private static readonly Key[] productionKeys = { Key.A, Key.S, Key.D, Key.F };
+    public Building SelectedBuilding { get; private set; }
+
     public int Wood {  get; private set; }
     public int Gold { get; private set; }
     public event Action OnResourceChanged;
@@ -36,72 +39,134 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if (Mouse.current.rightButton.wasPressedThisFrame)
-        {
-            // 선택한 유닛이 없을 경우
-            if (selectUnitList == null || selectUnitList.Count == 0)
-                return;
-            Vector2 worldPos = camera.ScreenToWorldPoint(Mouse.current.position.ReadValue());
-
-            Collider2D hit = Physics2D.OverlapCircle(worldPos, 0.2f, enemyLayerMask);
-            Unit target = hit != null ? hit.GetComponent<Unit>() : null;
-            
-            if (target != null && target.IsAlive)
-            {
-                foreach(Unit unit in selectUnitList)
-                {
-                    unit.Attack.SetTarget(target);
-                    unit.StateMachine.ChangeState(unit.ChaseState);
-                }
-                return;
-            }
-
-            Collider2D resourceHit = Physics2D.OverlapCircle(worldPos, 0.2f, resourceLayerMask);
-            Resource resource = resourceHit != null ? resourceHit.GetComponent<Resource>() : null;
-
-            if (resource != null && !resource.IsDepleted)
-            {
-                foreach (Unit unit in selectUnitList)
-                {
-                    if (!(unit is Pawn pawn))
-                        continue;
-
-                    pawn.Gather.SetTargetResource(resource);
-                    pawn.Gather.SetReturnBuilding(Castle.FindNearestCastle(pawn.transform.position));
-                    pawn.StateMachine.ChangeState(pawn.GatherState);
-                }
-                return;
-            }
-
-            Vector2 destination = worldPos;
-
-            int column = Mathf.CeilToInt(Mathf.Sqrt(selectUnitList.Count));
-            int row = Mathf.CeilToInt((float)selectUnitList.Count / column);
-            for (int i = 0; i < selectUnitList.Count; i++)
-            {
-                int x = i % column;
-                int y = i / column;
-
-                Vector2 offset = new Vector2(
-                    (x - (column - 1) * 0.5f) * spacing,
-                    ((row - 1) * 0.5f - y) * spacing);
-
-                Unit unit = selectUnitList[i];
-
-                unit.Movement.SetDestination(destination + offset);
-
-                // 이동 중이라면 상태변화 없음
-                if (unit.StateMachine.CurrentState != unit.MoveState)
-                {
-                    unit.StateMachine.ChangeState(unit.MoveState);
-                }
-            }   
-        }
+        HandleProduckKeys();
+        HandleRightClick();
     }
     private void FixedUpdate()
     {
         
     }
+    private void HandleProduckKeys()
+    {
+        if (!(SelectedBuilding is ProductionBuilding productionBuilding))
+            return;
+        if (!productionBuilding.IsAlive)
+            return;
+
+        for(int i = 0; i < productionKeys.Length; i++)
+        {
+            if (Keyboard.current[productionKeys[i]].wasPressedThisFrame)
+                productionBuilding.EnqueueUnitByIndex(i);
+        }
+
+        if (Keyboard.current.escapeKey.wasPressedThisFrame)
+            productionBuilding.CancelLastProduct();
+    }
+    private void HandleRightClick()
+    {
+        if (!Mouse.current.rightButton.wasPressedThisFrame)
+            return;
+        if (selectUnitList == null || selectUnitList.Count == 0)
+            return;
+
+        Vector2 worldPos = camera.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+
+        // 유닛공격(공격없는 유닛은 이동)
+        Collider2D hit = Physics2D.OverlapCircle(worldPos, 0.2f, enemyLayerMask);
+        Unit target = hit != null ? hit.GetComponent<Unit>() : null;
+
+        if (target != null && target.IsAlive)
+        {
+            List<Unit> notCombatUnits = new List<Unit>();
+            foreach (Unit unit in selectUnitList)
+            {
+                if(unit.Attack == null)
+                {
+                    notCombatUnits.Add(unit);
+                    continue;
+                }
+                unit.Attack.SetTarget(target);
+                unit.StateMachine.ChangeState(unit.ChaseState);
+            }
+            if (notCombatUnits.Count > 0)
+                MoveUnits(notCombatUnits, worldPos);
+            return;
+        }
+
+        // 유닛 힐(Monk만, 나머지 이동)
+        Collider2D allyHit = Physics2D.OverlapCircle(worldPos, 0.2f, allyLayerMask);
+        Unit ally = allyHit != null ? allyHit.GetComponent<Unit>() : null;
+
+        if(ally != null && ally.IsAlive)
+        {
+            List<Unit> moveUnits = new List<Unit>();
+
+            foreach (Unit unit in selectUnitList)
+            {
+                if(unit is Monk monk && unit != ally)
+                {
+                    monk.Heal.SetTarget(ally);
+                    monk.StateMachine.ChangeState(monk.HealState);
+                }
+                else
+                {
+                    moveUnits.Add(unit);
+                }
+            }
+            if (moveUnits.Count > 0)
+                MoveUnits(moveUnits, worldPos);
+            return;
+        }
+        
+        // 자원채집 (Pawn)
+        Collider2D resourceHit = Physics2D.OverlapCircle(worldPos, 0.2f, resourceLayerMask);
+        Resource resource = resourceHit != null ? resourceHit.GetComponent<Resource>() : null;
+
+        if (resource != null && !resource.IsDepleted)
+        {
+            foreach (Unit unit in selectUnitList)
+            {
+                if (!(unit is Pawn pawn))
+                    continue;
+
+                pawn.Gather.SetTargetResource(resource);
+                pawn.Gather.SetReturnBuilding(Castle.FindNearestCastle(pawn.transform.position));
+                pawn.StateMachine.ChangeState(pawn.GatherState);
+            }
+            return;
+        }
+
+        MoveUnits(selectUnitList, worldPos);
+    }
+    // 유닛 이동
+    private void MoveUnits(List<Unit> units, Vector2 destination)
+    {
+        if (units.Count == 0)
+            return;
+
+        int column = Mathf.CeilToInt(Mathf.Sqrt(selectUnitList.Count));
+        int row = Mathf.CeilToInt((float)selectUnitList.Count / column);
+        for (int i = 0; i < selectUnitList.Count; i++)
+        {
+            int x = i % column;
+            int y = i / column;
+
+            Vector2 offset = new Vector2(
+                (x - (column - 1) * 0.5f) * spacing,
+                ((row - 1) * 0.5f - y) * spacing);
+
+            Unit unit = selectUnitList[i];
+
+            unit.Movement.SetDestination(destination + offset);
+
+            // 이동 중이라면 상태변화 없음
+            if (unit.StateMachine.CurrentState != unit.MoveState)
+            {
+                unit.StateMachine.ChangeState(unit.MoveState);
+            }
+        }
+    }
+    // 유닛선택
     public void SelectUnit(Unit unit)
     {
         if(!selectUnitList.Contains(unit))
@@ -118,6 +183,22 @@ public class Player : MonoBehaviour
             unit.SetSelected(false);
         selectUnitList.Clear();
     }
+    // 건물선택
+    public void SelectBuilding(Building building)
+    {
+        ClearSelectList();
+        DeselectBuilding();
+
+        SelectedBuilding = building;
+        building.SetSelected(true);
+    }
+    public void DeselectBuilding()
+    {
+        if (SelectedBuilding != null)
+            SelectedBuilding.SetSelected(false);
+        SelectedBuilding = null;
+    }
+    // 자원
     public void AddResource(ResourceType resourceType, int amount)
     {
         switch(resourceType)

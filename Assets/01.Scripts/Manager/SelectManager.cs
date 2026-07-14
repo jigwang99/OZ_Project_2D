@@ -7,6 +7,7 @@ public class SelectManager : MonoBehaviour
 
     [SerializeField] private RectTransform selectBox;
     [SerializeField] private LayerMask layerMask;
+    [SerializeField] private LayerMask buildingLayerMask;
     [SerializeField] private Camera camera;
 
     private const float drag = 10f;
@@ -94,13 +95,21 @@ public class SelectManager : MonoBehaviour
     private void ClickSelect()
     {
         Vector2 worldPos = camera.ScreenToWorldPoint(startPos);
-        Collider2D hit = Physics2D.OverlapPoint(worldPos, layerMask);
+        Collider2D unitHit = Physics2D.OverlapPoint(worldPos, layerMask);
 
-        Unit unit = hit != null ? hit.GetComponent<Unit>() : null;
+        Unit unit = unitHit != null ? unitHit.GetComponent<Unit>() : null;
 
         if (unit != null && unit.IsAlive)
         {
             Player.instance.SelectUnit(unit);
+        }
+
+        Collider2D buildingHit = Physics2D.OverlapPoint(worldPos, buildingLayerMask);
+        Building building = buildingHit != null ? buildingHit.GetComponent<Building>() : null;
+
+        if(building != null && building.IsAlive)
+        {
+            Player.instance.SelectBuilding(building);
         }
     }
 }

@@ -13,7 +13,6 @@ public class Archer : Unit
     }
     public override void ReturnToPool()
     {
-        
         ObjectPoolManager.instance.ReturnObject("Archer", this.gameObject);
     }
 }
