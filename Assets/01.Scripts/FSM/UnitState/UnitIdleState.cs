@@ -19,6 +19,16 @@ public class UnitIdleState : UnitBaseState
     }
     public override void Update()
     {
+        // 대기 상태시 적 탐지
+        if(!(Unit is Pawn))
+        {
+            Unit target = Unit.Attack.FindTarget();
 
+            if(target != null && target.IsAlive)
+            {
+                Unit.Attack.SetTarget(target);
+                Unit.StateMachine.ChangeState(Unit.AttackState);
+            }    
+        }
     }
 }

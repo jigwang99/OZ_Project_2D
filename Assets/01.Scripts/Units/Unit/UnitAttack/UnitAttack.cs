@@ -6,6 +6,8 @@ public abstract class UnitAttack : MonoBehaviour
     protected Unit target;
     protected float remainCooldown;
 
+    private Collider2D hit;
+
     private void Awake()
     {
         unit = GetComponent<Unit>();
@@ -35,6 +37,11 @@ public abstract class UnitAttack : MonoBehaviour
     {
         if(target == null) return false;
         return Vector2.Distance(unit.transform.position, target.transform.position) <= unit.UnitStat.AttackRange;
+    }
+    public Unit FindTarget()
+    {
+        hit = Physics2D.OverlapCircle(transform.position, unit.UnitStat.Vision);
+        return hit != null ? hit.GetComponent<Unit>() : null;
     }
     public abstract void Attack();
 }
