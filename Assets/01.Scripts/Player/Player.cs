@@ -12,6 +12,9 @@ public class Player : MonoBehaviour
 
     private const float spacing = 1.1f;
     
+    public int Wood {  get; private set; }
+    public int Gold { get; private set; }
+
     private void Awake()
     {
         if (instance == null)
@@ -88,5 +91,17 @@ public class Player : MonoBehaviour
     public void ClearSelectList()
     {
         selectUnitList.Clear();
+    }
+    public void AddResource(ResourceType resourceType, int amount)
+    {
+        switch(resourceType)
+        {
+            case ResourceType.Wood:
+                Wood += amount;
+                break;
+            case ResourceType.Gold:
+                Gold += amount; 
+                break;
+        }    
     }
 }

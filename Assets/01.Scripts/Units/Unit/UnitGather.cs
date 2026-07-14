@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Runtime.CompilerServices;
+using UnityEngine;
 
 public class UnitGather : MonoBehaviour
 {
@@ -15,7 +16,13 @@ public class UnitGather : MonoBehaviour
     }
     public void SetTargetResource(Resource targetResource)
     {
+        if(TargetResource != null)
+            TargetResource.OnDepleted -= HandleTargetDepleted;
+
         this.TargetResource = targetResource;
+        
+        if(TargetResource != null)
+            TargetResource.OnDepleted += HandleTargetDepleted;
     }
     public void SetReturnBuilding(Building returnBuilding)
     {
@@ -39,7 +46,11 @@ public class UnitGather : MonoBehaviour
         if(CarryAmount <= 0)
             return;
 
-        // 플레이어 자원 상승
+        Player.instance.AddResource(CarryResourceType, CarryAmount);
         CarryAmount = 0;
+    }
+    private void HandleTargetDepleted()
+    {
+        TargetResource = null;
     }
 }

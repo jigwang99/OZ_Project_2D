@@ -9,10 +9,11 @@ public class Wood : Resource
     public override void Init()
     {
         remainAmount = resourceStat.MaxAmount;
+        IsDepleted = false;
     }
 
     public override void ReturnToPool()
     {
-        ObjectPoolManager.instance.ReturnObject("Gold", this.gameObject);
+        ObjectPoolManager.instance.ReturnObject("Wood", this.gameObject);
     }
 }

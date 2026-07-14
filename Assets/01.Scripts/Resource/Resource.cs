@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
-
+using System;
 
 public abstract class Resource : MonoBehaviour, IPoolable
 {
     protected ResourceStat resourceStat;
     protected int remainAmount;
 
+    public event Action OnDepleted;
     public ResourceType ResourceType
     {
         get { return resourceStat.ResourceType; }
@@ -34,8 +35,11 @@ public abstract class Resource : MonoBehaviour, IPoolable
     private void Deplete()
     {
         IsDepleted = true;
+        OnDepleted?.Invoke();
+        OnDepleted = null;
         ReturnToPool();
     }
+    private
     public abstract void Init();
     public abstract void ReturnToPool();
 }

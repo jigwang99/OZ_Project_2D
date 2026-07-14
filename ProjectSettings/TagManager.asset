@@ -15,8 +15,8 @@ TagManager:
   - EnemyUnit
   - PlayerProjectile
   - EnemyProjectile
-  - 
-  - 
+  - PlayerBuilding
+  - EnemyBuilding
   - 
   - 
   - 

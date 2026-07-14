@@ -9,6 +9,7 @@ public class Gold : Resource
     public override void Init()
     {
         remainAmount = resourceStat.MaxAmount;
+        IsDepleted = false;
     }
 
     public override void ReturnToPool()

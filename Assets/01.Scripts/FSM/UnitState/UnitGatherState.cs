@@ -16,8 +16,7 @@ public class UnitGatherState : UnitBaseState
     private Phase phase;
     private float timer;
 
-    private const float gatherDelay = 0.3f;
-    private const float returnDelay = 0.3f;
+    private const float Delay = 0.3f;
     public UnitGatherState(Unit unit) : base(unit)
     {
         pawn = unit as Pawn;
@@ -72,10 +71,14 @@ public class UnitGatherState : UnitBaseState
     private void CheckArrivedAtResource()
     {
         if (gather.TargetResource == null || gather.TargetResource.IsDepleted)
+        {
+            Unit.StateMachine.ChangeState(Unit.IdleState);
             return;
+        }
         if(Unit.Movement.HasArrived)
         {
             phase = Phase.Gathering;
+            timer = Delay;
         }
     }
     private void MoveToBuilding()
@@ -85,7 +88,6 @@ public class UnitGatherState : UnitBaseState
             Unit.StateMachine.ChangeState(Unit.IdleState);
             return;
         }
-
         phase = Phase.MoveToBuilding;
         Unit.Movement.SetDestination(gather.ReturnBuilding.transform.position);
     }
@@ -94,22 +96,35 @@ public class UnitGatherState : UnitBaseState
         if(Unit.Movement.HasArrived)
         {
             phase = Phase.Returning;
+            timer = Delay;
         }
     }
     private void Gathering()
     {
         if(gather.TargetResource == null || gather.TargetResource.IsDepleted)
         {
-            MoveToBuilding();
+            Unit.StateMachine.ChangeState(Unit.IdleState);
             return;
         }
-        
+
+        // 
+        timer -= Time.deltaTime;
+        if (timer > 0f)
+            return;
+
         gather.Gather();
-
-
+        MoveToBuilding();
     }
     private void Returning()
     {
+        timer -= Time.deltaTime;
+        if (timer > 0f) return;
 
+        gather.ReturnResource();
+
+        if (gather.TargetResource != null && !gather.TargetResource.IsDepleted)
+            MoveToResource();
+        else
+            Unit.StateMachine.ChangeState(Unit.IdleState);
     }
 }

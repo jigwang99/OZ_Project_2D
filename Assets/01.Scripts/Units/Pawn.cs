@@ -24,6 +24,7 @@ public class Pawn : Unit
     }
     public override void ReturnToPool()
     {
+        Gather.SetTargetResource(null);
         ObjectPoolManager.instance.ReturnObject("Pawn", this.gameObject);
     }
 }
