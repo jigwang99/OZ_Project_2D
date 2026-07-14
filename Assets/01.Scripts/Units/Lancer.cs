@@ -11,12 +11,6 @@ public class Lancer : Unit
     {
         unitStat = UnitManager.instance.GetUnitStat(UnitType.Lancer);
     }
-    public override void Init()
-    {
-        CurrentHp = unitStat.MaxHp;
-        IsAlive = true;
-        StateMachine.ChangeState(IdleState);
-    }
     public override void ReturnToPool()
     {
         ObjectPoolManager.instance.ReturnObject("Lancer", this.gameObject);

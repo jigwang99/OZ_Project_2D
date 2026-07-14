@@ -9,6 +9,7 @@ public class Arrow : Projectile
     }
     public override void Init()
     {
+        projectileStat = ProjectileManager.instance.GetProjectileStat(ProjectileType.Arrow);
         timer = 0f;
         Direction = Vector2.zero;
         Damage = 0;

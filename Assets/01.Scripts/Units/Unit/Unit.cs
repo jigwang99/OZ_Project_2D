@@ -19,6 +19,7 @@ public abstract class Unit : MonoBehaviour, IPoolable
 
     public int CurrentHp { get; protected set; }
     public bool IsAlive { get; protected set; }
+    public bool IsSelected { get; protected set; }
     public UnitStat UnitStat => unitStat;
     public UnitMovement Movement { get; protected set; }
     public UnitAttack Attack { get; protected set; }
@@ -46,6 +47,10 @@ public abstract class Unit : MonoBehaviour, IPoolable
     // Update is called once per frame
     protected void Update() => StateMachine.Update();
     protected void FixedUpdate() => StateMachine.FixedUpdate();
+    public void SetSelected(bool selected)
+    {
+        IsSelected = selected;
+    }
     public void TakeDamage(int attackDamage)
     {
         int damage = Mathf.Max(1, attackDamage - UnitStat.Defense);
@@ -61,8 +66,19 @@ public abstract class Unit : MonoBehaviour, IPoolable
     protected void Die()
     {
         IsAlive = false;
+        Player.instance.DeselectUnit(this);
         ReturnToPool();
     }
-    public abstract void Init();
+    public LayerMask GetEnemyLayerMask()
+    {
+        return enemyMask;
+    }
+    public virtual void Init()
+    {
+        SetSelected(false);
+        CurrentHp = unitStat.MaxHp;
+        IsAlive = true;
+        StateMachine.ChangeState(IdleState);
+    }
     public abstract void ReturnToPool();
 }

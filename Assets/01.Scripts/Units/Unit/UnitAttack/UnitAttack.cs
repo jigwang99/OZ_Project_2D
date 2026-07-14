@@ -40,7 +40,7 @@ public abstract class UnitAttack : MonoBehaviour
     }
     public Unit FindTarget()
     {
-        hit = Physics2D.OverlapCircle(transform.position, unit.UnitStat.Vision);
+        hit = Physics2D.OverlapCircle(transform.position, unit.UnitStat.Vision, unit.GetEnemyLayerMask());
         return hit != null ? hit.GetComponent<Unit>() : null;
     }
     public abstract void Attack();

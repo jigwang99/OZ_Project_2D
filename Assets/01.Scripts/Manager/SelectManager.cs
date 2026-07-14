@@ -9,19 +9,14 @@ public class SelectManager : MonoBehaviour
     [SerializeField] private LayerMask layerMask;
     [SerializeField] private Camera camera;
 
+    private const float drag = 10f;
+    private bool isDrag;
+
     // selectBox Vector
     private Vector2 startPos;
     private Vector2 currentPos;
     private Vector2 min;
     private Vector2 max;
-
-    // OverlapBoxAll Vector
-    private Vector3 worldMin;
-    private Vector3 worldMax;
-    private Vector2 center;
-    private Vector2 size;
-
-    private Collider2D[] hits;
 
     public void Awake()
     {
@@ -38,18 +33,26 @@ public class SelectManager : MonoBehaviour
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {   
             startPos = Mouse.current.position.ReadValue();
-            selectBox.gameObject.SetActive(true);
+            isDrag = false;
         }
         // 드래그 중
         if (Mouse.current.leftButton.isPressed)
         {
             currentPos = Mouse.current.position.ReadValue();
 
-            min = Vector2.Min(startPos, currentPos);
-            max = Vector2.Max(startPos, currentPos);
+            if(!isDrag && Vector2.Distance(startPos, currentPos) > drag)
+            {
+                isDrag = true;
+                selectBox.gameObject.SetActive(true);
+            }
+            if(isDrag)
+            {
+                min = Vector2.Min(startPos, currentPos);
+                max = Vector2.Max(startPos, currentPos);
 
-            selectBox.anchoredPosition = min;
-            selectBox.sizeDelta = max - min;
+                selectBox.anchoredPosition = min;
+                selectBox.sizeDelta = max - min;
+            }
         }
         // 드래그 종료
         if (Mouse.current.leftButton.wasReleasedThisFrame)
@@ -57,26 +60,47 @@ public class SelectManager : MonoBehaviour
             selectBox.gameObject.SetActive(false);
             Player.instance.ClearSelectList();
 
-            worldMin = camera.ScreenToWorldPoint(min);
-            worldMax = camera.ScreenToWorldPoint(max);
+            if (isDrag)
+                DragSelect();
+            else
+                ClickSelect();
+            
+            isDrag=false;
+        }
+    }
+    private void DragSelect()
+    {
+        Vector3 worldMin = camera.ScreenToWorldPoint(min);
+        Vector3 worldMax = camera.ScreenToWorldPoint(max);
 
-            center = (worldMin + worldMax) * 0.5f;
-            size = new Vector2(
-                Mathf.Abs(worldMax.x - worldMin.x),
-                Mathf.Abs(worldMax.y - worldMin.y)
-                );
+        Vector2 center = (worldMin + worldMax) * 0.5f;
+        Vector2 size = new Vector2(
+            Mathf.Abs(worldMax.x - worldMin.x),
+            Mathf.Abs(worldMax.y - worldMin.y)
+            );
 
-            hits = Physics2D.OverlapBoxAll(center, size, 0f, layerMask);
+        Collider2D[] hits = Physics2D.OverlapBoxAll(center, size, 0f, layerMask);
 
-            foreach(Collider2D hit in hits)
+        foreach (Collider2D hit in hits)
+        {
+            Unit unit = hit.GetComponent<Unit>();
+
+            if (unit != null)
             {
-                Unit unit = hit.GetComponent<Unit>();
-
-                if (unit != null)
-                {
-                    Player.instance.SelectUnit(unit);
-                }
+                Player.instance.SelectUnit(unit);
             }
+        }
+    }
+    private void ClickSelect()
+    {
+        Vector2 worldPos = camera.ScreenToWorldPoint(startPos);
+        Collider2D hit = Physics2D.OverlapPoint(worldPos, layerMask);
+
+        Unit unit = hit != null ? hit.GetComponent<Unit>() : null;
+
+        if (unit != null && unit.IsAlive)
+        {
+            Player.instance.SelectUnit(unit);
         }
     }
 }

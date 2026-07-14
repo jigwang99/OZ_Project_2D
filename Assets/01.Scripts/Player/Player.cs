@@ -56,6 +56,23 @@ public class Player : MonoBehaviour
                 return;
             }
 
+            Collider2D resourceHit = Physics2D.OverlapCircle(worldPos, 0.2f, resourceLayerMask);
+            Resource resource = resourceHit != null ? resourceHit.GetComponent<Resource>() : null;
+
+            if (resource != null && !resource.IsDepleted)
+            {
+                foreach (Unit unit in selectUnitList)
+                {
+                    if (!(unit is Pawn pawn))
+                        continue;
+
+                    pawn.Gather.SetTargetResource(resource);
+                    pawn.Gather.SetReturnBuilding(Castle.FindNearestCastle(pawn.transform.position));
+                    pawn.StateMachine.ChangeState(pawn.GatherState);
+                }
+                return;
+            }
+
             Vector2 destination = worldPos;
 
             int column = Mathf.CeilToInt(Mathf.Sqrt(selectUnitList.Count));
@@ -78,24 +95,7 @@ public class Player : MonoBehaviour
                 {
                     unit.StateMachine.ChangeState(unit.MoveState);
                 }
-            }
-
-            Collider2D resourceHit = Physics2D.OverlapCircle(worldPos, 0.2f, resourceLayerMask);
-            Resource resource = resourceHit != null ? resourceHit.GetComponent<Resource>() : null;
-
-            if(resource != null && !resource.IsDepleted)
-            {
-                foreach(Unit unit in selectUnitList)
-                {
-                    if (!(unit is Pawn pawn))
-                        continue;
-
-                    pawn.Gather.SetTargetResource(resource);
-                    pawn.Gather.SetReturnBuilding(Castle.FindNearestCastle(pawn.transform.position));
-                    pawn.StateMachine.ChangeState(pawn.GatherState);
-                }
-                return;
-            }
+            }   
         }
     }
     private void FixedUpdate()
@@ -107,8 +107,15 @@ public class Player : MonoBehaviour
         if(!selectUnitList.Contains(unit))
             selectUnitList.Add(unit);
     }
+    public void DeselectUnit(Unit unit)
+    {
+        if(selectUnitList.Contains(unit))
+            selectUnitList.Remove(unit);
+    }
     public void ClearSelectList()
     {
+        foreach (Unit unit in selectUnitList)
+            unit.SetSelected(false);
         selectUnitList.Clear();
     }
     public void AddResource(ResourceType resourceType, int amount)

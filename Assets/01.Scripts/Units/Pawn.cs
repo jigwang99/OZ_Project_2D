@@ -16,12 +16,6 @@ public class Pawn : Unit
     {
         unitStat = UnitManager.instance.GetUnitStat(UnitType.Pawn);
     }
-    public override void Init()
-    {
-        CurrentHp = unitStat.MaxHp;
-        IsAlive = true;
-        StateMachine.ChangeState(IdleState);
-    }
     public override void ReturnToPool()
     {
         Gather.SetTargetResource(null);

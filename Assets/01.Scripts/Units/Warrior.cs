@@ -11,12 +11,6 @@ public class Warrior : Unit
     {
         unitStat = UnitManager.instance.GetUnitStat(UnitType.Warrior);
     }
-    public override void Init()
-    {
-        CurrentHp = unitStat.MaxHp;
-        IsAlive = true;
-        StateMachine.ChangeState(IdleState);
-    }
     public override void ReturnToPool()
     {
         ObjectPoolManager.instance.ReturnObject("Warrior", this.gameObject);

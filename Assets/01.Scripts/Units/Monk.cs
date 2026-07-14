@@ -11,12 +11,6 @@ public class Monk : Unit
     {
         unitStat = UnitManager.instance.GetUnitStat(UnitType.Monk);
     }
-    public override void Init()
-    {
-        CurrentHp = unitStat.MaxHp;
-        IsAlive = true;
-        StateMachine.ChangeState(IdleState);
-    }
     public override void ReturnToPool()
     {
         ObjectPoolManager.instance.ReturnObject("Monk", this.gameObject);

@@ -28,7 +28,7 @@ public class BuildingAttackState : BuildingBaseState
     {
         Unit target = tower.GetTarget();
 
-        if(target == null || target.IsAlive || !tower.IsInRange(target))
+        if(target == null || !target.IsAlive || !tower.IsInRange(target))
         {
             tower.SetTarget(null);
             Building.StateMachine.ChangeState(Building.IdleState);

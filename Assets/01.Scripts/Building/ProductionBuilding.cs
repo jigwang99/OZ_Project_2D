@@ -15,14 +15,15 @@ public abstract class ProductionBuilding : Building
 
     [SerializeField] private Transform spawnPosition;
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         ProductState = new BuildingProductState(this);
     }
     public bool EnqueueUnit(UnitType unitType)
     {
         if (!producibleUnits.Contains(unitType))
-            return;
+            return false;
 
         UnitStat unitStat = UnitManager.instance.GetUnitStat(unitType);
         if (!Player.instance.TryReduceResource(unitStat.WoodCost, unitStat.GoldCost))

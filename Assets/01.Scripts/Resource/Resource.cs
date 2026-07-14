@@ -22,7 +22,7 @@ public abstract class Resource : MonoBehaviour, IPoolable
             return 0;
 
         int gathered = Mathf.Min(amount, remainAmount);
-        remainAmount -= amount;
+        remainAmount -= gathered;
 
         if(remainAmount <= 0 )
         {
@@ -39,7 +39,6 @@ public abstract class Resource : MonoBehaviour, IPoolable
         OnDepleted = null;
         ReturnToPool();
     }
-    private
     public abstract void Init();
     public abstract void ReturnToPool();
 }
