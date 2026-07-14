@@ -30,7 +30,7 @@ public class UnitStat
     [Header("Production")]
     [SerializeField] private int woodCost;
     [SerializeField] private int goldCost;
-    [SerializeField] private float buildTime;
+    [SerializeField] private float productTime;
 
     [Header("Gather")]
     [SerializeField] private int gatherAmount;
@@ -49,7 +49,7 @@ public class UnitStat
 
     public int GoldCost => goldCost;
     public int WoodCost => woodCost;
-    public float BuildTime => buildTime;
+    public float ProductTime => productTime;
 
     public int GatherAmount => gatherAmount;
 
@@ -70,13 +70,13 @@ public class UnitStat
 
         this.woodCost = woodCost;
         this.goldCost = goldCost;
-        this.buildTime = buildTime;
+        this.productTime = buildTime;
 
         this.gatherAmount = gatherAmount;
     }
     public UnitStat Clone()
     {
-        return new UnitStat(unitType, maxHp, attackDamage, defense, population, moveSpeed, attackRange, attackCooldown, vision, woodCost, goldCost, buildTime, gatherAmount);
+        return new UnitStat(unitType, maxHp, attackDamage, defense, population, moveSpeed, attackRange, attackCooldown, vision, woodCost, goldCost, productTime, gatherAmount);
     }
 }
 

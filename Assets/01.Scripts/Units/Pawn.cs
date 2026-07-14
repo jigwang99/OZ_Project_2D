@@ -2,8 +2,8 @@
 
 public class Pawn : Unit
 {
-    public UnitGather Gather {  get; private set; }
-    public UnitGatherState GatherState {  get;  private set; }
+    public UnitGather Gather { get; private set; }
+    public UnitGatherState GatherState { get;  private set; }
     protected override void Awake()
     {
         base.Awake();

@@ -83,7 +83,10 @@ public class UnitGatherState : UnitBaseState
     }
     private void MoveToBuilding()
     {
-        if (gather.ReturnBuilding == null)
+        Castle castle = Castle.FindNearestCastle(Unit.transform.position);
+        gather.SetReturnBuilding(castle);
+
+        if (castle == null)
         {
             Unit.StateMachine.ChangeState(Unit.IdleState);
             return;

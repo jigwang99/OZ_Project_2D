@@ -10,17 +10,15 @@ public abstract class Building : MonoBehaviour, IPoolable
 
     public BuildingIdleState IdleState { get; protected set; }
     public BuildingBuildedState BuildedState { get; protected set; }
-    public BuildingProductState ProductState { get; protected set; }
     public StateMachine StateMachine { get; protected set; }
     
     protected virtual void Awake()
     {
         StateMachine = new StateMachine();
-        IdleState = new BuildingIdleState();
-        BuildedState = new BuildingBuildedState();
-        ProductState = new BuildingProductState();
+        IdleState = new BuildingIdleState(this);
+        BuildedState = new BuildingBuildedState(this);
     }
-    protected void OnEnable()
+    protected virtual void OnEnable()
     {
         Init();
     }

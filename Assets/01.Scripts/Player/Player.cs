@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-
+using System;
 public class Player : MonoBehaviour
 {
     public static Player instance;
@@ -9,12 +9,14 @@ public class Player : MonoBehaviour
     [SerializeField] private List<Unit> selectUnitList = new List<Unit>();
     [SerializeField] Camera camera;
     [SerializeField] LayerMask enemyLayerMask;
+    [SerializeField] LayerMask resourceLayerMask;
 
     private const float spacing = 1.1f;
     
+    
     public int Wood {  get; private set; }
     public int Gold { get; private set; }
-
+    public event Action OnResourceChanged;
     private void Awake()
     {
         if (instance == null)
@@ -43,7 +45,7 @@ public class Player : MonoBehaviour
 
             Collider2D hit = Physics2D.OverlapCircle(worldPos, 0.2f, enemyLayerMask);
             Unit target = hit != null ? hit.GetComponent<Unit>() : null;
-
+            
             if (target != null && target.IsAlive)
             {
                 foreach(Unit unit in selectUnitList)
@@ -77,6 +79,23 @@ public class Player : MonoBehaviour
                     unit.StateMachine.ChangeState(unit.MoveState);
                 }
             }
+
+            Collider2D resourceHit = Physics2D.OverlapCircle(worldPos, 0.2f, resourceLayerMask);
+            Resource resource = resourceHit != null ? resourceHit.GetComponent<Resource>() : null;
+
+            if(resource != null && !resource.IsDepleted)
+            {
+                foreach(Unit unit in selectUnitList)
+                {
+                    if (!(unit is Pawn pawn))
+                        continue;
+
+                    pawn.Gather.SetTargetResource(resource);
+                    pawn.Gather.SetReturnBuilding(Castle.FindNearestCastle(pawn.transform.position));
+                    pawn.StateMachine.ChangeState(pawn.GatherState);
+                }
+                return;
+            }
         }
     }
     private void FixedUpdate()
@@ -97,11 +116,30 @@ public class Player : MonoBehaviour
         switch(resourceType)
         {
             case ResourceType.Wood:
-                Wood += amount;
+                AddWood(amount);
                 break;
             case ResourceType.Gold:
-                Gold += amount; 
+                AddGold(amount); 
                 break;
         }    
+    }
+    public void AddWood(int amount)
+    {
+        Wood += amount;
+        OnResourceChanged?.Invoke();
+    }
+    public void AddGold(int amount)
+    {
+        Gold += amount;
+        OnResourceChanged?.Invoke();
+    }
+    public bool TryReduceResource(int woodCost, int goldCost)
+    {
+        if (Wood < woodCost || Gold < goldCost)
+            return false;
+
+        Wood -= woodCost;
+        Gold -= goldCost;
+        return true;
     }
 }
