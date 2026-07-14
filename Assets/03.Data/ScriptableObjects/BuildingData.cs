@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum BuildingType
@@ -10,6 +11,7 @@ public enum BuildingType
     Monastery,
     Tower,
 }
+[Serializable]
 public class BuildingStat
 {
     [Header("Info")]

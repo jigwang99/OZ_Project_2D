@@ -2,6 +2,11 @@
 
 public class Arrow : Projectile
 {
+    protected override void Start()
+    {
+        base.Start();
+        projectileStat = ProjectileManager.instance.GetProjectileStat(ProjectileType.Arrow);
+    }
     protected override void OnCollisionEnter2D(Collision2D collision)
     {
         collision.gameObject.GetComponent<Unit>().TakeDamage(Damage);
@@ -9,7 +14,6 @@ public class Arrow : Projectile
     }
     public override void Init()
     {
-        projectileStat = ProjectileManager.instance.GetProjectileStat(ProjectileType.Arrow);
         timer = 0f;
         Direction = Vector2.zero;
         Damage = 0;

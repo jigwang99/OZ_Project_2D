@@ -9,7 +9,7 @@ public abstract class Projectile : MonoBehaviour, IPoolable
     public Vector2 Direction { get; protected set; }
 
     public int Damage { get; set; }
-    protected void Start()
+    protected virtual void Start()
     {
         rb = GetComponent<Rigidbody2D>();
     }
