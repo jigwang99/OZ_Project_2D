@@ -6,25 +6,38 @@ public class BuildingAttackState : BuildingBaseState
     private float remainCooldown;
     public BuildingAttackState(Building building) : base(building)
     {
+        tower = building as Tower;
     }
 
     public override void Enter()
     {
-        throw new System.NotImplementedException();
+        remainCooldown = 0f;
     }
 
     public override void Exit()
     {
-        throw new System.NotImplementedException();
     }
 
     public override void FixedUpdate()
     {
-        throw new System.NotImplementedException();
+        if(remainCooldown > 0f)
+            remainCooldown -= Time.fixedDeltaTime;
     }
 
     public override void Update()
     {
-        throw new System.NotImplementedException();
+        Unit target = tower.GetTarget();
+
+        if(target == null || target.IsAlive || !tower.IsInRange(target))
+        {
+            tower.SetTarget(null);
+            Building.StateMachine.ChangeState(Building.IdleState);
+            return;
+        }
+        if(remainCooldown <= 0f)
+        {
+            tower.Fire(target);
+            remainCooldown = Building.BuildingStat.AttackCooldown;
+        }
     }
 }
