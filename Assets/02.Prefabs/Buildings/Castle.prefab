@@ -180,6 +180,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba5b4865561d8e7468fac133ed5fefdb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Castle
+  obstacleSize: {x: 3, y: 3}
   producibleUnits: 00000000
   productList: 
   spawnPosition: {fileID: 5124427761980153553}

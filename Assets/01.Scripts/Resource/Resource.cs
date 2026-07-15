@@ -1,10 +1,13 @@
 ﻿using UnityEngine;
 using System;
+using System.Collections;
 
 public abstract class Resource : MonoBehaviour, IPoolable
 {
     protected ResourceStat resourceStat;
     protected int remainAmount;
+
+    [SerializeField] private Vector2 obstacleSize;
 
     public event Action OnDepleted;
     
@@ -13,6 +16,7 @@ public abstract class Resource : MonoBehaviour, IPoolable
     protected void OnEnable()
     {
         Init();
+        StartCoroutine(RegisterObtacleNextFrame());
     }
     public int Gathered(int amount)
     {
@@ -36,6 +40,12 @@ public abstract class Resource : MonoBehaviour, IPoolable
         OnDepleted?.Invoke();
         OnDepleted = null;
         ReturnToPool();
+        GridManager.instance.UpdateArea(transform.position, obstacleSize);
+    }
+    private IEnumerator RegisterObtacleNextFrame()
+    {
+        yield return null;
+        GridManager.instance.UpdateArea(transform.position, obstacleSize);
     }
     public virtual void Init()
     {

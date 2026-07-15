@@ -106,7 +106,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c412ef722f6a6e44b0515547d3c0c1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Barrack
-  producibleUnits: 
+  obstacleSize: {x: 3, y: 3}
+  producibleUnits: 03000000020000000400000001000000
+  productList: 
   spawnPosition: {fileID: 0}
 --- !u!50 &3631008750880513914
 Rigidbody2D:
