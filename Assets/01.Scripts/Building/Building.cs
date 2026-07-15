@@ -1,9 +1,11 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public abstract class Building : MonoBehaviour, IPoolable
 {
     protected BuildingStat buildingStat;
-    
+    [SerializeField] private Vector2 obstacleSize;
+
     public abstract BuildingType Type { get; }
     public BuildingStat BuildingStat => buildingStat;
 
@@ -25,6 +27,7 @@ public abstract class Building : MonoBehaviour, IPoolable
     {
         SetSelected(false);
         Init();
+        StartCoroutine(RegisterObtacleNextFrame());
     }
     protected void Update() => StateMachine.Update();
     protected void FixedUpdate() => StateMachine.FixedUpdate();
@@ -48,6 +51,12 @@ public abstract class Building : MonoBehaviour, IPoolable
     {
         IsAlive = false;
         ReturnToPool();
+        GridManager.instance.UpdateArea(transform.position, obstacleSize);
+    }
+    private IEnumerator RegisterObtacleNextFrame()
+    {
+        yield return null;
+        GridManager.instance.UpdateArea(transform.position, obstacleSize);
     }
     public virtual void Init()
     {

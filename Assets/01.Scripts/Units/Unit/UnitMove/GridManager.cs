@@ -50,7 +50,7 @@ public class GridManager : MonoBehaviour
                     + Vector2.right * (x * nodeDiameter + nodeRadius)
                     + Vector2.up * (y * nodeDiameter + nodeRadius);
 
-                bool walkable = !Physics2D.OverlapCircle(worldPoint, nodeRadius * 0.9f, obstacleLayerMask);
+                bool walkable = CheckWalkable(worldPoint);
 
                 grid[x, y] = new Node(walkable, worldPoint, x, y);
             }
@@ -90,6 +90,26 @@ public class GridManager : MonoBehaviour
             }
         }
         return neighbours;
+    }
+    private bool CheckWalkable(Vector2 worldPoint)
+    {
+        return !Physics2D.OverlapCircle(worldPoint, nodeRadius * 0.9f, obstacleLayerMask);
+    }
+    public void UpdateArea(Vector2 center, Vector2 size)
+    {
+        if (grid == null)
+            return;
+
+        Vector2 half = size * 0.5f;
+        Vector2 min = center - half - Vector2.one * nodeDiameter;
+        Vector2 max = center + half + Vector2.one * nodeDiameter;
+
+        Node minNode = NodeFromWorldPoint(min);
+        Node maxNode = NodeFromWorldPoint(max);
+
+        for (int x = minNode.gridX; x <= maxNode.gridX; x++)
+            for (int y = minNode.gridY; y <= maxNode.gridY; y++)
+                grid[x, y].walkable = CheckWalkable(grid[x, y].worldPos);
     }
     // 그리드 시각화
     void OnDrawGizmos()
