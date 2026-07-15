@@ -101,15 +101,30 @@ public class GridManager : MonoBehaviour
             return;
 
         Vector2 half = size * 0.5f;
-        Vector2 min = center - half - Vector2.one * nodeDiameter;
-        Vector2 max = center + half + Vector2.one * nodeDiameter;
-
-        Node minNode = NodeFromWorldPoint(min);
-        Node maxNode = NodeFromWorldPoint(max);
+        Node minNode = NodeFromWorldPoint(center - half - Vector2.one * nodeDiameter);
+        Node maxNode = NodeFromWorldPoint(center + half + Vector2.one * nodeDiameter);
 
         for (int x = minNode.gridX; x <= maxNode.gridX; x++)
             for (int y = minNode.gridY; y <= maxNode.gridY; y++)
                 grid[x, y].walkable = CheckWalkable(grid[x, y].worldPos);
+    }
+    public bool IsAreaWalkable(Vector2 center, Vector2 size)
+    {
+        if(grid == null) return false;
+
+        Vector2 half = size * 0.5f;
+        Node minNode = NodeFromWorldPoint(center - half);
+        Node maxNode = NodeFromWorldPoint(center + half);
+
+        for (int x = minNode.gridX; x <= maxNode.gridX; x++)
+            for (int y = minNode.gridY; y <= maxNode.gridY; y++)
+                if (!grid[x, y].walkable)
+                    return false;
+        return true;
+    }
+    public Vector2 FitNode(Vector2 worldPos)
+    {
+        return NodeFromWorldPoint(worldPos).worldPos;
     }
     // 그리드 시각화
     void OnDrawGizmos()

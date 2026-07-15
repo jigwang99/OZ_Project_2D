@@ -12,6 +12,9 @@ public abstract class Building : MonoBehaviour, IPoolable
     public int CurrentHp {  get; protected set; }
     public bool IsAlive { get; protected set; }
     public bool IsSelected { get; protected set; }
+    public bool IsSkipBuilded { get; protected set; }
+    public float BuildProgress { get; protected set; }
+    public bool IsConstruction => StateMachine.CurrentState == BuildedState;
 
     public BuildingIdleState IdleState { get; protected set; }
     public BuildingBuildedState BuildedState { get; protected set; }
@@ -58,13 +61,21 @@ public abstract class Building : MonoBehaviour, IPoolable
         yield return null;
         GridManager.instance.UpdateArea(transform.position, obstacleSize);
     }
+    public void ResetProgress()
+    {
+        BuildProgress = 0;
+    }
+    public void Construct(float amount)
+    {
+        BuildProgress += amount;
+    }
     public virtual void Init()
     {
         if (buildingStat == null)
             buildingStat = BuildingManager.instance.GetBuildingStat(Type);
         CurrentHp = buildingStat.MaxHp;
         IsAlive = true;
-        StateMachine.ChangeState(BuildedState);
+        StateMachine.ChangeState(IsSkipBuilded ? IdleState : BuildedState);
     }
     public abstract void ReturnToPool();
 }

@@ -30,6 +30,9 @@ public class SelectManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (BuildPlacer.instance != null && BuildPlacer.instance.IsPlacing)
+            return;
+
         // 드래그 시작
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {   

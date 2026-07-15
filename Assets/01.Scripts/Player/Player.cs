@@ -66,6 +66,9 @@ public class Player : MonoBehaviour
     }
     private void HandleRightClick()
     {
+        if (BuildPlacer.instance != null && BuildPlacer.instance.IsPlacing)
+            return;
+
         if (!Mouse.current.rightButton.wasPressedThisFrame)
             return;
         if (selectUnitList == null || selectUnitList.Count == 0)
@@ -184,6 +187,20 @@ public class Player : MonoBehaviour
         foreach (Unit unit in selectUnitList)
             unit.SetSelected(false);
         selectUnitList.Clear();
+    }
+    public bool HasSelectedPawn()
+    {
+        return selectUnitList.Count == 1 && selectUnitList[0] is Pawn;
+    }
+    public void CommandBuild(Building building)
+    {
+        foreach(Unit unit in selectUnitList)
+        {
+            if(!(unit is Pawn pawn))
+                continue;
+            pawn.Build.SetTarget(building);
+            pawn.StateMachine.ChangeState(pawn.BuildState);
+        }
     }
     // 건물선택
     public void SelectBuilding(Building building)

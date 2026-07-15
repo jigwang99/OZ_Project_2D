@@ -10,8 +10,7 @@ public class BuildingBuildedState : BuildingBaseState
 
     public override void Enter()
     {
-        timer = Building.BuildingStat.BuildTime;
-        // 건설중
+        Building.ResetProgress();
     }
 
     public override void Exit()
@@ -26,8 +25,7 @@ public class BuildingBuildedState : BuildingBaseState
 
     public override void Update()
     {
-        timer -= Time.deltaTime;
-        if (timer <= 0f)
+        if (Building.BuildProgress >= Building.BuildingStat.BuildTime)
             Building.StateMachine.ChangeState(Building.IdleState);
     }
 }
