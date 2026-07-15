@@ -2,6 +2,7 @@
 
 public class Pawn : Unit
 {
+    public override UnitType Type => UnitType.Pawn;
     public UnitGather Gather { get; private set; }
     public UnitGatherState GatherState { get;  private set; }
     protected override void Awake()
@@ -11,10 +12,6 @@ public class Pawn : Unit
         Gather = GetComponent<UnitGather>();
 
         GatherState = new UnitGatherState(this);
-    }
-    protected void Start()
-    {
-        unitStat = UnitManager.instance.GetUnitStat(UnitType.Pawn);
     }
     public override void ReturnToPool()
     {

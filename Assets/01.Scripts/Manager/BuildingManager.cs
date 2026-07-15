@@ -14,10 +14,7 @@ public class BuildingManager : MonoBehaviour
         else
             Destroy(gameObject);
         DontDestroyOnLoad(gameObject);
-    }
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
+
         LoadBuildingData();
     }
     private void LoadBuildingData()

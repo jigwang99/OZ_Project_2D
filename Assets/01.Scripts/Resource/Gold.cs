@@ -2,15 +2,7 @@
 
 public class Gold : Resource
 {
-    private void Start()
-    {
-        resourceStat = ResourceManager.instance.GetResourceStat(ResourceType.Gold);
-    }
-    public override void Init()
-    {
-        remainAmount = resourceStat.MaxAmount;
-        IsDepleted = false;
-    }
+    public override ResourceType Type => ResourceType.Gold;
 
     public override void ReturnToPool()
     {

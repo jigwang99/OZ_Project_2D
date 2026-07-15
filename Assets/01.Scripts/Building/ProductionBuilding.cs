@@ -7,7 +7,7 @@ public abstract class ProductionBuilding : Building
 {
     [SerializeField] private List<UnitType> producibleUnits;
 
-    private List<UnitType> productList = new List<UnitType>();
+    [SerializeField] private List<UnitType> productList = new List<UnitType>();
 
     public BuildingProductState ProductState { get; protected set; }
     public bool HasList => productList.Count > 0;

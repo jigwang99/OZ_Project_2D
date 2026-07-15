@@ -7,10 +7,8 @@ public abstract class Resource : MonoBehaviour, IPoolable
     protected int remainAmount;
 
     public event Action OnDepleted;
-    public ResourceType ResourceType
-    {
-        get { return resourceStat.ResourceType; }
-    }
+    
+    public abstract ResourceType Type { get; }
     public bool IsDepleted;
     protected void OnEnable()
     {
@@ -39,6 +37,24 @@ public abstract class Resource : MonoBehaviour, IPoolable
         OnDepleted = null;
         ReturnToPool();
     }
-    public abstract void Init();
+    public virtual void Init()
+    {
+        if (resourceStat == null)
+        {
+            if (ResourceManager.instance == null)
+            {
+                Debug.LogError("ResourceManager가 씬에 없거나 아직 초기화 전입니다.", this);
+                return;
+            }
+            resourceStat = ResourceManager.instance.GetResourceStat(Type);
+            if (resourceStat == null)
+            {
+                Debug.LogError($"{Type} 데이터가 ResourceData에 없습니다.", this);
+                return;
+            }
+        }
+        remainAmount = resourceStat.MaxAmount;
+        IsDepleted = false;
+    }
     public abstract void ReturnToPool();
 }

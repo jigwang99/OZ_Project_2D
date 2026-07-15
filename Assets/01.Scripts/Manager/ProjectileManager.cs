@@ -14,9 +14,6 @@ public class ProjectileManager : MonoBehaviour
         else
             Destroy(gameObject);
         DontDestroyOnLoad(gameObject);
-    }
-    private void Start()
-    {
         LoadProjectileData();
     }
     private void LoadProjectileData()

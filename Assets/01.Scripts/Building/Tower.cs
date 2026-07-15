@@ -2,6 +2,8 @@
 
 public class Tower : Building
 {
+    public override BuildingType Type => BuildingType.Tower;
+
     [SerializeField] private LayerMask enemyLayerMask;
     private Unit target;
 
@@ -12,10 +14,6 @@ public class Tower : Building
     {
         base.Awake();
         AttackState = new BuildingAttackState(this);
-    }
-    protected void Start()
-    {
-        buildingStat = BuildingManager.instance.GetBuildingStat(BuildingType.Tower);
     }
     public Unit GetTarget()
     {
@@ -44,10 +42,8 @@ public class Tower : Building
     }
     public override void Init()
     {
-        CurrentHp = buildingStat.MaxHp;
-        IsAlive = true;
+        base.Init();
         target = null;
-        StateMachine.ChangeState(BuildedState);
     }
 
     public override void ReturnToPool()

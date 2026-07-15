@@ -2,21 +2,15 @@
 
 public class Arrow : Projectile
 {
+    public override ProjectileType Type => ProjectileType.Arrow;
     protected override void Start()
     {
         base.Start();
-        projectileStat = ProjectileManager.instance.GetProjectileStat(ProjectileType.Arrow);
     }
     protected override void OnCollisionEnter2D(Collision2D collision)
     {
         collision.gameObject.GetComponent<Unit>().TakeDamage(Damage);
         ReturnToPool();
-    }
-    public override void Init()
-    {
-        timer = 0f;
-        Direction = Vector2.zero;
-        Damage = 0;
     }
     public override void ReturnToPool()
     {

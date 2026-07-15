@@ -7,6 +7,7 @@ public class Player : MonoBehaviour
     public static Player instance;
 
     [SerializeField] private List<Unit> selectUnitList = new List<Unit>();
+    [SerializeField] private Building selectBuilding;
     [SerializeField] Camera camera;
     [SerializeField] LayerMask allyLayerMask;
     [SerializeField] LayerMask enemyLayerMask;
@@ -15,7 +16,7 @@ public class Player : MonoBehaviour
     private const float spacing = 1.1f;
 
     private static readonly Key[] productionKeys = { Key.A, Key.S, Key.D, Key.F };
-    public Building SelectedBuilding { get; private set; }
+    
 
     public int Wood {  get; private set; }
     public int Gold { get; private set; }
@@ -33,7 +34,8 @@ public class Player : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        Wood = 50;
+        Gold = 0;
     }
 
     // Update is called once per frame
@@ -48,7 +50,7 @@ public class Player : MonoBehaviour
     }
     private void HandleProduckKeys()
     {
-        if (!(SelectedBuilding is ProductionBuilding productionBuilding))
+        if (!(selectBuilding is ProductionBuilding productionBuilding))
             return;
         if (!productionBuilding.IsAlive)
             return;
@@ -189,14 +191,14 @@ public class Player : MonoBehaviour
         ClearSelectList();
         DeselectBuilding();
 
-        SelectedBuilding = building;
+        selectBuilding = building;
         building.SetSelected(true);
     }
     public void DeselectBuilding()
     {
-        if (SelectedBuilding != null)
-            SelectedBuilding.SetSelected(false);
-        SelectedBuilding = null;
+        if (selectBuilding != null)
+            selectBuilding.SetSelected(false);
+        selectBuilding = null;
     }
     // 자원
     public void AddResource(ResourceType resourceType, int amount)

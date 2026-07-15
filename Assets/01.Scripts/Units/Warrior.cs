@@ -2,14 +2,11 @@
 
 public class Warrior : Unit
 {
+    public override UnitType Type => UnitType.Warrior;
     protected override void Awake()
     {
         base.Awake();
         Attack = GetComponent<MeleeAttack>();
-    }
-    protected void Start()
-    {
-        unitStat = UnitManager.instance.GetUnitStat(UnitType.Warrior);
     }
     public override void ReturnToPool()
     {

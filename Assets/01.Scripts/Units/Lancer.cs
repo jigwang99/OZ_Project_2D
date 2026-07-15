@@ -2,14 +2,11 @@
 
 public class Lancer : Unit
 {
+    public override UnitType Type => UnitType.Lancer;
     protected override void Awake()
     {
         base.Awake();
         Attack = GetComponent<MeleeAttack>();
-    }
-    protected void Start()
-    {
-        unitStat = UnitManager.instance.GetUnitStat(UnitType.Lancer);
     }
     public override void ReturnToPool()
     {

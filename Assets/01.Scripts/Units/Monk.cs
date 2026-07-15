@@ -2,6 +2,7 @@
 
 public class Monk : Unit
 {
+    public override UnitType Type => UnitType.Monk;
     public UnitHeal Heal { get; private set; }
     public UnitHealState HealState { get; private set; }
 
@@ -10,10 +11,6 @@ public class Monk : Unit
         base.Awake();
         Heal = GetComponent<UnitHeal>();
         HealState = new UnitHealState(this);
-    }
-    protected void Start()
-    {
-        unitStat = UnitManager.instance.GetUnitStat(UnitType.Monk);
     }
     public override void ReturnToPool()
     {

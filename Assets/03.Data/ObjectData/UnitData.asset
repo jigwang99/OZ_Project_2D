@@ -24,7 +24,8 @@ MonoBehaviour:
     vision: 5
     woodCost: 50
     goldCost: 0
-    buildTime: 8
+    productTime: 8
+    gatherAmount: 8
   - unitType: 1
     maxHp: 100
     attackDamage: 12
@@ -36,4 +37,44 @@ MonoBehaviour:
     vision: 10
     woodCost: 120
     goldCost: 0
-    buildTime: 13
+    productTime: 0
+    gatherAmount: 0
+  - unitType: 2
+    maxHp: 100
+    attackDamage: 12
+    defense: 1
+    population: 1
+    moveSpeed: 8
+    attackRange: 100
+    attackCooldown: 1.3
+    vision: 10
+    woodCost: 120
+    goldCost: 0
+    productTime: 0
+    gatherAmount: 0
+  - unitType: 3
+    maxHp: 100
+    attackDamage: 12
+    defense: 1
+    population: 1
+    moveSpeed: 8
+    attackRange: 100
+    attackCooldown: 1.3
+    vision: 10
+    woodCost: 120
+    goldCost: 0
+    productTime: 0
+    gatherAmount: 0
+  - unitType: 4
+    maxHp: 100
+    attackDamage: 12
+    defense: 1
+    population: 1
+    moveSpeed: 8
+    attackRange: 100
+    attackCooldown: 1.3
+    vision: 10
+    woodCost: 120
+    goldCost: 0
+    productTime: 0
+    gatherAmount: 0

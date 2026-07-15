@@ -14,9 +14,6 @@ public class UnitManager : MonoBehaviour
         else
             Destroy(gameObject);
         DontDestroyOnLoad(gameObject);
-    }
-    private void Start()
-    {
         LoadUnitData();
     }
     private void LoadUnitData()

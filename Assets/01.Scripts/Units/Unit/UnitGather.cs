@@ -38,7 +38,7 @@ public class UnitGather : MonoBehaviour
         if (gatherd == 0)
             return;
 
-        CarryResourceType = TargetResource.ResourceType;
+        CarryResourceType = TargetResource.Type;
         CarryAmount = gatherd;
     }
     public void ReturnResource()

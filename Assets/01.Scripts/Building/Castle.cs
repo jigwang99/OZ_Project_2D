@@ -3,11 +3,9 @@ using UnityEngine;
 
 public class Castle : ProductionBuilding
 {
+    public override BuildingType Type => BuildingType.Castle;
+
     public static List<Castle> ActiveCastle = new List<Castle>();
-    private void Start()
-    {
-        buildingStat = BuildingManager.instance.GetBuildingStat(BuildingType.Castle);
-    }
     protected override void OnEnable()
     {
         base.OnEnable();
@@ -32,12 +30,6 @@ public class Castle : ProductionBuilding
 
         }
         return nearest;
-    }
-    public override void Init()
-    {
-        CurrentHp = buildingStat.MaxHp;
-        IsAlive = true;
-        StateMachine.ChangeState(BuildedState);
     }
     public override void ReturnToPool()
     {

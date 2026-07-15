@@ -14,4 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ResourceData
   resourceList:
   - resourceType: 0
-    maxAmount: 0
+    maxAmount: 4000
+  - resourceType: 1
+    maxAmount: 4000

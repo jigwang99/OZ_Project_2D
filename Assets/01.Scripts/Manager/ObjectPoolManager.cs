@@ -8,7 +8,7 @@ public class ObjectPoolManager : MonoBehaviour
     // Unit, Projectile, Building
     [SerializeField] private List<GameObject> objList;
 
-    private int size;
+    private int size = 5;
     private Dictionary<string, Pool> pools = new Dictionary<string, Pool>();
     private void Awake()
     {
@@ -17,13 +17,8 @@ public class ObjectPoolManager : MonoBehaviour
         else
             Destroy(gameObject);
         DontDestroyOnLoad(gameObject);
-    }
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
         InitializePools();
     }
-
     private void InitializePools()
     {
         foreach (GameObject go in objList)

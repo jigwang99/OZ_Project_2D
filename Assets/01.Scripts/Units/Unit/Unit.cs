@@ -21,6 +21,7 @@ public abstract class Unit : MonoBehaviour, IPoolable
     protected int allianceMask;
     protected int enemyMask;
 
+    public abstract UnitType Type { get; }
     public int CurrentHp { get; protected set; }
     public bool IsAlive { get; protected set; }
     public bool IsSelected { get; protected set; }
@@ -85,6 +86,8 @@ public abstract class Unit : MonoBehaviour, IPoolable
     }
     public virtual void Init()
     {
+        if (unitStat == null)
+            unitStat = UnitManager.instance.GetUnitStat(Type);
         SetSelected(false);
         CurrentHp = unitStat.MaxHp;
         IsAlive = true;

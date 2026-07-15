@@ -12,3 +12,58 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: daac9036c3441aa4388961f671c1e8c7, type: 3}
   m_Name: BuildingData
   m_EditorClassIdentifier: Assembly-CSharp::BuildingData
+  buildingList:
+  - buildingType: 0
+    maxHp: 500
+    defense: 1
+    attackDamage: 0
+    attackRange: 0
+    attackCooldown: 0
+    woodCost: 400
+    goldCost: 0
+    buildTime: 25
+  - buildingType: 1
+    maxHp: 0
+    defense: 0
+    attackDamage: 0
+    attackRange: 0
+    attackCooldown: 0
+    woodCost: 0
+    goldCost: 0
+    buildTime: 0
+  - buildingType: 2
+    maxHp: 0
+    defense: 0
+    attackDamage: 0
+    attackRange: 0
+    attackCooldown: 0
+    woodCost: 0
+    goldCost: 0
+    buildTime: 0
+  - buildingType: 3
+    maxHp: 0
+    defense: 0
+    attackDamage: 0
+    attackRange: 0
+    attackCooldown: 0
+    woodCost: 0
+    goldCost: 0
+    buildTime: 0
+  - buildingType: 4
+    maxHp: 0
+    defense: 0
+    attackDamage: 0
+    attackRange: 0
+    attackCooldown: 0
+    woodCost: 0
+    goldCost: 0
+    buildTime: 0
+  - buildingType: 5
+    maxHp: 0
+    defense: 0
+    attackDamage: 0
+    attackRange: 0
+    attackCooldown: 0
+    woodCost: 0
+    goldCost: 0
+    buildTime: 0

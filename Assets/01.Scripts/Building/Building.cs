@@ -4,6 +4,7 @@ public abstract class Building : MonoBehaviour, IPoolable
 {
     protected BuildingStat buildingStat;
     
+    public abstract BuildingType Type { get; }
     public BuildingStat BuildingStat => buildingStat;
 
     public int CurrentHp {  get; protected set; }
@@ -48,6 +49,13 @@ public abstract class Building : MonoBehaviour, IPoolable
         IsAlive = false;
         ReturnToPool();
     }
-    public abstract void Init();
+    public virtual void Init()
+    {
+        if (buildingStat == null)
+            buildingStat = BuildingManager.instance.GetBuildingStat(Type);
+        CurrentHp = buildingStat.MaxHp;
+        IsAlive = true;
+        StateMachine.ChangeState(BuildedState);
+    }
     public abstract void ReturnToPool();
 }
