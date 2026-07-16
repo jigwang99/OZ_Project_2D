@@ -9,6 +9,7 @@ public class BuildingSpawner : MonoBehaviour
     {
         public BuildingType buildingType;
         public Transform spawnPoint;
+        public Layer layer;
     }
     [SerializeField] private List<SpawnBuilding> spawnList = new List<SpawnBuilding>();
 
@@ -23,6 +24,7 @@ public class BuildingSpawner : MonoBehaviour
         {
             Building building = ObjectPoolManager.instance.GetObject<Building>(spawn.buildingType.ToString());
             
+            building.SetLayer(spawn.layer);
             building.transform.position = spawn.spawnPoint.position;
             building.SetSkipBuilded(true);
             building.Init();

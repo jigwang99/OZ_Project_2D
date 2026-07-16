@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 4305145032456082992}
   - component: {fileID: 3796158814202789965}
   - component: {fileID: 6007972428507165661}
+  - component: {fileID: 2143863510082133162}
   m_Layer: 0
   m_Name: Tower
   m_TagString: Untagged
@@ -106,6 +107,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e411d9abe1d7d524bba98b5ed58cc01b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tower
+  obstacleSize: {x: 0, y: 0}
   enemyLayerMask:
     serializedVersion: 2
     m_Bits: 0
@@ -182,3 +184,17 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 2, y: 4}
   m_EdgeRadius: 0
+--- !u!114 &2143863510082133162
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 820324868785763692}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 345edcac413e896409b7835f8d3964af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BuildingVisual
+  allySprite: {fileID: 21300000, guid: 9150ff9a3f88646ddaf1ed327afa1315, type: 3}
+  enemySprite: {fileID: 21300000, guid: c84d25441265a4e42b000f20f8fb20d8, type: 3}

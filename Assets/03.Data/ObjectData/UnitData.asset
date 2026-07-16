@@ -48,10 +48,10 @@ MonoBehaviour:
     attackRange: 8
     attackCooldown: 1.7
     vision: 10
-    woodCost: 120
-    goldCost: 0
-    productTime: 0
-    gatherAmount: 16
+    woodCost: 100
+    goldCost: 25
+    productTime: 16
+    gatherAmount: 0
   - unitType: 3
     maxHp: 100
     attackDamage: 10
@@ -63,8 +63,8 @@ MonoBehaviour:
     vision: 10
     woodCost: 100
     goldCost: 0
-    productTime: 0
-    gatherAmount: 14
+    productTime: 14
+    gatherAmount: 0
   - unitType: 4
     maxHp: 100
     attackDamage: 7

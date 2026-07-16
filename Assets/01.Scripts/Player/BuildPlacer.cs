@@ -61,10 +61,10 @@ public class BuildPlacer : MonoBehaviour
             StartPlacement(BuildingType.House);
         if (Keyboard.current.tKey.wasPressedThisFrame)
             StartPlacement(BuildingType.Tower);
-        //if (Keyboard.current.aKey.wasPressedThisFrame)
-        //    StartPlacement(BuildingType.Archery);
-        //if (Keyboard.current.mKey.wasPressedThisFrame)
-        //    StartPlacement(BuildingType.Monastery);
+        if (Keyboard.current.aKey.wasPressedThisFrame)
+            StartPlacement(BuildingType.Archery);
+        if (Keyboard.current.mKey.wasPressedThisFrame)
+            StartPlacement(BuildingType.Monastery);
     }
     private void StartPlacement(BuildingType type)
     {
@@ -97,9 +97,13 @@ public class BuildPlacer : MonoBehaviour
             return;
 
         Building building = ObjectPoolManager.instance.GetObject<Building>(currentPlaceInfo.type.ToString());
+        building.SetLayer(Layer.Player);
+        building.SetSkipBuilded(false);
+        building.Init();
         building.transform.position = pos;
 
         Player.instance.CommandBuild(building);
+        CancelPlacement();
     }
 
 }   

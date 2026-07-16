@@ -17,6 +17,8 @@ GameObject:
   - component: {fileID: 6077945095595584409}
   - component: {fileID: 932101332961490820}
   - component: {fileID: 5840389899482320718}
+  - component: {fileID: 1745798995530392365}
+  - component: {fileID: 489710791171246147}
   m_Layer: 6
   m_Name: Pawn
   m_TagString: Untagged
@@ -231,3 +233,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ba9455a5a7b6d140a970533cb723df5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitBuild
+--- !u!114 &1745798995530392365
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7162029090737098223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60fbb73ede364cd4cb88cb2c34e49b92, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UnitVisual
+  allyController: {fileID: 9100000, guid: 392949dc7dc664ffa92fa29ae687d347, type: 2}
+  enemyController: {fileID: 9100000, guid: 8d3fe39a90ee64414acfeb504f2c8ec1, type: 2}
+--- !u!95 &489710791171246147
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7162029090737098223}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0

@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 4685916713746521666}
   - component: {fileID: 7656398623448745599}
   - component: {fileID: 7875609261788599360}
+  - component: {fileID: 3582113035821581963}
   m_Layer: 10
   m_Name: Castle
   m_TagString: Untagged
@@ -184,6 +185,20 @@ MonoBehaviour:
   producibleUnits: 00000000
   productList: 
   spawnPosition: {fileID: 5124427761980153553}
+--- !u!114 &3582113035821581963
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1617452397749046263}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 345edcac413e896409b7835f8d3964af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BuildingVisual
+  allySprite: {fileID: 21300000, guid: 5fef2d88b09824faba4be40a870c347e, type: 3}
+  enemySprite: {fileID: 21300000, guid: 03b438cc1edb849a7978ee3571c43887, type: 3}
 --- !u!1 &8893778359484575079
 GameObject:
   m_ObjectHideFlags: 0

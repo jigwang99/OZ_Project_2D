@@ -1,16 +1,22 @@
+﻿using UnityEditor.Animations;
 using UnityEngine;
 
 public class UnitVisual : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    // 애니메이션 컨트롤러
+    [SerializeField] AnimatorController allyController;
+    [SerializeField] AnimatorController enemyController;
 
-    // Update is called once per frame
-    void Update()
+
+    private Animator animator;
+
+    private void Awake()
     {
-        
+        animator = GetComponent<Animator>();
+    }
+    public void ApplyAnime()
+    {
+        bool isAlly = gameObject.layer == (int)Layer.Player;
+        animator.runtimeAnimatorController = isAlly ? allyController : enemyController;
     }
 }

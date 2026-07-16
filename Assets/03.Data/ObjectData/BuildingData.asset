@@ -24,52 +24,52 @@ MonoBehaviour:
     goldCost: 0
     buildTime: 25
   - buildingType: 1
-    maxHp: 0
+    maxHp: 100
     defense: 0
-    populationProvide: 0
+    populationProvide: 8
     attackDamage: 0
     attackRange: 0
     attackCooldown: 0
-    woodCost: 0
+    woodCost: 100
     goldCost: 0
-    buildTime: 0
+    buildTime: 15
   - buildingType: 2
-    maxHp: 0
-    defense: 0
+    maxHp: 150
+    defense: 1
     populationProvide: 0
     attackDamage: 0
     attackRange: 0
     attackCooldown: 0
-    woodCost: 0
+    woodCost: 150
     goldCost: 0
-    buildTime: 0
+    buildTime: 21
   - buildingType: 3
-    maxHp: 0
-    defense: 0
+    maxHp: 150
+    defense: 1
     populationProvide: 0
     attackDamage: 0
     attackRange: 0
     attackCooldown: 0
-    woodCost: 0
+    woodCost: 150
     goldCost: 0
-    buildTime: 0
+    buildTime: 16
   - buildingType: 4
-    maxHp: 0
+    maxHp: 200
     defense: 0
     populationProvide: 0
     attackDamage: 0
     attackRange: 0
     attackCooldown: 0
-    woodCost: 0
-    goldCost: 0
-    buildTime: 0
+    woodCost: 100
+    goldCost: 200
+    buildTime: 21
   - buildingType: 5
-    maxHp: 0
+    maxHp: 100
     defense: 0
     populationProvide: 0
-    attackDamage: 0
-    attackRange: 0
-    attackCooldown: 0
-    woodCost: 0
+    attackDamage: 7
+    attackRange: 7
+    attackCooldown: 2
+    woodCost: 100
     goldCost: 0
-    buildTime: 0
+    buildTime: 14

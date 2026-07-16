@@ -93,6 +93,13 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
     {
         IsSkipBuilded = skip;
     }
+    public void SetLayer(Layer ownerLayer)
+    {
+        gameObject.layer = (int)(ownerLayer == Layer.Player || ownerLayer == Layer.PlayerBuilding
+            ? Layer.PlayerBuilding : Layer.EnemyBuilding);
+
+        GetComponent<BuildingVisual>()?.ApplySprite();
+    }
     public virtual void Init()
     {
         if (buildingStat == null)

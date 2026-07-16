@@ -12,6 +12,7 @@ public class Player : MonoBehaviour
     [SerializeField] LayerMask allyLayerMask;
     [SerializeField] LayerMask enemyLayerMask;
     [SerializeField] LayerMask resourceLayerMask;
+    [SerializeField] LayerMask allyBuildingLayerMask;
 
     private const float spacing = 1.1f;
 
@@ -129,7 +130,24 @@ public class Player : MonoBehaviour
             return;
         }
         
-        // 자원채집 (Pawn)
+        Collider2D buildHit = Physics2D.OverlapCircle(worldPos, 0.2f, allyBuildingLayerMask);
+        Building ConstructionBuilding = buildHit != null ? buildHit.GetComponent<Building>() : null;
+
+        if(ConstructionBuilding != null && ConstructionBuilding.IsAlive && ConstructionBuilding.IsConstruction)
+        {
+            List<Unit> nonPawns = new List<Unit>();
+            foreach(Unit unit in selectUnitList)
+            {
+                if(!(unit is Pawn))
+                    nonPawns.Add(unit);
+            }
+            CommandBuild(ConstructionBuilding);
+            if(nonPawns.Count > 0)
+                MoveUnits(nonPawns, worldPos);
+            return;
+        }
+        
+            // 자원채집 (Pawn)
         Collider2D resourceHit = Physics2D.OverlapCircle(worldPos, 0.2f, resourceLayerMask);
         Resource resource = resourceHit != null ? resourceHit.GetComponent<Resource>() : null;
 
@@ -155,9 +173,9 @@ public class Player : MonoBehaviour
         if (units.Count == 0)
             return;
 
-        int column = Mathf.CeilToInt(Mathf.Sqrt(selectUnitList.Count));
-        int row = Mathf.CeilToInt((float)selectUnitList.Count / column);
-        for (int i = 0; i < selectUnitList.Count; i++)
+        int column = Mathf.CeilToInt(Mathf.Sqrt(units.Count));
+        int row = Mathf.CeilToInt((float)units.Count / column);
+        for (int i = 0; i < units.Count; i++)
         {
             int x = i % column;
             int y = i / column;
@@ -166,7 +184,7 @@ public class Player : MonoBehaviour
                 (x - (column - 1) * 0.5f) * spacing,
                 ((row - 1) * 0.5f - y) * spacing);
 
-            Unit unit = selectUnitList[i];
+            Unit unit = units[i];
 
             unit.Movement.SetDestination(destination + offset);
 

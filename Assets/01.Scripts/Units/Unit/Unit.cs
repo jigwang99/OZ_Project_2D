@@ -30,6 +30,8 @@ public abstract class Unit : MonoBehaviour, IPoolable, IDamageable
     public UnitMoveState MoveState { get; protected set; }
     public UnitChaseState ChaseState { get; protected set; }
     public UnitAttackState AttackState { get; protected set; }
+
+    public Animator Animator { get; protected set; }
     protected virtual void Awake()
     {
         Movement = GetComponent<UnitMovement>();
@@ -39,6 +41,8 @@ public abstract class Unit : MonoBehaviour, IPoolable, IDamageable
         MoveState = new UnitMoveState(this);
         ChaseState = new UnitChaseState(this);
         AttackState = new UnitAttackState(this);
+
+        Animator = GetComponent<Animator>();
     }
     protected void OnEnable()
     {

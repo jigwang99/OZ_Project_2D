@@ -1,16 +1,19 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class BuildingVisual : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    [SerializeField] private Sprite allySprite;
+    [SerializeField] private Sprite enemySprite;
 
-    // Update is called once per frame
-    void Update()
+    private SpriteRenderer sr;
+
+    private void Awake()
     {
-        
+        sr = GetComponent<SpriteRenderer>();
+    }
+    public void ApplySprite()
+    {
+        bool isAlly = gameObject.layer ==(int)Layer.PlayerBuilding;
+        sr.sprite = isAlly ? allySprite : enemySprite;
     }
 }

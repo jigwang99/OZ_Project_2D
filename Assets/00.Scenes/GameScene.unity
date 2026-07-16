@@ -477,6 +477,12 @@ MonoBehaviour:
   - type: 0
     size: {x: 2, y: 2}
     ghost: {fileID: 21300000, guid: d0349d8d3a04044f7a4810157b116b14, type: 3}
+  - type: 2
+    size: {x: 2, y: 2}
+    ghost: {fileID: 21300000, guid: e39c44d354e0a47ec89630128209e801, type: 3}
+  - type: 5
+    size: {x: 2, y: 2}
+    ghost: {fileID: 21300000, guid: 3cbd575d4968745d3a7f79a654fae04a, type: 3}
   obstacleLayerMask:
     serializedVersion: 2
     m_Bits: 36032
@@ -1506,6 +1512,9 @@ MonoBehaviour:
   resourceLayerMask:
     serializedVersion: 2
     m_Bits: 32768
+  allyBuildingLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!4 &1266215097
 Transform:
   m_ObjectHideFlags: 0
@@ -1586,10 +1595,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjectPoolManager
   objList:
-  - {fileID: 7162029090737098223, guid: af00d429828ebbf49b204726f2986cea, type: 3}
-  - {fileID: 1617452397749046263, guid: 1e11537bcd3400e44a5f5adec5a29fb8, type: 3}
   - {fileID: 8978224026215066287, guid: 76046e00b4c5d09498d428a8130970a3, type: 3}
   - {fileID: 8999167661257118101, guid: ca1cfd7a2000fa54795e8fe16e8f4b1f, type: 3}
+  - {fileID: 7162029090737098223, guid: af00d429828ebbf49b204726f2986cea, type: 3}
+  - {fileID: 706787264776316784, guid: 3e24bfbf4d7ba9e44a127d8e00e4c225, type: 3}
+  - {fileID: 9204365462264634299, guid: 742fbd76e9e16f841b3d5c1fa4340ac4, type: 3}
+  - {fileID: 1646791384101708085, guid: 5adc46ee25f05db41a0f3709d406ef39, type: 3}
+  - {fileID: 2519964685039321008, guid: ca822b674871c90448e9e15bd5230652, type: 3}
+  - {fileID: 1617452397749046263, guid: 1e11537bcd3400e44a5f5adec5a29fb8, type: 3}
+  - {fileID: 8812177742366105777, guid: 7bbff992164c90e49a2a77bf65d05462, type: 3}
+  - {fileID: 2918233427081951070, guid: 1e9e98b3eeee9f54fb7edd26b3aabbfd, type: 3}
+  - {fileID: 3703057305481839201, guid: 75cd1bca3326c5b4584a1b48522fb913, type: 3}
+  - {fileID: 6821213866125832997, guid: 24ab1f85395ad8d41b9cd0ce77a2397b, type: 3}
+  - {fileID: 6821213866125832997, guid: 24ab1f85395ad8d41b9cd0ce77a2397b, type: 3}
+  - {fileID: 4606301878362736141, guid: 9a0dcedde13e6b74499abec7997f848e, type: 3}
 --- !u!1 &1709645160
 GameObject:
   m_ObjectHideFlags: 0
@@ -4242,6 +4261,7 @@ MonoBehaviour:
   spawnList:
   - buildingType: 0
     spawnPoint: {fileID: 150579851}
+    layer: 10
 --- !u!114 &1927497620
 MonoBehaviour:
   m_ObjectHideFlags: 0
