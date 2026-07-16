@@ -1,53 +1,71 @@
 ﻿using UnityEngine;
 
-public abstract class Unit : MonoBehaviour
+public enum Layer
 {
-    [Header("Data")]
-    [SerializeField] protected UnitData data;
+    Player = 6,
+    Enemy = 7,
+    PlayerProjectile = 8,
+    EnemyProjectile = 9,
+    PlayerBuilding = 10,
+    EnemyBuilding = 11,
+}
+public abstract class Unit : MonoBehaviour, IPoolable, IDamageable
+{
+    protected UnitStat unitStat;
+    protected Collider2D hit;
+    protected int allianceMask;
+    protected int enemyMask;
 
-    public Unit Target {  get; protected set; }
-    public UnitData Data => data;
+    public abstract UnitType Type { get; }
+    public int CurrentHp { get; protected set; }
+    public bool IsAlive { get; protected set; }
+    public bool IsSelected { get; protected set; }
+    public UnitStat UnitStat => unitStat;
     public UnitMovement Movement { get; protected set; }
     public UnitAttack Attack { get; protected set; }
-    public int CurrentHp { get; protected set; }
+    
 
     public StateMachine StateMachine { get; protected set; }
-    public IdleState IdleState { get; protected set; }
-    public MoveState MoveState { get; protected set; }
-    public AttackState AttackState { get; protected set; }
-    protected void Awake()
+    public UnitIdleState IdleState { get; protected set; }
+    public UnitMoveState MoveState { get; protected set; }
+    public UnitChaseState ChaseState { get; protected set; }
+    public UnitAttackState AttackState { get; protected set; }
+
+    public Animator Animator { get; protected set; }
+    protected virtual void Awake()
     {
-        
         Movement = GetComponent<UnitMovement>();
-        Attack = GetComponent<UnitAttack>();
 
         StateMachine = new StateMachine();
-        IdleState = new IdleState(this);
-        MoveState = new MoveState(this);
-        AttackState = new AttackState(this);
+        IdleState = new UnitIdleState(this);
+        MoveState = new UnitMoveState(this);
+        ChaseState = new UnitChaseState(this);
+        AttackState = new UnitAttackState(this);
+
+        Animator = GetComponent<Animator>();
     }
     protected void OnEnable()
     {
-        CurrentHp = Data.MaxHp;
+        Init();
     }
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    protected void Start()
-    {
-        
-    }
-
     // Update is called once per frame
-    protected void Update()
+    protected void Update() => StateMachine.Update();
+    protected void FixedUpdate() => StateMachine.FixedUpdate();
+    public void SetSelected(bool selected)
     {
-        StateMachine.Update();
+        IsSelected = selected;
     }
-    protected void FixedUpdate()
+    public void RestoreHP(int amount)
     {
-        StateMachine.FixedUpdate();
+        if (!IsAlive)
+            return;
+        CurrentHp = Mathf.Min(CurrentHp + amount, unitStat.MaxHp);
     }
-    public void TakeDamage(int damage)
+    public void TakeDamage(int attackDamage)
     {
-        CurrentHp -= damage - Data.Defense;
+        int damage = Mathf.Max(1, attackDamage - UnitStat.Defense);
+
+        CurrentHp -= damage;
 
         if(CurrentHp <= 0)
         {
@@ -57,6 +75,48 @@ public abstract class Unit : MonoBehaviour
     }
     protected void Die()
     {
-
+        IsAlive = false;
+        if(gameObject.layer == (int)Layer.Player)
+        {
+            Player.instance.DeselectUnit(this);
+            Player.instance.ReleasePopulation(unitStat.Population);
+        }
+        ReturnToPool();
     }
+    public LayerMask GetEnemyLayerMask()
+    {
+        return enemyMask;
+    }
+    public void SetLayer(Layer layer)
+    {
+        gameObject.layer = (int)layer;
+
+        if(layer == Layer.Player)
+        {
+            allianceMask = (1 << (int)Layer.Player) | (1 << (int)Layer.PlayerBuilding);
+            enemyMask = (1 << (int)Layer.Enemy) | (1 << (int)Layer.EnemyBuilding);
+        }
+        else
+        {
+            allianceMask = (1 << (int)Layer.Enemy) | (1 << (int)Layer.EnemyBuilding);
+            enemyMask = (1 << (int)Layer.Player) | (1 << (int)Layer.PlayerBuilding);
+        }
+        GetComponent<UnitVisual>()?.ApplyAnime();
+    }
+    public virtual void Init()
+    {
+        if (unitStat == null)
+            unitStat = UnitManager.instance.GetUnitStat(Type);
+        SetSelected(false);
+        CurrentHp = unitStat.MaxHp;
+        IsAlive = true;
+
+        if (gameObject.layer == (int)Layer.Player)
+            enemyMask = (1 << (int)Layer.Enemy) | (1 << (int)Layer.EnemyBuilding);
+        else
+            enemyMask = (1 << (int)Layer.Player) | (1 << (int)Layer.PlayerBuilding);
+
+        StateMachine.ChangeState(IdleState);
+    }
+    public abstract void ReturnToPool();
 }

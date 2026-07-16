@@ -12,15 +12,15 @@ TagManager:
   - Water
   - UI
   - PlayerUnit
+  - EnemyUnit
+  - PlayerProjectile
+  - EnemyProjectile
+  - PlayerBuilding
+  - EnemyBuilding
   - 
   - 
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Resource
   - 
   - 
   - 
