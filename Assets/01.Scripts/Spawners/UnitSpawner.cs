@@ -28,6 +28,9 @@ public class UnitSpawner : MonoBehaviour
                 Debug.Log("xxx");
             }
             unit.transform.position = spawn.spawnPoint.position;
+
+            UnitStat unitStat = UnitManager.instance.GetUnitStat(spawn.unitType);
+            Player.instance.TryIncreasePopulation(unitStat.Population);
         }
     }
 }

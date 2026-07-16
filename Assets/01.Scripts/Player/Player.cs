@@ -43,6 +43,9 @@ public class Player : MonoBehaviour
         Wood = 500;
         Gold = 0;
         MaxPopulation = 0;
+
+        OnResourceChanged?.Invoke();
+        OnPopulationChanged?.Invoke();
     }
 
     // Update is called once per frame
@@ -250,6 +253,7 @@ public class Player : MonoBehaviour
 
         Wood -= woodCost;
         Gold -= goldCost;
+        OnResourceChanged?.Invoke();
         return true;
     }
     // 인구수

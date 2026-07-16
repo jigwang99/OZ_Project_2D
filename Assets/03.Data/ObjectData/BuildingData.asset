@@ -16,6 +16,7 @@ MonoBehaviour:
   - buildingType: 0
     maxHp: 500
     defense: 1
+    populationProvide: 10
     attackDamage: 0
     attackRange: 0
     attackCooldown: 0
@@ -25,6 +26,7 @@ MonoBehaviour:
   - buildingType: 1
     maxHp: 0
     defense: 0
+    populationProvide: 0
     attackDamage: 0
     attackRange: 0
     attackCooldown: 0
@@ -34,6 +36,7 @@ MonoBehaviour:
   - buildingType: 2
     maxHp: 0
     defense: 0
+    populationProvide: 0
     attackDamage: 0
     attackRange: 0
     attackCooldown: 0
@@ -43,6 +46,7 @@ MonoBehaviour:
   - buildingType: 3
     maxHp: 0
     defense: 0
+    populationProvide: 0
     attackDamage: 0
     attackRange: 0
     attackCooldown: 0
@@ -52,6 +56,7 @@ MonoBehaviour:
   - buildingType: 4
     maxHp: 0
     defense: 0
+    populationProvide: 0
     attackDamage: 0
     attackRange: 0
     attackCooldown: 0
@@ -61,6 +66,7 @@ MonoBehaviour:
   - buildingType: 5
     maxHp: 0
     defense: 0
+    populationProvide: 0
     attackDamage: 0
     attackRange: 0
     attackCooldown: 0

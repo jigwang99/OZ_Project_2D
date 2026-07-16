@@ -26,10 +26,20 @@ public abstract class ProductionBuilding : Building
             return false;
 
         UnitStat unitStat = UnitManager.instance.GetUnitStat(unitType);
-        if (!Player.instance.TryReduceResource(unitStat.WoodCost, unitStat.GoldCost))
+
+        if (!Player.instance.TryIncreasePopulation(unitStat.Population))
             return false;
 
+        if (!Player.instance.TryReduceResource(unitStat.WoodCost, unitStat.GoldCost))
+        {
+            Player.instance.ReleasePopulation(unitStat.Population);
+            return false;
+        }
+
         productList.Add(unitType);
+
+        if (StateMachine.CurrentState == IdleState)
+            StateMachine.ChangeState(ProductState);
         return true;
     }
     public bool EnqueueUnitByIndex(int index)
@@ -63,5 +73,6 @@ public abstract class ProductionBuilding : Building
         UnitStat unitStat = UnitManager.instance.GetUnitStat(unitType);
         Player.instance.AddWood(unitStat.WoodCost);
         Player.instance.AddGold(unitStat.GoldCost);
+        Player.instance.ReleasePopulation(unitStat.Population);
     }
 }

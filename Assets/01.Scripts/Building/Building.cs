@@ -6,6 +6,7 @@ public abstract class Building : MonoBehaviour, IPoolable
     protected BuildingStat buildingStat;
     [SerializeField] private Vector2 obstacleSize;
 
+    private bool populationProvided;
     public abstract BuildingType Type { get; }
     public BuildingStat BuildingStat => buildingStat;
 
@@ -53,6 +54,7 @@ public abstract class Building : MonoBehaviour, IPoolable
     protected void Die()
     {
         IsAlive = false;
+        WithdrawPopulation();
         ReturnToPool();
         GridManager.instance.UpdateArea(transform.position, obstacleSize);
     }
@@ -70,13 +72,38 @@ public abstract class Building : MonoBehaviour, IPoolable
         BuildProgress += amount;
         Debug.Log($"진행도 : {BuildProgress:F2} / {BuildingStat.BuildTime}");
     }
+    public void ProvidePopulation()
+    {
+        if (populationProvided || buildingStat.PopulationProvide <= 0)
+            return;
+
+        populationProvided = true;
+        Player.instance.AddMaxPopulation(buildingStat.PopulationProvide);
+
+    }
+    public void WithdrawPopulation()
+    {
+        if (!populationProvided)
+            return;
+
+        populationProvided = false;
+        Player.instance.AddMaxPopulation(-buildingStat.PopulationProvide);
+    }
+    public void SetSkipBuilded(bool skip)
+    {
+        IsSkipBuilded = skip;
+    }
     public virtual void Init()
     {
         if (buildingStat == null)
             buildingStat = BuildingManager.instance.GetBuildingStat(Type);
+
+        populationProvided = false;
         CurrentHp = buildingStat.MaxHp;
         IsAlive = true;
         StateMachine.ChangeState(IsSkipBuilded ? IdleState : BuildedState);
+        if(IsSkipBuilded)
+            ProvidePopulation();
     }
     public abstract void ReturnToPool();
 }

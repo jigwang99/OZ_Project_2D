@@ -78,6 +78,7 @@ public abstract class Unit : MonoBehaviour, IPoolable
     {
         IsAlive = false;
         Player.instance.DeselectUnit(this);
+        Player.instance.ReleasePopulation(unitStat.Population);
         ReturnToPool();
     }
     public LayerMask GetEnemyLayerMask()

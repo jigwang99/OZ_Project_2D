@@ -22,12 +22,10 @@ public class BuildingSpawner : MonoBehaviour
         foreach (SpawnBuilding spawn in spawnList)
         {
             Building building = ObjectPoolManager.instance.GetObject<Building>(spawn.buildingType.ToString());
-
-            if (building == null)
-            {
-                Debug.Log("xxx");
-            }
+            
             building.transform.position = spawn.spawnPoint.position;
+            building.SetSkipBuilded(true);
+            building.Init();
         }
     }
 }
