@@ -57,15 +57,22 @@ public abstract class ProductionBuilding : Building
         int lastIndex = productList.Count - 1;
         Refund(productList[lastIndex]);
         productList.RemoveAt(lastIndex);
+
+        if(productList.Count == 0 && StateMachine.CurrentState == ProductState)
+            StateMachine.ChangeState(IdleState);
     }
     public void CompleteProduction()
     {
+        if(productList.Count == 0)
+            return;
+
         // 첫번 째 유닛 리스트에서 제거
         UnitType unitType = productList.FirstOrDefault();
         productList.RemoveAt(0);
 
         //유닛스폰
         Unit unit = ObjectPoolManager.instance.GetObject<Unit>(unitType.ToString());
+        unit.SetLayer(gameObject.layer == (int)Layer.PlayerBuilding ? Layer.Player : Layer.Enemy);
         unit.transform.position = spawnPosition.position;
     }
     private void Refund(UnitType unitType)

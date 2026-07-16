@@ -25,6 +25,12 @@ public class BuildingProductState : BuildingBaseState
 
     public override void Update()
     {
+        if(!productionBuilding.HasList)
+        {
+            Building.StateMachine.ChangeState(Building.IdleState);
+            return;
+        }
+
         timer -= Time.deltaTime;
         if(timer <= 0f)
         {

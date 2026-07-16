@@ -1505,16 +1505,16 @@ MonoBehaviour:
   camera: {fileID: 519420031}
   allyLayerMask:
     serializedVersion: 2
-    m_Bits: 1344
+    m_Bits: 1088
   enemyLayerMask:
     serializedVersion: 2
-    m_Bits: 2688
+    m_Bits: 2176
   resourceLayerMask:
     serializedVersion: 2
     m_Bits: 32768
   allyBuildingLayerMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1024
 --- !u!4 &1266215097
 Transform:
   m_ObjectHideFlags: 0
@@ -1607,7 +1607,7 @@ MonoBehaviour:
   - {fileID: 2918233427081951070, guid: 1e9e98b3eeee9f54fb7edd26b3aabbfd, type: 3}
   - {fileID: 3703057305481839201, guid: 75cd1bca3326c5b4584a1b48522fb913, type: 3}
   - {fileID: 6821213866125832997, guid: 24ab1f85395ad8d41b9cd0ce77a2397b, type: 3}
-  - {fileID: 6821213866125832997, guid: 24ab1f85395ad8d41b9cd0ce77a2397b, type: 3}
+  - {fileID: 820324868785763692, guid: cebd5c58e526da544addfa03d0ca9b69, type: 3}
   - {fileID: 4606301878362736141, guid: 9a0dcedde13e6b74499abec7997f848e, type: 3}
 --- !u!1 &1709645160
 GameObject:
@@ -4277,6 +4277,7 @@ MonoBehaviour:
   spawnList:
   - unitType: 0
     spawnPoint: {fileID: 813081429}
+    layer: 6
 --- !u!1 &2023553149
 GameObject:
   m_ObjectHideFlags: 0

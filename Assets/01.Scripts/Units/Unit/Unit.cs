@@ -76,13 +76,32 @@ public abstract class Unit : MonoBehaviour, IPoolable, IDamageable
     protected void Die()
     {
         IsAlive = false;
-        Player.instance.DeselectUnit(this);
-        Player.instance.ReleasePopulation(unitStat.Population);
+        if(gameObject.layer == (int)Layer.Player)
+        {
+            Player.instance.DeselectUnit(this);
+            Player.instance.ReleasePopulation(unitStat.Population);
+        }
         ReturnToPool();
     }
     public LayerMask GetEnemyLayerMask()
     {
         return enemyMask;
+    }
+    public void SetLayer(Layer layer)
+    {
+        gameObject.layer = (int)layer;
+
+        if(layer == Layer.Player)
+        {
+            allianceMask = (1 << (int)Layer.Player) | (1 << (int)Layer.PlayerBuilding);
+            enemyMask = (1 << (int)Layer.Enemy) | (1 << (int)Layer.EnemyBuilding);
+        }
+        else
+        {
+            allianceMask = (1 << (int)Layer.Enemy) | (1 << (int)Layer.EnemyBuilding);
+            enemyMask = (1 << (int)Layer.Player) | (1 << (int)Layer.PlayerBuilding);
+        }
+        GetComponent<UnitVisual>()?.ApplyAnime();
     }
     public virtual void Init()
     {

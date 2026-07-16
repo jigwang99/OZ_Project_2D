@@ -9,6 +9,7 @@ public class UnitSpawner : MonoBehaviour
     {
         public UnitType unitType;
         public Transform spawnPoint;
+        public Layer layer;
     }
     [SerializeField] private List<SpawnUnit> spawnList = new List<SpawnUnit>();
 
@@ -24,13 +25,17 @@ public class UnitSpawner : MonoBehaviour
             Unit unit = ObjectPoolManager.instance.GetObject<Unit>(spawn.unitType.ToString());
 
             if (unit == null)
-            {
-                Debug.Log("xxx");
-            }
+                continue;
+
+            unit.SetLayer(spawn.layer);
             unit.transform.position = spawn.spawnPoint.position;
 
-            UnitStat unitStat = UnitManager.instance.GetUnitStat(spawn.unitType);
-            Player.instance.TryIncreasePopulation(unitStat.Population);
+            if(spawn.layer == Layer.Player)
+            {
+                UnitStat unitStat = UnitManager.instance.GetUnitStat(spawn.unitType);
+                Player.instance.TryIncreasePopulation(unitStat.Population);
+            }
+            
         }
     }
 }
