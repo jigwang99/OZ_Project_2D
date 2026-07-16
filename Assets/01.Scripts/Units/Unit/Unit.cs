@@ -87,6 +87,12 @@ public abstract class Unit : MonoBehaviour, IPoolable, IDamageable
         SetSelected(false);
         CurrentHp = unitStat.MaxHp;
         IsAlive = true;
+
+        if (gameObject.layer == (int)Layer.Player)
+            enemyMask = (1 << (int)Layer.Enemy) | (1 << (int)Layer.EnemyBuilding);
+        else
+            enemyMask = (1 << (int)Layer.Player) | (1 << (int)Layer.PlayerBuilding);
+
         StateMachine.ChangeState(IdleState);
     }
     public abstract void ReturnToPool();

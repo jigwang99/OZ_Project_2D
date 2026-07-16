@@ -28,6 +28,13 @@ public abstract class Projectile : MonoBehaviour, IPoolable
         timer += Time.fixedDeltaTime;
         rb.linearVelocity = transform.right * projectileStat.Speed;
     }
+    public void SetDamageAndLayer(int damage, int shooterLayer)
+    {
+        Damage = damage;
+
+        gameObject.layer = shooterLayer == (int)Layer.Player || shooterLayer == (int)Layer.PlayerBuilding 
+            ? (int)Layer.PlayerProjectile : (int)Layer.EnemyProjectile;
+    }
     protected abstract void OnCollisionEnter2D(Collision2D collision);
     public virtual void Init()
     {

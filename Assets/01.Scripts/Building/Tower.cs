@@ -38,7 +38,7 @@ public class Tower : Building
         arrow.position = transform.position;
         Vector2 dir = (target.transform.position - arrow.position).normalized;
         //arrow.rotation = Quaternion.
-        arrow.GetComponent<Arrow>().Damage = buildingStat.AttackDamage;
+        arrow.GetComponent<Arrow>().SetDamageAndLayer(buildingStat.AttackDamage, gameObject.layer);
     }
     public override void Init()
     {

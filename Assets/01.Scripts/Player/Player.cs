@@ -84,7 +84,7 @@ public class Player : MonoBehaviour
 
         // 유닛공격(공격없는 유닛은 이동)
         Collider2D hit = Physics2D.OverlapCircle(worldPos, 0.2f, enemyLayerMask);
-        Unit target = hit != null ? hit.GetComponent<Unit>() : null;
+        IDamageable target = hit != null ? hit.GetComponent<IDamageable>() : null;
 
         if (target != null && target.IsAlive)
         {
