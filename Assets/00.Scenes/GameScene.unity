@@ -195,6 +195,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1927497618}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &186846799
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 186846800}
+  m_Layer: 0
+  m_Name: Gold_01
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &186846800
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 186846799}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -7.51, y: -3.86, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1927497618}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &284063152
 GameObject:
   m_ObjectHideFlags: 0
@@ -1558,6 +1589,7 @@ MonoBehaviour:
   - {fileID: 7162029090737098223, guid: af00d429828ebbf49b204726f2986cea, type: 3}
   - {fileID: 1617452397749046263, guid: 1e11537bcd3400e44a5f5adec5a29fb8, type: 3}
   - {fileID: 8978224026215066287, guid: 76046e00b4c5d09498d428a8130970a3, type: 3}
+  - {fileID: 8999167661257118101, guid: ca1cfd7a2000fa54795e8fe16e8f4b1f, type: 3}
 --- !u!1 &1709645160
 GameObject:
   m_ObjectHideFlags: 0
@@ -4134,7 +4166,7 @@ Transform:
   m_GameObject: {fileID: 1892015550}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.74, y: 0.09, z: 0}
+  m_LocalPosition: {x: -7.74, y: 1.68, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4174,6 +4206,8 @@ MonoBehaviour:
   spawnList:
   - resourceType: 0
     spawnPoint: {fileID: 1892015551}
+  - resourceType: 1
+    spawnPoint: {fileID: 186846800}
 --- !u!4 &1927497618
 Transform:
   m_ObjectHideFlags: 0
@@ -4190,6 +4224,7 @@ Transform:
   - {fileID: 1892015551}
   - {fileID: 813081429}
   - {fileID: 150579851}
+  - {fileID: 186846800}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1927497619
