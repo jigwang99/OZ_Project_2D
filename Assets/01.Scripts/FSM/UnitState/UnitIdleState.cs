@@ -34,7 +34,7 @@ public class UnitIdleState : UnitBaseState
         // 대기 상태시 적 탐지
         if(!(Unit is Pawn))
         {
-            Unit target = Unit.Attack.FindTarget();
+            IDamageable target = Unit.Attack.FindTarget();
 
             if(target != null && target.IsAlive)
             {

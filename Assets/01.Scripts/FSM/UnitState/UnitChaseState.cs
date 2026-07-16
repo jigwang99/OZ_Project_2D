@@ -22,14 +22,14 @@ public class UnitChaseState : UnitBaseState
 
     public override void FixedUpdate()
     {
-        Unit target = Unit.Attack.GetTarget();
+        IDamageable target = Unit.Attack.GetTarget();
         if (target == null)
             return;
 
         scout -= Time.fixedDeltaTime;
         if (scout <= 0f)
         {
-            Unit.Movement.SetDestination(target.transform.position);
+            Unit.Movement.SetDestinationNear(target.transform);
             scout = repathInterval;
         }
         Unit.Movement.Move();
@@ -37,7 +37,7 @@ public class UnitChaseState : UnitBaseState
 
     public override void Update()
     {
-        Unit target = Unit.Attack.GetTarget();
+        IDamageable target = Unit.Attack.GetTarget();
 
         if(target == null || !target.IsAlive)
         {

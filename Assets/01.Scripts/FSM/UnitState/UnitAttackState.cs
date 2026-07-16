@@ -18,7 +18,7 @@ public class UnitAttackState : UnitBaseState
     }
     public override void Update()
     {
-        Unit target = Unit.Attack.GetTarget();
+        IDamageable target = Unit.Attack.GetTarget();
 
         if(target == null || !target.IsAlive)
         {
@@ -29,6 +29,7 @@ public class UnitAttackState : UnitBaseState
         if(!Unit.Attack.IsInRange())
         {
             Unit.StateMachine.ChangeState(Unit.ChaseState);
+            return;
         }
         if (Unit.Attack.CanAttack())
             Unit.Attack.Attack();

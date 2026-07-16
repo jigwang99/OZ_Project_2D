@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public abstract class Building : MonoBehaviour, IPoolable
+public abstract class Building : MonoBehaviour, IPoolable, IDamageable
 {
     protected BuildingStat buildingStat;
     [SerializeField] private Vector2 obstacleSize;

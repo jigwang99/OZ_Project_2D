@@ -3,7 +3,7 @@
 public abstract class UnitAttack : MonoBehaviour
 {
     protected Unit unit;
-    protected Unit target;
+    protected IDamageable target;
     protected float remainCooldown;
 
     private Collider2D hit;
@@ -15,6 +15,7 @@ public abstract class UnitAttack : MonoBehaviour
     private void OnEnable()
     {
         remainCooldown = 0;
+        target = null;
     }
     private void FixedUpdate()
     {
@@ -25,23 +26,27 @@ public abstract class UnitAttack : MonoBehaviour
     {
         return remainCooldown <= 0;
     }
-    public Unit GetTarget()
+    public IDamageable GetTarget()
     {
         return target;
     }
-    public void SetTarget(Unit target)
+    public void SetTarget(IDamageable target)
     {
         this.target = target;
     }
     public bool IsInRange()
     {
         if(target == null) return false;
-        return Vector2.Distance(unit.transform.position, target.transform.position) <= unit.UnitStat.AttackRange;
+
+        Collider2D col = target.transform.GetComponent<Collider2D>();
+        Vector2 point = col != null ? col.ClosestPoint(unit.transform.position) : (Vector2)target.transform.position;
+
+        return Vector2.Distance(unit.transform.position, point) <= unit.UnitStat.AttackRange;
     }
-    public Unit FindTarget()
+    public IDamageable FindTarget()
     {
         hit = Physics2D.OverlapCircle(transform.position, unit.UnitStat.Vision, unit.GetEnemyLayerMask());
-        return hit != null ? hit.GetComponent<Unit>() : null;
+        return hit != null ? hit.GetComponent<IDamageable>() : null;
     }
     public abstract void Attack();
 }

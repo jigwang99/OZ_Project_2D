@@ -9,12 +9,7 @@ public enum Layer
     PlayerBuilding = 10,
     EnemyBuilding = 11,
 }
-public interface IAttackable
-{
-    public UnitAttack Attack {  get; protected set; }
-    public UnitAttackState AttackState { get; protected set; }
-}
-public abstract class Unit : MonoBehaviour, IPoolable
+public abstract class Unit : MonoBehaviour, IPoolable, IDamageable
 {
     protected UnitStat unitStat;
     protected Collider2D hit;
