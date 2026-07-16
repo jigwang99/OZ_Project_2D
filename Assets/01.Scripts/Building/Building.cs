@@ -68,6 +68,7 @@ public abstract class Building : MonoBehaviour, IPoolable
     public void Construct(float amount)
     {
         BuildProgress += amount;
+        Debug.Log($"진행도 : {BuildProgress:F2} / {BuildingStat.BuildTime}");
     }
     public virtual void Init()
     {

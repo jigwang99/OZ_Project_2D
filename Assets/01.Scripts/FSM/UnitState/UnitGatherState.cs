@@ -16,6 +16,7 @@ public class UnitGatherState : UnitBaseState
     private Phase phase;
     private float timer;
 
+    private const float range = 1.5f;
     private const float Delay = 0.3f;
     public UnitGatherState(Unit unit) : base(unit)
     {
@@ -60,13 +61,21 @@ public class UnitGatherState : UnitBaseState
                 break;
         }
     }
+    public bool IsNear(Transform target)
+    {
+        Collider2D col = target.GetComponent<Collider2D>();
+        Vector2 point = col != null ? col.ClosestPoint(Unit.transform.position) : (Vector2)target.position;
+
+        return Vector2.Distance(Unit.transform.position, point) <= range;
+    }
+
     private void MoveToResource()
     {
         if (gather.TargetResource == null || gather.TargetResource.IsDepleted)
             return;
 
         phase = Phase.MoveToResource;
-        Unit.Movement.SetDestination(gather.TargetResource.transform.position);
+        Unit.Movement.SetDestinationNear(gather.TargetResource.transform);
     }
     private void CheckArrivedAtResource()
     {
@@ -75,8 +84,9 @@ public class UnitGatherState : UnitBaseState
             Unit.StateMachine.ChangeState(Unit.IdleState);
             return;
         }
-        if(Unit.Movement.HasArrived)
+        if(Unit.Movement.HasArrived || IsNear(gather.TargetResource.transform))
         {
+            Unit.Movement.Stop();
             phase = Phase.Gathering;
             timer = Delay;
         }
@@ -92,11 +102,11 @@ public class UnitGatherState : UnitBaseState
             return;
         }
         phase = Phase.MoveToBuilding;
-        Unit.Movement.SetDestination(gather.ReturnBuilding.transform.position);
+        Unit.Movement.SetDestinationNear(gather.ReturnBuilding.transform);
     }
     private void CheckArrivedAtBuilding()
     {
-        if(Unit.Movement.HasArrived)
+        if(Unit.Movement.HasArrived || IsNear(gather.ReturnBuilding.transform))
         {
             phase = Phase.Returning;
             timer = Delay;

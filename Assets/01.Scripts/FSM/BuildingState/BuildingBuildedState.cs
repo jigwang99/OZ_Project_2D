@@ -15,7 +15,7 @@ public class BuildingBuildedState : BuildingBaseState
 
     public override void Exit()
     {
-        // 완성
+        
     }
 
     public override void FixedUpdate()
@@ -26,6 +26,9 @@ public class BuildingBuildedState : BuildingBaseState
     public override void Update()
     {
         if (Building.BuildProgress >= Building.BuildingStat.BuildTime)
+        {
+            Debug.Log("BuildFinish");
             Building.StateMachine.ChangeState(Building.IdleState);
+        }
     }
 }

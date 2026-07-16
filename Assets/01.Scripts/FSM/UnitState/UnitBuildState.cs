@@ -20,6 +20,7 @@ public class UnitBuildState : UnitBaseState
 
     public override void Exit()
     {
+        
         Unit.Movement.Stop();
         build.SetTarget(null);
     }
@@ -31,7 +32,7 @@ public class UnitBuildState : UnitBaseState
         refindTimer -= Time.fixedDeltaTime;
         if(refindTimer <=0)
         {
-            Unit.Movement.SetDestination(build.TargetBuilding.transform.position);
+            Unit.Movement.SetDestinationNear(build.TargetBuilding.transform);
             refindTimer = refindInterval;
         }
         Unit.Movement.Move();
@@ -39,12 +40,28 @@ public class UnitBuildState : UnitBaseState
 
     public override void Update()
     {
-        if(!build.HasValidTarget())
+        if (build.TargetBuilding != null)
+        {
+            Debug.Log($"Alive: {build.TargetBuilding.IsAlive}, " + $"UnderConstruction: {build.TargetBuilding.IsConstruction}, " + $"State : {build.TargetBuilding.StateMachine.CurrentState}");
+        }
+        else
+            Debug.Log("TargetBuilding is null");
+
+        if (!build.HasValidTarget())
         {
             Unit.StateMachine.ChangeState(Unit.IdleState);
             return;
         }
         if (build.IsInRange())
             build.Construct();
+
+        // test 
+        if(build.TargetBuilding != null && Unit.Movement.HasArrived)
+        {
+            Collider2D col = build.TargetBuilding.GetComponent<Collider2D>();
+            float dist = Vector2.Distance(Unit.transform.position, col.ClosestPoint(Unit.transform.position));
+
+            Debug.Log($"{dist:F2}, range : {Unit.UnitStat.AttackRange}");
+        }
     }
 }

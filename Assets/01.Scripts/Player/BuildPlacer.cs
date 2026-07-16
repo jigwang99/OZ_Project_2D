@@ -50,7 +50,6 @@ public class BuildPlacer : MonoBehaviour
 
         if (Mouse.current.rightButton.wasPressedThisFrame || Keyboard.current.escapeKey.wasPressedThisFrame)
             CancelPlacement();
-        
     }
     private void HandleKeys()
     {

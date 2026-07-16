@@ -20,6 +20,12 @@ public class Player : MonoBehaviour
 
     public int Wood {  get; private set; }
     public int Gold { get; private set; }
+
+    private const int limitPopulation = 200;
+    public int CurrentPopulation { get; private set; }
+    public int MaxPopulation { get; private set; }
+
+    public event Action OnPopulationChanged;
     public event Action OnResourceChanged;
     private void Awake()
     {
@@ -34,8 +40,9 @@ public class Player : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        Wood = 50;
+        Wood = 500;
         Gold = 0;
+        MaxPopulation = 0;
     }
 
     // Update is called once per frame
@@ -43,10 +50,6 @@ public class Player : MonoBehaviour
     {
         HandleProduckKeys();
         HandleRightClick();
-    }
-    private void FixedUpdate()
-    {
-        
     }
     private void HandleProduckKeys()
     {
@@ -248,5 +251,24 @@ public class Player : MonoBehaviour
         Wood -= woodCost;
         Gold -= goldCost;
         return true;
+    }
+    // 인구수
+    public bool TryIncreasePopulation(int amount)
+    {
+        if (CurrentPopulation + amount > MaxPopulation)
+            return false;
+        CurrentPopulation += amount;
+        OnPopulationChanged?.Invoke();
+        return true;
+    }
+    public void ReleasePopulation(int amount)
+    {
+        CurrentPopulation = Mathf.Max(0, CurrentPopulation -  amount);
+        OnPopulationChanged?.Invoke();
+    }
+    public void AddMaxPopulation(int amount)
+    {
+        MaxPopulation = Mathf.Max(0, MaxPopulation + amount);
+        OnPopulationChanged?.Invoke();
     }
 }

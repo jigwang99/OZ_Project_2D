@@ -22,8 +22,11 @@ public class UnitBuild : MonoBehaviour
     {
         if (TargetBuilding == null)
             return false;
+        
+        Collider2D col = TargetBuilding.GetComponent<Collider2D>();
+        Vector2 point = col != null ? col.ClosestPoint(unit.transform.position) : (Vector2)TargetBuilding.transform.position;
 
-        return Vector2.Distance(unit.transform.position, TargetBuilding.transform.position) <= unit.UnitStat.AttackRange;
+        return Vector2.Distance(unit.transform.position, point) <= unit.UnitStat.AttackRange;
     }
     public bool HasValidTarget()
     {

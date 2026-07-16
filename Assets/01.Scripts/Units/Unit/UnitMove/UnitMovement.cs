@@ -25,7 +25,22 @@ public class UnitMovement : MonoBehaviour
         targetIndex = 0;
         HasArrived = (path == null || path.Count == 0);
     }
+    public void SetDestinationNear(Transform target, float offset = 0.5f)
+    {
+        Collider2D targetCol = target.GetComponent<Collider2D>();
+        Vector2 myPos = rb.position;
 
+        Vector2 point;
+        if (targetCol != null)
+        {
+            Vector2 closest = targetCol.ClosestPoint(myPos);
+            Vector2 disNear = (myPos - closest).normalized;
+            point = closest + disNear * offset;
+        }
+        else
+            point = target.position;
+        SetDestination(point);
+    }
     public void Move()
     {
         if (HasArrived || path == null || targetIndex >= path.Count) return;

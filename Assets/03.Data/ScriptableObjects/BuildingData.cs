@@ -21,6 +21,7 @@ public class BuildingStat
     [SerializeField] private int maxHp;
     [SerializeField] private int defense;
 
+    [SerializeField] private int populationProvide;
     [SerializeField] private int attackDamage;
     [SerializeField] private float attackRange;
     [SerializeField] private float attackCooldown;
@@ -33,6 +34,7 @@ public class BuildingStat
     public BuildingType BuildingType => buildingType;
     public int MaxHp => maxHp;
     public int Defense => defense;
+    public int PopulationProvide => populationProvide;
     public int AttackDamage => attackDamage;
     public float AttackRange => attackRange;
     public float AttackCooldown => attackCooldown;
@@ -40,13 +42,14 @@ public class BuildingStat
     public int GoldCost => goldCost;
     public float BuildTime => buildTime;
 
-    public BuildingStat(BuildingType buildingType, int maxHp, int defense, int attackDamage, float attackRange, float attackCooldown, int woodCost, int goldCost, float buildTime)
+    public BuildingStat(BuildingType buildingType, int maxHp, int defense, int populationProvide, int attackDamage, float attackRange, float attackCooldown, int woodCost, int goldCost, float buildTime)
     {
         this.buildingType = buildingType;
 
         this.maxHp = maxHp;
         this.defense = defense;
 
+        this.populationProvide = populationProvide;
         this.attackDamage = attackDamage;
         this.attackRange = attackRange;
         this.attackCooldown = attackCooldown;
@@ -57,7 +60,7 @@ public class BuildingStat
     }
     public BuildingStat Clone()
     {
-        return new BuildingStat(buildingType, maxHp, defense, attackDamage, attackRange, attackCooldown, woodCost, goldCost, buildTime);
+        return new BuildingStat(buildingType, maxHp, defense, populationProvide, attackDamage, attackRange, attackCooldown, woodCost, goldCost, buildTime);
     }
 }
 
