@@ -18,6 +18,8 @@ public class Player : MonoBehaviour
 
     private static readonly Key[] productionKeys = { Key.A, Key.S, Key.D, Key.F };
     
+    public IReadOnlyList<Unit> SelectUnitList => selectUnitList;
+    public Building SelectBuilding => selectBuilding;
 
     public int Wood {  get; private set; }
     public int Gold { get; private set; }
@@ -211,6 +213,8 @@ public class Player : MonoBehaviour
         foreach (Unit unit in selectUnitList)
             unit.SetSelected(false);
         selectUnitList.Clear();
+
+        CameraManager.instance.ResetFocusIndex();
     }
     public bool HasSelectedPawn()
     {
@@ -227,7 +231,7 @@ public class Player : MonoBehaviour
         }
     }
     // 건물선택
-    public void SelectBuilding(Building building)
+    public void BuildingSelect(Building building)
     {
         ClearSelectList();
         DeselectBuilding();

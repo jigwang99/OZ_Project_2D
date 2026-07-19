@@ -112,7 +112,7 @@ public class SelectManager : MonoBehaviour
 
         if(building != null && building.IsAlive)
         {
-            Player.instance.SelectBuilding(building);
+            Player.instance.BuildingSelect(building);
         }
     }
 }
