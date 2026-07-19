@@ -214,7 +214,8 @@ public class Player : MonoBehaviour
             unit.SetSelected(false);
         selectUnitList.Clear();
 
-        CameraManager.instance.ResetFocusIndex();
+        if(CameraManager.instance != null)
+            CameraManager.instance.ResetFocusIndex();
     }
     public bool HasSelectedPawn()
     {
