@@ -46,6 +46,7 @@ public class SelectionUI : MonoBehaviour
         if(units.Count > 1)
         {
             info.SetActive(false);
+            productQueueUI.Clear();
             for(int i = 0; i < slots.Count; i++)
             {
                 if (i < units.Count)
@@ -61,6 +62,7 @@ public class SelectionUI : MonoBehaviour
 
         if (units.Count == 1)
         {
+            productQueueUI.Clear();
             string label = units[0] is Monk ? "Heal" : "damage";
             ShowInfo(units[0].UnitStat.Icon, units[0].Type.ToString(), units[0].UnitStat.AttackDamage, units[0].UnitStat.Defense, label);
             return;
@@ -74,7 +76,7 @@ public class SelectionUI : MonoBehaviour
                 productQueueUI.Show(pb);
             else
                 productQueueUI.Clear();
-                return;
+            return;
         }
 
         // 선택없음

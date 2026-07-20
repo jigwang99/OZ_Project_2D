@@ -54,6 +54,9 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
     protected void Die()
     {
         IsAlive = false;
+        if(Player.instance.SelectBuilding == this)
+            Player.instance.DeselectBuilding();
+
         WithdrawPopulation();
         ReturnToPool();
         GridManager.instance.UpdateArea(transform.position, obstacleSize);

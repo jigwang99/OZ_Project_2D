@@ -53,8 +53,8 @@ public class ProductQueueUI : MonoBehaviour
         }
         progressFill.gameObject.SetActive(list.Count > 0);
     }
-        public void RequestCancel(int index)
-        {
-        current?.CancelProductAt(index);
+    public void RequestCancel(int index)
+    {
+    current?.CancelProductAt(index);
     }
 }
