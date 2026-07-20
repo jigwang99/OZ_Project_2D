@@ -14,7 +14,8 @@ public class SelectionUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI nameTMP;
     [SerializeField] private TextMeshProUGUI hpTMP;
     [SerializeField] private TextMeshProUGUI attackTMP;
-    [SerializeField] private TextMeshProUGUI defenseTMP;
+    [SerializeField] private TextMeshProUGUI defenseTMP;    
+    [SerializeField] private ProductQueueUI productQueueUI; 
 
     private void Start()
     {
@@ -68,11 +69,17 @@ public class SelectionUI : MonoBehaviour
         if(building != null)
         {
             ShowInfo(building.BuildingStat.Icon, building.Type.ToString(), building.BuildingStat.AttackDamage, building.BuildingStat.Defense);
-            return;
+
+            if (building is ProductionBuilding pb)
+                productQueueUI.Show(pb);
+            else
+                productQueueUI.Clear();
+                return;
         }
 
         // 선택없음
         info.SetActive(false);
+        productQueueUI.Clear();
     }
     private void ShowInfo(Sprite icon, string name, int attack, int defense, string label="damage")
     {

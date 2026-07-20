@@ -63,7 +63,8 @@ public class SelectManager : MonoBehaviour
         {
             selectBox.gameObject.SetActive(false);
             Player.instance.ClearSelectList();
-
+            Player.instance.DeselectBuilding();
+            
             if (isDrag)
                 DragSelect();
             else

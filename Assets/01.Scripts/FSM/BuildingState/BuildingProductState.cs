@@ -4,6 +4,7 @@ public class BuildingProductState : BuildingBaseState
 {
     private ProductionBuilding productionBuilding;
     private float timer;
+    public float RemainTimer => timer;
     public BuildingProductState(Building building) : base(building)
     { 
         productionBuilding = building as ProductionBuilding;

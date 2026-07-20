@@ -6,8 +6,10 @@ using System;
 public abstract class ProductionBuilding : Building
 {
     [SerializeField] private List<UnitType> producibleUnits;
-
     [SerializeField] private List<UnitType> productList = new List<UnitType>();
+
+    public const int MaxProductList = 7;
+    public bool IsQueueFull => productList.Count >= MaxProductList;
 
     public BuildingProductState ProductState { get; protected set; }
     public bool HasList => productList.Count > 0;
@@ -15,6 +17,18 @@ public abstract class ProductionBuilding : Building
 
     [SerializeField] private Transform spawnPosition;
 
+    public IReadOnlyList<UnitType> ProductList => productList;
+    public event Action OnProductChanged;
+
+    public float ProductProgress
+    {
+        get
+        {
+            if (!HasList || StateMachine.CurrentState != ProductState)
+                return 0f;
+            return 1f - ProductState.RemainTimer / CurrentProductTime;
+        }
+    }
     protected override void Awake()
     {
         base.Awake();
@@ -22,6 +36,9 @@ public abstract class ProductionBuilding : Building
     }
     public bool EnqueueUnit(UnitType unitType)
     {
+        if (productList.Count >= MaxProductList)
+            return false;
+
         if (!producibleUnits.Contains(unitType))
             return false;
 
@@ -37,6 +54,7 @@ public abstract class ProductionBuilding : Building
         }
 
         productList.Add(unitType);
+        OnProductChanged?.Invoke();
 
         if (StateMachine.CurrentState == IdleState)
             StateMachine.ChangeState(ProductState);
@@ -51,15 +69,26 @@ public abstract class ProductionBuilding : Building
     }
     public void CancelLastProduct()
     {
-        if (productList.Count == 0)
+        CancelProductAt(productList.Count - 1);
+    }
+    public void CancelProductAt(int index)
+    {
+        if (index < 0 || index >= productList.Count)
             return;
 
-        int lastIndex = productList.Count - 1;
-        Refund(productList[lastIndex]);
-        productList.RemoveAt(lastIndex);
+        Refund(productList[index]);
+        productList.RemoveAt(index);
 
-        if(productList.Count == 0 && StateMachine.CurrentState == ProductState)
-            StateMachine.ChangeState(IdleState);
+        if (productList.Count == 0)
+        {
+            if (StateMachine.CurrentState == ProductState)
+                StateMachine.ChangeState(IdleState);
+        }
+        else if(index == 0 && StateMachine.CurrentState == ProductState)
+        {
+            StateMachine.ChangeState(ProductState);
+        }
+        OnProductChanged?.Invoke();
     }
     public void CompleteProduction()
     {
@@ -69,6 +98,7 @@ public abstract class ProductionBuilding : Building
         // 첫번 째 유닛 리스트에서 제거
         UnitType unitType = productList.FirstOrDefault();
         productList.RemoveAt(0);
+        OnProductChanged?.Invoke();
 
         //유닛스폰
         Unit unit = ObjectPoolManager.instance.GetObject<Unit>(unitType.ToString());
@@ -82,4 +112,5 @@ public abstract class ProductionBuilding : Building
         Player.instance.AddGold(unitStat.GoldCost);
         Player.instance.ReleasePopulation(unitStat.Population);
     }
+    
 }
