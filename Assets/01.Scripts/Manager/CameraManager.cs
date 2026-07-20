@@ -56,7 +56,7 @@ public class CameraManager : MonoBehaviour
     }
     private void HandleEdgeMove()
     {
-        Vector2 mousePosition = Mouse.current.position.ReadDefaultValue();
+        Vector2 mousePosition = Mouse.current.position.ReadValue();
 
         if (mousePosition.x < 0 || mousePosition.x > Screen.width || mousePosition.y < 0 || mousePosition.y > Screen.height)
             return;
@@ -64,14 +64,14 @@ public class CameraManager : MonoBehaviour
         Vector2 dir = Vector2.zero;
 
         if(mousePosition.x <= edgeSize)
-            dir.x += -1f;
-        else if(mousePosition.x >= edgeSize)
-            dir.x += 1f;
+            dir.x = -1f;
+        else if(mousePosition.x >= Screen.width - edgeSize)
+            dir.x = 1f;
 
         if(mousePosition.y <= edgeSize)
-            dir.y += -1f;
-        else if(mousePosition.y >= edgeSize)
-            dir.y += 1f;
+            dir.y = -1f;
+        else if(mousePosition.y >= Screen.height - edgeSize)
+            dir.y = 1f;
 
         if(dir == Vector2.zero)
             return;
