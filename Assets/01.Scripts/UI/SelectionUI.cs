@@ -14,7 +14,9 @@ public class SelectionUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI nameTMP;
     [SerializeField] private TextMeshProUGUI hpTMP;
     [SerializeField] private TextMeshProUGUI attackTMP;
-    [SerializeField] private TextMeshProUGUI defenseTMP;    
+    [SerializeField] private TextMeshProUGUI defenseTMP;
+
+    [Header("생산 큐")]
     [SerializeField] private ProductQueueUI productQueueUI; 
 
     private void Start()
