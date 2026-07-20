@@ -13,6 +13,8 @@ public class SelectionUI : MonoBehaviour
     [SerializeField] private Image image;
     [SerializeField] private TextMeshProUGUI nameTMP;
     [SerializeField] private TextMeshProUGUI hpTMP;
+    [SerializeField] private TextMeshProUGUI attackTMP;
+    [SerializeField] private TextMeshProUGUI defenseTMP;
 
     private void Start()
     {
@@ -46,7 +48,7 @@ public class SelectionUI : MonoBehaviour
             for(int i = 0; i < slots.Count; i++)
             {
                 if (i < units.Count)
-                    slots[i].Bind(units.[i]);
+                    slots[i].Bind(units[i]);
                 else
                     slots[i].Clear();
             }
@@ -58,24 +60,30 @@ public class SelectionUI : MonoBehaviour
 
         if (units.Count == 1)
         {
-            ShowInfo(units[0].UnitStat.Icon, units[0].Type.ToString());
+            string label = units[0] is Monk ? "Heal" : "damage";
+            ShowInfo(units[0].UnitStat.Icon, units[0].Type.ToString(), units[0].UnitStat.AttackDamage, units[0].UnitStat.Defense, label);
             return;
         }
         // 건물 선택
         if(building != null)
         {
-            ShowInfo(building.BuildingStat.Icon, building.Type.ToString());
+            ShowInfo(building.BuildingStat.Icon, building.Type.ToString(), building.BuildingStat.AttackDamage, building.BuildingStat.Defense);
             return;
         }
 
         // 선택없음
         info.SetActive(false);
     }
-    private void ShowInfo(Sprite icon, string name)
+    private void ShowInfo(Sprite icon, string name, int attack, int defense, string label="damage")
     {
         info.SetActive(true);
         image.sprite = icon;
         nameTMP.text = name;
+        defenseTMP.text = $"Armor : {defense}";
+        
+        attackTMP.gameObject.SetActive(attack > 0);
+        if (attack > 0)
+            attackTMP.text = $"{label} : {attack}";
     }
     private void UpdateInfoHp()
     {

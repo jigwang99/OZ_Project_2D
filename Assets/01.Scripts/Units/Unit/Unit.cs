@@ -47,7 +47,7 @@ public abstract class Unit : MonoBehaviour, IPoolable, IDamageable
         AttackState = new UnitAttackState(this);
 
         animator = GetComponent<Animator>();
-        isRun = Animator.StringToHash("sRun");
+        isRun = Animator.StringToHash("isRun");
         isAttack = Animator.StringToHash("isAttack");
 
         spriteRenderer = GetComponent<SpriteRenderer>();
