@@ -31,7 +31,11 @@ public abstract class Unit : MonoBehaviour, IPoolable, IDamageable
     public UnitChaseState ChaseState { get; protected set; }
     public UnitAttackState AttackState { get; protected set; }
 
-    public Animator Animator { get; protected set; }
+    private SpriteRenderer spriteRenderer;
+
+    protected Animator animator;
+    private int isRun;
+    protected int isAttack;
     protected virtual void Awake()
     {
         Movement = GetComponent<UnitMovement>();
@@ -42,7 +46,11 @@ public abstract class Unit : MonoBehaviour, IPoolable, IDamageable
         ChaseState = new UnitChaseState(this);
         AttackState = new UnitAttackState(this);
 
-        Animator = GetComponent<Animator>();
+        animator = GetComponent<Animator>();
+        isRun = Animator.StringToHash("sRun");
+        isAttack = Animator.StringToHash("isAttack");
+
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
     protected void OnEnable()
     {
@@ -82,6 +90,18 @@ public abstract class Unit : MonoBehaviour, IPoolable, IDamageable
             Player.instance.ReleasePopulation(unitStat.Population);
         }
         ReturnToPool();
+    }
+    public void SetRunAnimation(bool isRun)
+    {
+        animator.SetBool(this.isRun, isRun);
+    }
+    public virtual void PlayAttackAnimation()
+    {
+        animator.SetTrigger(isAttack);
+    }
+    public void FlipSprite(float directionX)
+    {
+        spriteRenderer.flipX = directionX < 0;
     }
     public LayerMask GetEnemyLayerMask()
     {

@@ -111,7 +111,7 @@ MonoBehaviour:
   obstacleSize: {x: 3, y: 3}
   producibleUnits: 03000000020000000400000001000000
   productList: 
-  spawnPosition: {fileID: 0}
+  spawnPosition: {fileID: 6936730175346076632}
 --- !u!50 &3631008750880513914
 Rigidbody2D:
   serializedVersion: 5

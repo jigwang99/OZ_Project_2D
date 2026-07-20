@@ -53,6 +53,10 @@ public class UnitHealState : UnitBaseState
         }
 
         if (heal.IsInRange() && heal.CanHeal())
+        {
+            monk.PlayHealAnimation();
             heal.Heal();
+        }
+        Unit.SetRunAnimation(!heal.IsInRange());
     }
 }

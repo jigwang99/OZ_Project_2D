@@ -241,5 +241,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60fbb73ede364cd4cb88cb2c34e49b92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitVisual
-  allyController: {fileID: 9100000, guid: f172b4eeb829d4ec2b9b7a42f3efa3ef, type: 2}
-  enemyController: {fileID: 9100000, guid: b96f062c1d073496fb335d14ea81c2ec, type: 2}
+  allyController: {fileID: 9100000, guid: aa1112b337436413a9e3f0f07d8475c2, type: 2}
+  enemyController: {fileID: 9100000, guid: 12285b2ad229e465ca21363a5ff750b0, type: 2}

@@ -32,6 +32,10 @@ public class UnitAttackState : UnitBaseState
             return;
         }
         if (Unit.Attack.CanAttack())
+        {
+            Unit.FlipSprite(target.transform.position.x - Unit.transform.position.x);
+            Unit.PlayAttackAnimation();
             Unit.Attack.Attack();
+        }
     }
 }

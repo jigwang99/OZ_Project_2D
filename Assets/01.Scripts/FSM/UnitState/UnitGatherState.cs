@@ -32,6 +32,8 @@ public class UnitGatherState : UnitBaseState
     public override void Exit()
     {
         Unit.Movement.Stop();
+        Unit.SetRunAnimation(false);
+        pawn.StopInteractAnimation();
     }
 
     public override void FixedUpdate()
@@ -75,6 +77,8 @@ public class UnitGatherState : UnitBaseState
             return;
 
         phase = Phase.MoveToResource;
+        pawn.StopInteractAnimation();
+        Unit.SetRunAnimation(true);
         Unit.Movement.SetDestinationNear(gather.TargetResource.transform);
     }
     private void CheckArrivedAtResource()
@@ -87,6 +91,11 @@ public class UnitGatherState : UnitBaseState
         if(Unit.Movement.HasArrived || IsNear(gather.TargetResource.transform))
         {
             Unit.Movement.Stop();
+
+            Unit.SetRunAnimation(false);
+            PawnTool tool = gather.TargetResource.Type == ResourceType.Wood ? PawnTool.Axe : PawnTool.Pickaxe;
+            pawn.SetInteractAnimation(tool);
+
             phase = Phase.Gathering;
             timer = Delay;
         }
@@ -101,6 +110,11 @@ public class UnitGatherState : UnitBaseState
             Unit.StateMachine.ChangeState(Unit.IdleState);
             return;
         }
+
+        pawn.StopInteractAnimation();
+        pawn.SetCarryAnimation(gather.CarryResourceType, true);
+        Unit.SetRunAnimation(true);
+
         phase = Phase.MoveToBuilding;
         Unit.Movement.SetDestinationNear(gather.ReturnBuilding.transform);
     }
@@ -108,6 +122,7 @@ public class UnitGatherState : UnitBaseState
     {
         if(Unit.Movement.HasArrived || IsNear(gather.ReturnBuilding.transform))
         {
+            Unit.SetRunAnimation(false);
             phase = Phase.Returning;
             timer = Delay;
         }
@@ -134,6 +149,7 @@ public class UnitGatherState : UnitBaseState
         if (timer > 0f) return;
 
         gather.ReturnResource();
+        pawn.ClearCarryAnimation();
 
         if (gather.TargetResource != null && !gather.TargetResource.IsDepleted)
             MoveToResource();

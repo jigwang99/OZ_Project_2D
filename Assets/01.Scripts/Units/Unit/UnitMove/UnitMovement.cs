@@ -4,6 +4,7 @@ using UnityEngine;
 public class UnitMovement : MonoBehaviour
 {
     private Rigidbody2D rb;
+    private Unit unit;
     private float moveSpeed;
     private float waypointReachedDistance = 0.15f;
 
@@ -14,6 +15,7 @@ public class UnitMovement : MonoBehaviour
     public void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        unit = GetComponent<Unit>();
     }
     public void SetMoveSpeed(float moveSpeed)
     {
@@ -63,6 +65,7 @@ public class UnitMovement : MonoBehaviour
         }
 
         Vector2 direction = toTarget.normalized;
+        unit.FlipSprite(direction.x);
         Vector2 newPos = currentPos + direction * moveSpeed * Time.fixedDeltaTime;
         rb.MovePosition(newPos);
     }

@@ -15,6 +15,8 @@ GameObject:
   - component: {fileID: 160880957805876955}
   - component: {fileID: 26502444031506205}
   - component: {fileID: 4957157694018078948}
+  - component: {fileID: -3146704469842494254}
+  - component: {fileID: -690003126713406222}
   m_Layer: 0
   m_Name: Monk
   m_TagString: Untagged
@@ -208,3 +210,39 @@ MonoBehaviour:
   allyLayerMask:
     serializedVersion: 2
     m_Bits: 0
+--- !u!114 &-3146704469842494254
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2519964685039321008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60fbb73ede364cd4cb88cb2c34e49b92, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UnitVisual
+  allyController: {fileID: 9100000, guid: 010817759ac3943d8a63d1698ab7d60e, type: 2}
+  enemyController: {fileID: 9100000, guid: 9d562d4c9c07b48d2aedad38e30acaa7, type: 2}
+--- !u!95 &-690003126713406222
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2519964685039321008}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0

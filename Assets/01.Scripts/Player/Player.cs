@@ -25,11 +25,13 @@ public class Player : MonoBehaviour
     public int Gold { get; private set; }
 
     private const int limitPopulation = 200;
+    public const int MaxSelectCount = 12;
     public int CurrentPopulation { get; private set; }
     public int MaxPopulation { get; private set; }
 
     public event Action OnPopulationChanged;
     public event Action OnResourceChanged;
+    public event Action OnSelectionChanged;
     private void Awake()
     {
         if (instance == null)
@@ -200,13 +202,23 @@ public class Player : MonoBehaviour
     // 유닛선택
     public void SelectUnit(Unit unit)
     {
-        if(!selectUnitList.Contains(unit))
+        if (selectUnitList.Count >= MaxSelectCount)
+            return;
+
+        if (!selectUnitList.Contains(unit))
+        {
             selectUnitList.Add(unit);
+            unit.SetSelected(true);
+            OnSelectionChanged?.Invoke();
+        }
     }
     public void DeselectUnit(Unit unit)
     {
-        if(selectUnitList.Contains(unit))
+        if (selectUnitList.Contains(unit))
+        {
             selectUnitList.Remove(unit);
+            OnSelectionChanged?.Invoke();
+        }
     }
     public void ClearSelectList()
     {
@@ -216,6 +228,7 @@ public class Player : MonoBehaviour
 
         if(CameraManager.instance != null)
             CameraManager.instance.ResetFocusIndex();
+        OnSelectionChanged?.Invoke();
     }
     public bool HasSelectedPawn()
     {
@@ -239,12 +252,20 @@ public class Player : MonoBehaviour
 
         selectBuilding = building;
         building.SetSelected(true);
+        OnSelectionChanged?.Invoke();
     }
     public void DeselectBuilding()
     {
         if (selectBuilding != null)
             selectBuilding.SetSelected(false);
         selectBuilding = null;
+        OnSelectionChanged?.Invoke();
+    }
+    public void SelectSingleUnit(Unit unit)
+    {
+        ClearSelectList();
+        DeselectBuilding();
+        SelectUnit(unit);
     }
     // 자원
     public void AddResource(ResourceType resourceType, int amount)
