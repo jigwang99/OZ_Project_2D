@@ -2526,11 +2526,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b1940dbba2ecaf429075f9a165ff5cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyCommander
+  thinkInterval: 1
   resourceLayerMask:
     serializedVersion: 2
     m_Bits: 32768
-  thinkInterval: 1
   resourceSearchRadius: 30
+  buildCount: 200
+  combatCount: 15
+  productionRules:
+  - unitType: 0
+    maxCount: 20
+    priority: 0
+    phases: 000000000100000002000000
+  - unitType: 3
+    maxCount: 15
+    priority: 1
+    phases: 0100000002000000
+  - unitType: 2
+    maxCount: 10
+    priority: 2
+    phases: 0100000002000000
+  - unitType: 4
+    maxCount: 5
+    priority: 3
+    phases: 0100000002000000
+  - unitType: 1
+    maxCount: 3
+    priority: 4
+    phases: 0100000002000000
 --- !u!4 &628479612
 Transform:
   m_ObjectHideFlags: 0
