@@ -28,7 +28,6 @@ public class CameraManager : MonoBehaviour
         if (mainCamera == null)
             mainCamera = Camera.main;
     }
-
     // Update is called once per frame
     void Update()
     {
