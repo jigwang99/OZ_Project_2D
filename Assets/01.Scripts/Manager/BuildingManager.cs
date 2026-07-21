@@ -5,7 +5,7 @@ public class BuildingManager : MonoBehaviour
 {
     public static BuildingManager instance;
 
-    private Dictionary<BuildingType, int> playerBuildingCount = new Dictionary<BuildingType, int>();
+    private Dictionary<(FactionType, BuildingType), int> playerBuildingCount = new Dictionary<(FactionType, BuildingType), int>();
 
     private void Awake()
     {
@@ -15,19 +15,22 @@ public class BuildingManager : MonoBehaviour
             Destroy(gameObject);
         DontDestroyOnLoad(gameObject);
     }
-    public void RegisterPlayerBuilding(BuildingType type)
+    public void RegisterBuilding(FactionType factionType, BuildingType buildingType)
     {
-        playerBuildingCount.TryGetValue(type, out int count);
-        playerBuildingCount[type] = count + 1;
+        var key = (factionType, buildingType);
+
+        playerBuildingCount.TryGetValue(key, out int count);
+        playerBuildingCount[key] = count + 1;
     }
-    public void UnregisterPlayerBuilding(BuildingType type)
+    public void UnregisterBuilding(FactionType factionType, BuildingType buildingType)
     {
-        if (!playerBuildingCount.TryGetValue(type, out int count))
+        var key = (factionType, buildingType);
+        if (!playerBuildingCount.TryGetValue(key, out int count))
             return;
-        playerBuildingCount[type] = Mathf.Max(0, count - 1);
+        playerBuildingCount[key] = Mathf.Max(0, count - 1);
     }
-    public bool HasPlayerBuilding(BuildingType type)
+    public bool HasBuilding(FactionType factionType, BuildingType buildingType)
     {
-        return playerBuildingCount.TryGetValue(type, out int count) && count > 0;
+        return playerBuildingCount.TryGetValue((factionType, buildingType), out int count) && count > 0;
     }
 }

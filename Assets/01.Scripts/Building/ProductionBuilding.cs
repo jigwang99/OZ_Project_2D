@@ -47,12 +47,12 @@ public abstract class ProductionBuilding : Building
 
         UnitStat unitStat = UnitDataLoader.instance.GetUnitStat(unitType);
 
-        if (!Player.instance.TryIncreasePopulation(unitStat.Population))
+        if (!OwnerFaction.TryIncreasePopulation(unitStat.Population))
             return false;
 
-        if (!Player.instance.TryReduceResource(unitStat.WoodCost, unitStat.GoldCost))
+        if (!OwnerFaction.TryReduceResource(unitStat.WoodCost, unitStat.GoldCost))
         {
-            Player.instance.ReleasePopulation(unitStat.Population);
+            OwnerFaction.ReleasePopulation(unitStat.Population);
             return false;
         }
 
@@ -111,9 +111,9 @@ public abstract class ProductionBuilding : Building
     private void Refund(UnitType unitType)
     {
         UnitStat unitStat = UnitDataLoader.instance.GetUnitStat(unitType);
-        Player.instance.AddWood(unitStat.WoodCost);
-        Player.instance.AddGold(unitStat.GoldCost);
-        Player.instance.ReleasePopulation(unitStat.Population);
+        OwnerFaction.AddWood(unitStat.WoodCost);
+        OwnerFaction.AddGold(unitStat.GoldCost);
+        OwnerFaction.ReleasePopulation(unitStat.Population);
     }
     public bool CanProduce(UnitType unitType)
     {
@@ -124,6 +124,6 @@ public abstract class ProductionBuilding : Building
         if (stat.RequiredBuilding == BuildingType.None)
             return true;
 
-        return BuildingManager.instance.HasPlayerBuilding(stat.RequiredBuilding);
+        return BuildingManager.instance.HasBuilding(OwnerFaction.Type, stat.RequiredBuilding);
     }
 }

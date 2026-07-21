@@ -93,7 +93,7 @@ public class BuildPlacer : MonoBehaviour
     private void TryPlace(Vector2 pos)
     {
         BuildingStat stat = BuildingDataLoader.instance.GetBuildingStat(currentPlaceInfo.type);
-        if (!Player.instance.TryReduceResource(stat.WoodCost, stat.GoldCost))
+        if (!FactionManager.instance.Player.TryReduceResource(stat.WoodCost, stat.GoldCost))
             return;
 
         Building building = ObjectPoolManager.instance.GetObject<Building>(currentPlaceInfo.type.ToString());

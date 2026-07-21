@@ -8,6 +8,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI goldTMP;
     [SerializeField] private TextMeshProUGUI woodTMP;
     [SerializeField] private TextMeshProUGUI populationTMP;
+
+    private Faction faction;
+
     private void Awake()
     {
         if (instance == null)
@@ -20,8 +23,10 @@ public class UIManager : MonoBehaviour
     }
     private void Start()
     {
-        Player.instance.OnResourceChanged += UpdateResourceUI;
-        Player.instance.OnPopulationChanged += UpdatePopulationUI;
+        faction = FactionManager.instance.Player;  // Player 진영
+
+        faction.OnResourceChanged += UpdateResourceUI;
+        faction.OnPopulationChanged += UpdatePopulationUI;
 
         // 초기값
         UpdateResourceUI();
@@ -29,11 +34,11 @@ public class UIManager : MonoBehaviour
     }
     private void UpdateResourceUI()
     {
-        woodTMP.text = Player.instance.Wood.ToString();
-        goldTMP.text = Player.instance.Gold.ToString();
+        woodTMP.text = faction.Wood.ToString();
+        goldTMP.text = faction.Gold.ToString();
     }
     private void UpdatePopulationUI()
     {
-        populationTMP.text = $"{Player.instance.CurrentPopulation} / {Player.instance.MaxPopulation}";
+        populationTMP.text = $"{faction.CurrentPopulation} / {faction.MaxPopulation}";
     }
 }

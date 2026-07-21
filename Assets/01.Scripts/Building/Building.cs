@@ -35,7 +35,6 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
     protected virtual void OnEnable()
     {
         SetSelected(false);
-        Init();
         StartCoroutine(RegisterObtacleNextFrame());
     }
     protected void Update() => StateMachine.Update();
@@ -59,7 +58,7 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
     protected void Die()
     {
         IsAlive = false;
-        UnregisterPlayer();
+        UnregisterOwner();
 
         if(Player.instance.SelectBuilding == this)
             Player.instance.DeselectBuilding();
@@ -84,12 +83,12 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
     }
     public void ProvidePopulation()
     {
-        RegisterPlayer();
+        RegisterOwner();
         if (populationProvided || buildingStat.PopulationProvide <= 0)
             return;
 
         populationProvided = true;
-        Player.instance.AddMaxPopulation(buildingStat.PopulationProvide);
+        OwnerFaction.AddMaxPopulation(buildingStat.PopulationProvide);
 
     }
     public void WithdrawPopulation()
@@ -98,7 +97,7 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
             return;
 
         populationProvided = false;
-        Player.instance.AddMaxPopulation(-buildingStat.PopulationProvide);
+        OwnerFaction.AddMaxPopulation(-buildingStat.PopulationProvide);
     }
     public void SetSkipBuilded(bool skip)
     {
@@ -112,19 +111,19 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
         OwnerFaction = FactionManager.instance.FromLayer(gameObject.layer);
         GetComponent<BuildingVisual>()?.ApplySprite();
     }
-    private void RegisterPlayer()
+    private void RegisterOwner()
     {
         if (IsRegistered || !IsPlayerBuilding)
             return;
         IsRegistered = true;
-        BuildingManager.instance.RegisterPlayerBuilding(Type);
+        BuildingManager.instance.RegisterBuilding(OwnerFaction.Type, Type);
     }
-    private void UnregisterPlayer()
+    private void UnregisterOwner()
     {
         if (!IsRegistered)
             return;
         IsRegistered = false;
-        BuildingManager.instance.UnregisterPlayerBuilding(Type);
+        BuildingManager.instance.UnregisterBuilding(OwnerFaction.Type, Type);
     }
     public virtual void Init()
     {

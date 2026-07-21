@@ -89,7 +89,7 @@ public abstract class Unit : MonoBehaviour, IPoolable, IDamageable
         if(gameObject.layer == (int)Layer.Player)
         {
             Player.instance.DeselectUnit(this);
-            Player.instance.ReleasePopulation(unitStat.Population);
+            OwnerFaction.ReleasePopulation(unitStat.Population);
         }
         ReturnToPool();
     }

@@ -33,7 +33,7 @@ public class UnitSpawner : MonoBehaviour
             if(spawn.layer == Layer.Player)
             {
                 UnitStat unitStat = UnitDataLoader.instance.GetUnitStat(spawn.unitType);
-                Player.instance.TryIncreasePopulation(unitStat.Population);
+                unit.OwnerFaction.TryIncreasePopulation(unitStat.Population);
             }
             
         }

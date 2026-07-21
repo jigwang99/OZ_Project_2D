@@ -17,27 +17,14 @@ public class Player : MonoBehaviour
     private const float spacing = 1.1f;
 
     private static readonly Key[] productionKeys = { Key.A, Key.S, Key.D, Key.F };
-    
+
     public IReadOnlyList<Unit> SelectUnitList => selectUnitList;
     public Building SelectBuilding => selectBuilding;
 
     public Faction Faction => FactionManager.instance.Player;
-    public int Wood => Faction.Wood;
-    public int Gold => Faction.Gold;
-    public int CurrentPopulation => Faction.CurrentPopulation;
-    public int MaxPopulation => Faction.MaxPopulation;
 
     public const int MaxSelectCount = 12;
-    public event Action OnPopulationChanged
-    {
-        add => Faction.OnPopulationChanged += value;
-        remove => Faction.OnPopulationChanged -= value;
-    }
-    public event Action OnResourceChanged
-    {
-        add => Faction.OnResourceChanged += value;
-        remove => Faction.OnResourceChanged -= value;
-    }
+
     public event Action OnSelectionChanged;
     private void Awake()
     {
@@ -63,7 +50,7 @@ public class Player : MonoBehaviour
         if (!productionBuilding.IsAlive)
             return;
 
-        for(int i = 0; i < productionKeys.Length; i++)
+        for (int i = 0; i < productionKeys.Length; i++)
         {
             if (Keyboard.current[productionKeys[i]].wasPressedThisFrame)
                 productionBuilding.EnqueueUnitByIndex(i);
@@ -93,7 +80,7 @@ public class Player : MonoBehaviour
             List<Unit> notCombatUnits = new List<Unit>();
             foreach (Unit unit in selectUnitList)
             {
-                if(unit.Attack == null)
+                if (unit.Attack == null)
                 {
                     notCombatUnits.Add(unit);
                     continue;
@@ -110,13 +97,13 @@ public class Player : MonoBehaviour
         Collider2D allyHit = Physics2D.OverlapCircle(worldPos, 0.2f, allyLayerMask);
         Unit ally = allyHit != null ? allyHit.GetComponent<Unit>() : null;
 
-        if(ally != null && ally.IsAlive)
+        if (ally != null && ally.IsAlive)
         {
             List<Unit> moveUnits = new List<Unit>();
 
             foreach (Unit unit in selectUnitList)
             {
-                if(unit is Monk monk && unit != ally)
+                if (unit is Monk monk && unit != ally)
                 {
                     monk.Heal.SetTarget(ally);
                     monk.StateMachine.ChangeState(monk.HealState);
@@ -130,25 +117,25 @@ public class Player : MonoBehaviour
                 MoveUnits(moveUnits, worldPos);
             return;
         }
-        
+
         Collider2D buildHit = Physics2D.OverlapCircle(worldPos, 0.2f, allyBuildingLayerMask);
         Building ConstructionBuilding = buildHit != null ? buildHit.GetComponent<Building>() : null;
 
-        if(ConstructionBuilding != null && ConstructionBuilding.IsAlive && ConstructionBuilding.IsConstruction)
+        if (ConstructionBuilding != null && ConstructionBuilding.IsAlive && ConstructionBuilding.IsConstruction)
         {
             List<Unit> nonPawns = new List<Unit>();
-            foreach(Unit unit in selectUnitList)
+            foreach (Unit unit in selectUnitList)
             {
-                if(!(unit is Pawn))
+                if (!(unit is Pawn))
                     nonPawns.Add(unit);
             }
             CommandBuild(ConstructionBuilding);
-            if(nonPawns.Count > 0)
+            if (nonPawns.Count > 0)
                 MoveUnits(nonPawns, worldPos);
             return;
         }
-        
-            // 자원채집 (Pawn)
+
+        // 자원채집 (Pawn)
         Collider2D resourceHit = Physics2D.OverlapCircle(worldPos, 0.2f, resourceLayerMask);
         Resource resource = resourceHit != null ? resourceHit.GetComponent<Resource>() : null;
 
@@ -223,7 +210,7 @@ public class Player : MonoBehaviour
             unit.SetSelected(false);
         selectUnitList.Clear();
 
-        if(CameraManager.instance != null)
+        if (CameraManager.instance != null)
             CameraManager.instance.ResetFocusIndex();
         OnSelectionChanged?.Invoke();
     }
@@ -233,9 +220,9 @@ public class Player : MonoBehaviour
     }
     public void CommandBuild(Building building)
     {
-        foreach(Unit unit in selectUnitList)
+        foreach (Unit unit in selectUnitList)
         {
-            if(!(unit is Pawn pawn))
+            if (!(unit is Pawn pawn))
                 continue;
             pawn.Build.SetTarget(building);
             pawn.StateMachine.ChangeState(pawn.BuildState);
@@ -263,35 +250,5 @@ public class Player : MonoBehaviour
         ClearSelectList();
         DeselectBuilding();
         SelectUnit(unit);
-    }
-    // 자원
-    public void AddResource(ResourceType resourceType, int amount)
-    {
-        Faction.AddResource(resourceType, amount);
-    }
-    public void AddWood(int amount)
-    {
-        Faction.AddWood(amount);
-    }
-    public void AddGold(int amount)
-    {
-        Faction.AddGold(amount);
-    }
-    public bool TryReduceResource(int woodCost, int goldCost)
-    {
-        return Faction.TryReduceResource(woodCost, goldCost);
-    }
-    // 인구수
-    public bool TryIncreasePopulation(int amount)
-    {
-        return Faction.TryIncreasePopulation(amount);
-    }
-    public void ReleasePopulation(int amount)
-    {
-        Faction.ReleasePopulation(amount);
-    }
-    public void AddMaxPopulation(int amount)
-    {
-        Faction.AddMaxPopulation(amount);
     }
 }
