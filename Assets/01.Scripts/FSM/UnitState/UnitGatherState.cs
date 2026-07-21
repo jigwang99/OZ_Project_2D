@@ -104,7 +104,7 @@ public class UnitGatherState : UnitBaseState
     }
     private void MoveToBuilding()
     {
-        Castle castle = Castle.FindNearestCastle(Unit.transform.position);
+        Castle castle = Castle.FindNearestCastle(Unit.transform.position, pawn.OwnerFaction.Type);
         gather.SetReturnBuilding(castle);
 
         if (castle == null)

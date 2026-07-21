@@ -147,7 +147,7 @@ public class Player : MonoBehaviour
                     continue;
 
                 pawn.Gather.SetTargetResource(resource);
-                pawn.Gather.SetReturnBuilding(Castle.FindNearestCastle(pawn.transform.position));
+                pawn.Gather.SetReturnBuilding(Castle.FindNearestCastle(pawn.transform.position, pawn.OwnerFaction.Type));
                 pawn.StateMachine.ChangeState(pawn.GatherState);
             }
             return;

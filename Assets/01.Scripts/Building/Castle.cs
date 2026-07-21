@@ -11,7 +11,7 @@ public class Castle : ProductionBuilding
         base.OnEnable();
         ActiveCastle.Add(this);
     }
-    public static Castle FindNearestCastle(Vector2 position)
+    public static Castle FindNearestCastle(Vector2 position, FactionType factionType)
     {
         Castle nearest = null;
         float minDistance = float.MaxValue;
@@ -19,6 +19,8 @@ public class Castle : ProductionBuilding
         foreach(Castle castle in ActiveCastle)
         {
             if (!castle.IsAlive)
+                continue;
+            if (castle.OwnerFaction.Type != factionType)
                 continue;
 
             float distance = Vector2.Distance(castle.transform.position, position);

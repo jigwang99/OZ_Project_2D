@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System;
+using System.Collections.Generic;
+using Unity.Jobs;
 
 public enum FactionType
 {
@@ -9,6 +11,9 @@ public enum FactionType
 
 public class Faction
 {
+    private List<Unit> units = new List<Unit>();
+    public IReadOnlyList<Unit> Units => units;
+
     public FactionType Type {  get; private set; }
 
     public int Wood { get; private set; }
@@ -77,5 +82,15 @@ public class Faction
     {
         MaxPopulation = Mathf.Max(0, MaxPopulation + amount);
         OnPopulationChanged?.Invoke();
+    }
+    public void RegisterUnit(Unit unit)
+    {
+        if(!units.Contains(unit))
+            units.Add(unit);
+    }
+    public void UnregisterUnit(Unit unit)
+    {
+        if(units.Contains(unit))
+            units.Remove(unit);
     }
 }

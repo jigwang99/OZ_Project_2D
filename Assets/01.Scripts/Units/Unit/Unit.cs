@@ -86,6 +86,7 @@ public abstract class Unit : MonoBehaviour, IPoolable, IDamageable
     protected void Die()
     {
         IsAlive = false;
+        OwnerFaction.UnregisterUnit(this);
         if(gameObject.layer == (int)Layer.Player)
         {
             Player.instance.DeselectUnit(this);
@@ -123,6 +124,7 @@ public abstract class Unit : MonoBehaviour, IPoolable, IDamageable
             allianceMask = (1 << (int)Layer.Enemy) | (1 << (int)Layer.EnemyBuilding);
             enemyMask = (1 << (int)Layer.Player) | (1 << (int)Layer.PlayerBuilding);
         }
+        OwnerFaction.RegisterUnit(this);
         GetComponent<UnitVisual>()?.ApplyAnime();
     }
     public virtual void Init()
