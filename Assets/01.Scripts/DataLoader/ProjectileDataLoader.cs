@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-public class ProjectileManager : MonoBehaviour
+public class ProjectileDataLoader : MonoBehaviour
 {
-    public static ProjectileManager instance;
+    public static ProjectileDataLoader instance;
 
     [SerializeField] private ProjectileData projectileData;
     private Dictionary<ProjectileType, ProjectileStat> projectileDictionary = new Dictionary<ProjectileType, ProjectileStat>();

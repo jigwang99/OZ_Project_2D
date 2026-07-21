@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-public class UnitManager : MonoBehaviour
+public class UnitDataLoader : MonoBehaviour
 {
-    public static UnitManager instance;
+    public static UnitDataLoader instance;
 
     [SerializeField] private UnitData unitData;
     private Dictionary<UnitType, UnitStat> unitDictionary  = new Dictionary<UnitType, UnitStat>();

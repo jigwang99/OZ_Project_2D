@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+
 public class BuildingManager : MonoBehaviour
 {
     public static BuildingManager instance;
 
-    [SerializeField] private BuildingData buildingData;
-    private Dictionary<BuildingType, BuildingStat> buildingDictionary = new Dictionary<BuildingType, BuildingStat> ();
+    private Dictionary<BuildingType, int> playerBuildingCount = new Dictionary<BuildingType, int>();
 
     private void Awake()
     {
@@ -14,20 +14,20 @@ public class BuildingManager : MonoBehaviour
         else
             Destroy(gameObject);
         DontDestroyOnLoad(gameObject);
-
-        LoadBuildingData();
     }
-    private void LoadBuildingData()
+    public void RegisterPlayerBuilding(BuildingType type)
     {
-        buildingDictionary.Clear();
-        for(int i = 0; i < buildingData.buildingList.Count; i++)
-        {
-            BuildingStat buildingStat = buildingData.buildingList[i].Clone();
-            buildingDictionary[buildingStat.BuildingType] = buildingStat;
-        }
+        playerBuildingCount.TryGetValue(type, out int count);
+        playerBuildingCount[type] = count + 1;
     }
-    public BuildingStat GetBuildingStat(BuildingType type)
+    public void UnregisterPlayerBuilding(BuildingType type)
     {
-        return buildingDictionary.GetValueOrDefault(type);
+        if (!playerBuildingCount.TryGetValue(type, out int count))
+            return;
+        playerBuildingCount[type] = Mathf.Max(0, count - 1);
+    }
+    public bool HasPlayerBuilding(BuildingType type)
+    {
+        return playerBuildingCount.TryGetValue(type, out int count) && count > 0;
     }
 }

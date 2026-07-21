@@ -16,8 +16,10 @@ public class UnitGatherState : UnitBaseState
     private Phase phase;
     private float timer;
 
-    private const float range = 1.5f;
-    private const float Delay = 0.3f;
+    private const float range = 0.5f;
+    private const float gatherDelay = 2f;
+    private const float returnDelay = 1f;
+
     public UnitGatherState(Unit unit) : base(unit)
     {
         pawn = unit as Pawn;
@@ -97,7 +99,7 @@ public class UnitGatherState : UnitBaseState
             pawn.SetInteractAnimation(tool);
 
             phase = Phase.Gathering;
-            timer = Delay;
+            timer = gatherDelay;
         }
     }
     private void MoveToBuilding()
@@ -124,7 +126,7 @@ public class UnitGatherState : UnitBaseState
         {
             Unit.SetRunAnimation(false);
             phase = Phase.Returning;
-            timer = Delay;
+            timer = returnDelay;
         }
     }
     private void Gathering()

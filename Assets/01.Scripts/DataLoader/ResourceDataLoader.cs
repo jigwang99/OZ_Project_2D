@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class ResourceManager : MonoBehaviour
+public class ResourceDataLoader : MonoBehaviour
 {
-    public static ResourceManager instance;
+    public static ResourceDataLoader instance;
 
     [SerializeField] private ResourceData resourceData;
     private Dictionary<ResourceType, ResourceStat> resourceDictionary = new Dictionary<ResourceType, ResourceStat>();

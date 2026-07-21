@@ -13,7 +13,7 @@ public abstract class ProductionBuilding : Building
 
     public BuildingProductState ProductState { get; protected set; }
     public bool HasList => productList.Count > 0;
-    public float CurrentProductTime => UnitManager.instance.GetUnitStat(productList.FirstOrDefault()).ProductTime;
+    public float CurrentProductTime => UnitDataLoader.instance.GetUnitStat(productList.FirstOrDefault()).ProductTime;
 
     [SerializeField] private Transform spawnPosition;
 
@@ -42,7 +42,10 @@ public abstract class ProductionBuilding : Building
         if (!producibleUnits.Contains(unitType))
             return false;
 
-        UnitStat unitStat = UnitManager.instance.GetUnitStat(unitType);
+        if (!CanProduce(unitType))
+            return false;
+
+        UnitStat unitStat = UnitDataLoader.instance.GetUnitStat(unitType);
 
         if (!Player.instance.TryIncreasePopulation(unitStat.Population))
             return false;
@@ -107,10 +110,20 @@ public abstract class ProductionBuilding : Building
     }
     private void Refund(UnitType unitType)
     {
-        UnitStat unitStat = UnitManager.instance.GetUnitStat(unitType);
+        UnitStat unitStat = UnitDataLoader.instance.GetUnitStat(unitType);
         Player.instance.AddWood(unitStat.WoodCost);
         Player.instance.AddGold(unitStat.GoldCost);
         Player.instance.ReleasePopulation(unitStat.Population);
     }
-    
+    public bool CanProduce(UnitType unitType)
+    {
+        UnitStat stat = UnitDataLoader.instance.GetUnitStat(unitType);
+        if (stat == null)
+            return false;
+
+        if (stat.RequiredBuilding == BuildingType.None)
+            return true;
+
+        return BuildingManager.instance.HasPlayerBuilding(stat.RequiredBuilding);
+    }
 }

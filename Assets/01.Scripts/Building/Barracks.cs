@@ -7,7 +7,7 @@ public class Barracks : ProductionBuilding
     public override void Init()
     {
         if(buildingStat == null)
-            buildingStat = BuildingManager.instance.GetBuildingStat(BuildingType.Barracks);
+            buildingStat = BuildingDataLoader.instance.GetBuildingStat(BuildingType.Barracks);
         CurrentHp = buildingStat.MaxHp;
         IsAlive = true;
         StateMachine.ChangeState(BuildedState);

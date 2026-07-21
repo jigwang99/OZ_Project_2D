@@ -126,7 +126,7 @@ public abstract class Unit : MonoBehaviour, IPoolable, IDamageable
     public virtual void Init()
     {
         if (unitStat == null)
-            unitStat = UnitManager.instance.GetUnitStat(Type);
+            unitStat = UnitDataLoader.instance.GetUnitStat(Type);
         SetSelected(false);
         CurrentHp = unitStat.MaxHp;
         IsAlive = true;

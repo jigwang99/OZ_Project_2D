@@ -19,12 +19,13 @@ MonoBehaviour:
     defense: 0
     population: 1
     moveSpeed: 8
-    attackRange: 2
+    attackRange: 1
     attackCooldown: 2
     vision: 5
     woodCost: 50
     goldCost: 0
     productTime: 8
+    requiredBuilding: 0
     gatherAmount: 8
     icon: {fileID: -5948806968594788206, guid: f06e2727e33304d9d86114733c00ba84, type: 3}
   - unitType: 1
@@ -39,6 +40,7 @@ MonoBehaviour:
     woodCost: 200
     goldCost: 50
     productTime: 20
+    requiredBuilding: 0
     gatherAmount: 0
     icon: {fileID: 7384290322352760091, guid: 728135fe2ac4b434ab56e445d647d2a0, type: 3}
   - unitType: 2
@@ -53,6 +55,7 @@ MonoBehaviour:
     woodCost: 100
     goldCost: 25
     productTime: 16
+    requiredBuilding: 4
     gatherAmount: 0
     icon: {fileID: 7257567913506708742, guid: 2a0fcb2f11a4d496d9d10417bc8e1ab1, type: 3}
   - unitType: 3
@@ -67,6 +70,7 @@ MonoBehaviour:
     woodCost: 100
     goldCost: 0
     productTime: 14
+    requiredBuilding: 0
     gatherAmount: 0
     icon: {fileID: -594197781322936934, guid: 31e15b074d7344a3b99376dd4f70eb1d, type: 3}
   - unitType: 4
@@ -81,5 +85,6 @@ MonoBehaviour:
     woodCost: 50
     goldCost: 100
     productTime: 16
+    requiredBuilding: 5
     gatherAmount: 0
     icon: {fileID: 4723107735738678597, guid: 2018574d4308f4786a63ea08083f13cc, type: 3}

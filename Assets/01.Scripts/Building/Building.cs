@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public abstract class Building : MonoBehaviour, IPoolable, IDamageable
@@ -7,6 +8,8 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
     [SerializeField] private Vector2 obstacleSize;
 
     private bool populationProvided;
+    private bool IsRegistered;
+    private bool IsPlayerBuilding => gameObject.layer == (int)Layer.PlayerBuilding;
     public abstract BuildingType Type { get; }
     public BuildingStat BuildingStat => buildingStat;
 
@@ -54,6 +57,8 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
     protected void Die()
     {
         IsAlive = false;
+        UnregisterPlayer();
+
         if(Player.instance.SelectBuilding == this)
             Player.instance.DeselectBuilding();
 
@@ -77,6 +82,7 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
     }
     public void ProvidePopulation()
     {
+        RegisterPlayer();
         if (populationProvided || buildingStat.PopulationProvide <= 0)
             return;
 
@@ -103,12 +109,27 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
 
         GetComponent<BuildingVisual>()?.ApplySprite();
     }
+    private void RegisterPlayer()
+    {
+        if (IsRegistered || !IsPlayerBuilding)
+            return;
+        IsRegistered = true;
+        BuildingManager.instance.RegisterPlayerBuilding(Type);
+    }
+    private void UnregisterPlayer()
+    {
+        if (!IsRegistered)
+            return;
+        IsRegistered = false;
+        BuildingManager.instance.UnregisterPlayerBuilding(Type);
+    }
     public virtual void Init()
     {
         if (buildingStat == null)
-            buildingStat = BuildingManager.instance.GetBuildingStat(Type);
+            buildingStat = BuildingDataLoader.instance.GetBuildingStat(Type);
 
         populationProvided = false;
+        IsRegistered = false;
         CurrentHp = buildingStat.MaxHp;
         IsAlive = true;
         StateMachine.ChangeState(IsSkipBuilded ? IdleState : BuildedState);
