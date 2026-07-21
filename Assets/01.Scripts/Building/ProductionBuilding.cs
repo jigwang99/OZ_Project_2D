@@ -124,4 +124,10 @@ public abstract class ProductionBuilding : Building
             return true;
         return OwnerFaction.HasBuilding(stat.RequiredBuilding);
     }
+    public bool CanProduceType(UnitType unitType)
+    {
+        if(!producibleUnits.Contains(unitType)) // 생산 종류 검사
+            return false;
+        return CanProduce(unitType);
+    }
 }

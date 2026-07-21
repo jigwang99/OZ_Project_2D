@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1676778733085136181}
   - component: {fileID: 8787373340511426832}
   - component: {fileID: 6519962217362421968}
+  - component: {fileID: -1560705634428464731}
   m_Layer: 0
   m_Name: Archery
   m_TagString: Untagged
@@ -181,3 +182,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BuildingVisual
   allySprite: {fileID: 21300000, guid: 2bb7266a2b9e4494db34c60ba04a19a4, type: 3}
   enemySprite: {fileID: 21300000, guid: 40fa9502a6dcb4bdf8829c8654ceecb0, type: 3}
+--- !u!114 &-1560705634428464731
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3703057305481839201}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5d0f5dead55dde41b4f62316b86fc30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Archery
+  obstacleSize: {x: 0, y: 0}

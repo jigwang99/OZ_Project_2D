@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3462539670404379736}
   - component: {fileID: 1738442353217285282}
   - component: {fileID: 6169758418472896520}
+  - component: {fileID: -3517261602281351769}
   m_Layer: 0
   m_Name: Monastery
   m_TagString: Untagged
@@ -181,3 +182,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BuildingVisual
   allySprite: {fileID: 21300000, guid: a45aff6aa2c5d4d5f879c10f0231ba12, type: 3}
   enemySprite: {fileID: 21300000, guid: dba6a0ea45c49416fa947ae23f50275d, type: 3}
+--- !u!114 &-3517261602281351769
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6821213866125832997}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e85d224992d8464f8263f91a5c2bff4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Monastery
+  obstacleSize: {x: 0, y: 0}

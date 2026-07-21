@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 422176781662847301}
   - component: {fileID: 6452986158914483379}
   - component: {fileID: 6923863429480903673}
+  - component: {fileID: -2939223933060505926}
   m_Layer: 0
   m_Name: House
   m_TagString: Untagged
@@ -181,3 +182,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BuildingVisual
   allySprite: {fileID: 21300000, guid: 96ad664d87f2f48b7babf2f621531ae5, type: 3}
   enemySprite: {fileID: 21300000, guid: 4072398f97c2a4bd69440a0d7d29983b, type: 3}
+--- !u!114 &-2939223933060505926
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8812177742366105777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 622a456cc14b95a4bae2c79ac2c62f9e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::House
+  obstacleSize: {x: 0, y: 0}
