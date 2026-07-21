@@ -120,10 +120,8 @@ public abstract class ProductionBuilding : Building
         UnitStat stat = UnitDataLoader.instance.GetUnitStat(unitType);
         if (stat == null)
             return false;
-
         if (stat.RequiredBuilding == BuildingType.None)
             return true;
-
-        return BuildingManager.instance.HasBuilding(OwnerFaction.Type, stat.RequiredBuilding);
+        return OwnerFaction.HasBuilding(stat.RequiredBuilding);
     }
 }

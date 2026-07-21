@@ -88,10 +88,8 @@ public abstract class Unit : MonoBehaviour, IPoolable, IDamageable
         IsAlive = false;
         OwnerFaction.UnregisterUnit(this);
         if(gameObject.layer == (int)Layer.Player)
-        {
             Player.instance.DeselectUnit(this);
-            OwnerFaction.ReleasePopulation(unitStat.Population);
-        }
+        OwnerFaction.ReleasePopulation(unitStat.Population);
         ReturnToPool();
     }
     public void SetRunAnimation(bool isRun)

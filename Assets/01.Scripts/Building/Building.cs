@@ -89,7 +89,6 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
 
         populationProvided = true;
         OwnerFaction.AddMaxPopulation(buildingStat.PopulationProvide);
-
     }
     public void WithdrawPopulation()
     {
@@ -116,14 +115,14 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
         if (IsRegistered || !IsPlayerBuilding)
             return;
         IsRegistered = true;
-        BuildingManager.instance.RegisterBuilding(OwnerFaction.Type, Type);
+        OwnerFaction.RegisterBuilding(this);
     }
     private void UnregisterOwner()
     {
         if (!IsRegistered)
             return;
         IsRegistered = false;
-        BuildingManager.instance.UnregisterBuilding(OwnerFaction.Type, Type);
+        OwnerFaction.UnregisterBuilding(this);
     }
     public virtual void Init()
     {
