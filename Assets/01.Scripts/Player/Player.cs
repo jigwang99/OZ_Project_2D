@@ -21,16 +21,23 @@ public class Player : MonoBehaviour
     public IReadOnlyList<Unit> SelectUnitList => selectUnitList;
     public Building SelectBuilding => selectBuilding;
 
-    public int Wood {  get; private set; }
-    public int Gold { get; private set; }
+    public Faction Faction => FactionManager.instance.Player;
+    public int Wood => Faction.Wood;
+    public int Gold => Faction.Gold;
+    public int CurrentPopulation => Faction.CurrentPopulation;
+    public int MaxPopulation => Faction.MaxPopulation;
 
-    private const int limitPopulation = 200;
     public const int MaxSelectCount = 12;
-    public int CurrentPopulation { get; private set; }
-    public int MaxPopulation { get; private set; }
-
-    public event Action OnPopulationChanged;
-    public event Action OnResourceChanged;
+    public event Action OnPopulationChanged
+    {
+        add => Faction.OnPopulationChanged += value;
+        remove => Faction.OnPopulationChanged -= value;
+    }
+    public event Action OnResourceChanged
+    {
+        add => Faction.OnResourceChanged += value;
+        remove => Faction.OnResourceChanged -= value;
+    }
     public event Action OnSelectionChanged;
     private void Awake()
     {
@@ -41,16 +48,6 @@ public class Player : MonoBehaviour
             Destroy(gameObject);
         }
         DontDestroyOnLoad(gameObject);
-    }
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        Wood = 500;
-        Gold = 0;
-        MaxPopulation = 0;
-
-        OnResourceChanged?.Invoke();
-        OnPopulationChanged?.Invoke();
     }
 
     // Update is called once per frame
@@ -270,53 +267,31 @@ public class Player : MonoBehaviour
     // 자원
     public void AddResource(ResourceType resourceType, int amount)
     {
-        switch(resourceType)
-        {
-            case ResourceType.Wood:
-                AddWood(amount);
-                break;
-            case ResourceType.Gold:
-                AddGold(amount); 
-                break;
-        }    
+        Faction.AddResource(resourceType, amount);
     }
     public void AddWood(int amount)
     {
-        Wood += amount;
-        OnResourceChanged?.Invoke();
+        Faction.AddWood(amount);
     }
     public void AddGold(int amount)
     {
-        Gold += amount;
-        OnResourceChanged?.Invoke();
+        Faction.AddGold(amount);
     }
     public bool TryReduceResource(int woodCost, int goldCost)
     {
-        if (Wood < woodCost || Gold < goldCost)
-            return false;
-
-        Wood -= woodCost;
-        Gold -= goldCost;
-        OnResourceChanged?.Invoke();
-        return true;
+        return Faction.TryReduceResource(woodCost, goldCost);
     }
     // 인구수
     public bool TryIncreasePopulation(int amount)
     {
-        if (CurrentPopulation + amount > MaxPopulation)
-            return false;
-        CurrentPopulation += amount;
-        OnPopulationChanged?.Invoke();
-        return true;
+        return Faction.TryIncreasePopulation(amount);
     }
     public void ReleasePopulation(int amount)
     {
-        CurrentPopulation = Mathf.Max(0, CurrentPopulation -  amount);
-        OnPopulationChanged?.Invoke();
+        Faction.ReleasePopulation(amount);
     }
     public void AddMaxPopulation(int amount)
     {
-        MaxPopulation = Mathf.Max(0, MaxPopulation + amount);
-        OnPopulationChanged?.Invoke();
+        Faction.AddMaxPopulation(amount);
     }
 }

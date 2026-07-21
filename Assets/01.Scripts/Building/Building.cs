@@ -9,6 +9,7 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
 
     private bool populationProvided;
     private bool IsRegistered;
+
     private bool IsPlayerBuilding => gameObject.layer == (int)Layer.PlayerBuilding;
     public abstract BuildingType Type { get; }
     public BuildingStat BuildingStat => buildingStat;
@@ -24,6 +25,7 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
     public BuildingBuildedState BuildedState { get; protected set; }
     public StateMachine StateMachine { get; protected set; }
     
+    public Faction OwnerFaction { get; private set; }
     protected virtual void Awake()
     {
         StateMachine = new StateMachine();
@@ -107,6 +109,7 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
         gameObject.layer = (int)(ownerLayer == Layer.Player || ownerLayer == Layer.PlayerBuilding
             ? Layer.PlayerBuilding : Layer.EnemyBuilding);
 
+        OwnerFaction = FactionManager.instance.FromLayer(gameObject.layer);
         GetComponent<BuildingVisual>()?.ApplySprite();
     }
     private void RegisterPlayer()

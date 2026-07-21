@@ -36,6 +36,8 @@ public abstract class Unit : MonoBehaviour, IPoolable, IDamageable
     protected Animator animator;
     private int isRun;
     protected int isAttack;
+
+    public Faction OwnerFaction { get; protected set; }
     protected virtual void Awake()
     {
         Movement = GetComponent<UnitMovement>();
@@ -110,7 +112,7 @@ public abstract class Unit : MonoBehaviour, IPoolable, IDamageable
     public void SetLayer(Layer layer)
     {
         gameObject.layer = (int)layer;
-
+        OwnerFaction = FactionManager.instance.FromLayer((int)layer);
         if(layer == Layer.Player)
         {
             allianceMask = (1 << (int)Layer.Player) | (1 << (int)Layer.PlayerBuilding);
