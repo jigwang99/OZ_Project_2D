@@ -137,5 +137,5 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
             ProvidePopulation();
     }
     public abstract void ReturnToPool();
-    protected virtual void OnDisable() { };
+    protected virtual void OnDisable() { }
 }
