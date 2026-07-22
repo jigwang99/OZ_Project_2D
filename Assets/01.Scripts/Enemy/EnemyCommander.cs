@@ -17,6 +17,14 @@ public class ProductionRule
     public int priority;
     public List<EnemyPhase> phases = new List<EnemyPhase>();
 }
+[Serializable]
+public class ConstructionRule
+{
+    public BuildingType buildingType;
+    public int maxCount;
+    public int priority;
+    public List<EnemyPhase> phases = new List<EnemyPhase>();
+}
 public class EnemyCommander : MonoBehaviour
 {
     [Header("판단 주기")]
@@ -26,9 +34,6 @@ public class EnemyCommander : MonoBehaviour
     [SerializeField] private LayerMask resourceLayerMask;
     [SerializeField] private float resourceSearchRadius = 30f;
 
-    [Header("생산")]
-
-
     [Header("페이즈 분리")]
     [SerializeField] private int buildCount = 200;
     [SerializeField] private int combatCount = 15;
@@ -36,9 +41,14 @@ public class EnemyCommander : MonoBehaviour
     [Header("생산 규칙")]
     [SerializeField] private List<ProductionRule> productionRules = new List<ProductionRule>();
 
+    [Header("건설 규칙")]
+    [SerializeField] private List<ConstructionRule> constructionRules = new List<ConstructionRule>();
+
     private EnemyPhase currentPhase;
     private Faction faction;
     private float thinkTimer;
+
+    private Building currentConstructing;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -57,6 +67,7 @@ public class EnemyCommander : MonoBehaviour
 
         currentPhase = UpdateEnemyPhase();
 
+        HandleConstruction();
         PawnToGather();
         HandleProduction();
         // 전투
@@ -178,6 +189,9 @@ public class EnemyCommander : MonoBehaviour
     }
     private ProductionBuilding FindProducer(UnitType type)
     {
+        ProductionBuilding best = null;
+        int minQueue = int.MaxValue;
+
         foreach (Building building in faction.Buildings)
         {
             if (!(building is ProductionBuilding productionBuilding) || !productionBuilding.IsAlive)
@@ -186,9 +200,19 @@ public class EnemyCommander : MonoBehaviour
                 continue;
             if (!productionBuilding.CanProduceType(type))
                 continue;
-            return productionBuilding;
+            
+            if(productionBuilding.ProductList.Count < minQueue)
+            {
+                minQueue = productionBuilding.ProductList.Count;
+                best = productionBuilding;
+            }
         }
-        return null;
+        return best;
+    }
+    // 건물 건설
+    private void HandleConstruction()
+    {
+
     }
     // 전투
 

@@ -10,7 +10,6 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
     private bool populationProvided;
     private bool IsRegistered;
 
-    private bool IsPlayerBuilding => gameObject.layer == (int)Layer.PlayerBuilding;
     public abstract BuildingType Type { get; }
     public BuildingStat BuildingStat => buildingStat;
 
@@ -112,7 +111,7 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
     }
     private void RegisterOwner()
     {
-        if (IsRegistered || !IsPlayerBuilding)
+        if (IsRegistered)
             return;
         IsRegistered = true;
         OwnerFaction.RegisterBuilding(this);
@@ -138,4 +137,5 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
             ProvidePopulation();
     }
     public abstract void ReturnToPool();
+    protected virtual void OnDisable() { };
 }
