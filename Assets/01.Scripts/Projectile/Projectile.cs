@@ -5,7 +5,7 @@ public abstract class Projectile : MonoBehaviour, IPoolable
     protected ProjectileStat projectileStat;
     protected float timer;
     protected Rigidbody2D rb;
-
+    protected bool isReturned;
     public abstract ProjectileType Type { get; }
     public Vector2 Direction { get; protected set; }
 
@@ -20,6 +20,9 @@ public abstract class Projectile : MonoBehaviour, IPoolable
     }
     protected void Update()
     {
+        if (projectileStat == null)
+            return;
+
         if(timer > projectileStat.LifeTime)
             ReturnToPool();
     }
@@ -43,6 +46,7 @@ public abstract class Projectile : MonoBehaviour, IPoolable
         timer = 0f;
         Direction = Vector2.zero;
         Damage = 0;
+        isReturned = false;
     }
     public abstract void ReturnToPool();
 }

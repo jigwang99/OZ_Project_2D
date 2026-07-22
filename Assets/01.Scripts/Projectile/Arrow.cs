@@ -16,7 +16,9 @@ public class Arrow : Projectile
     }
     public override void ReturnToPool()
     {
+        if (isReturned)
+            return;
+        isReturned = true;
         ObjectPoolManager.instance.ReturnObject("Arrow", this.gameObject);
-        transform.rotation = Quaternion.identity;
     }
 }

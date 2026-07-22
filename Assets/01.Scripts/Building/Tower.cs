@@ -34,11 +34,21 @@ public class Tower : Building
     }
     public void Fire(Unit target)
     {
-        Transform arrow = ObjectPoolManager.instance.GetObject<Transform>("Arrow");
-        arrow.position = transform.position;
-        Vector2 dir = (target.transform.position - arrow.position).normalized;
-        //arrow.rotation = Quaternion.
-        arrow.GetComponent<Arrow>().SetDamageAndLayer(buildingStat.AttackDamage, gameObject.layer);
+        if(target == null || !target.IsAlive)
+            return;
+
+        Arrow arrow = ObjectPoolManager.instance.GetObject<Arrow>("Arrow");
+        if (arrow == null)
+            return;
+
+        Vector2 origin = transform.position;
+        Vector2 dir = ((Vector2)target.transform.position - origin).normalized;
+        if (dir == Vector2.zero)
+            dir = Vector2.right;
+
+        arrow.transform.position = origin + dir * 0.3f;
+        arrow.transform.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg);
+        arrow.SetDamageAndLayer(buildingStat.AttackDamage, gameObject.layer);
     }
     public override void Init()
     {
