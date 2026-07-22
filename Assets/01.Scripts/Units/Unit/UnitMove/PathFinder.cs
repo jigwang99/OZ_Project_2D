@@ -103,7 +103,7 @@ public static class PathFinder
 
         for(int i  = 1; i < path.Count - 1; i++)
         {
-            Vector2 newDirection = (path[i - 1] - path[i]).normalized;
+            Vector2 newDirection = (path[i] - path[i - 1]).normalized;
             if (Vector2.Distance(newDirection, lastDirection) > 0.01f)
             {
                 simplified.Add(path[i]);

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System;
 using System.Linq;
-using UnityEditor.Networking.PlayerConnection;
 
 public enum EnemyPhase
 {
@@ -80,18 +79,20 @@ public class EnemyCommander : MonoBehaviour
         PawnToGather();
         HandleProduction();
         // 전투
+
+        Debug.Log($"phase = {currentPhase}, wood = {faction.Wood}, gold = {faction.Gold}, pop = {faction.CurrentPopulation}, cons = {(currentConstructing != null ? currentConstructing.Type.ToString() : "none")}");
     }
     private EnemyPhase UpdateEnemyPhase()
     {
-        int combatUnits = CountCombatUnits();
-
-        if (combatUnits > combatCount)
-            return EnemyPhase.Combat;
-
-        if (faction.Wood >= buildCount)
-            return EnemyPhase.Build;
-
-        return EnemyPhase.Gather;
+        switch(currentPhase)
+        {
+            case EnemyPhase.Gather:
+                return faction.Wood >= buildCount ? EnemyPhase.Build : EnemyPhase.Gather;
+            case EnemyPhase.Build:
+                return CountCombatUnits() > combatCount ? EnemyPhase.Combat : EnemyPhase.Build;
+            default:
+                return currentPhase;
+        }
     }
     private int CountCombatUnits()
     {
@@ -290,7 +291,7 @@ public class EnemyCommander : MonoBehaviour
 
             Vector2 candidate = GridManager.instance.FitNode(center + dir * distance);
 
-            if(!CanPlaceAt(center, size))
+            if(!CanPlaceAt(candidate, size))
                 continue;
 
             position = candidate;
@@ -311,7 +312,7 @@ public class EnemyCommander : MonoBehaviour
     }
     private void AssignPawn(Building building)
     {
-        if (!IsValidBuilder(builder, building))
+        if (IsValidBuilder(builder, building))
             return;
 
         builder = FindBuilder();
