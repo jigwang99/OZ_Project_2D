@@ -2544,7 +2544,7 @@ MonoBehaviour:
   resourceSearchRadius: 30
   productionRules:
   - unitType: 0
-    maxCount: 5
+    maxCount: 20
     priority: 0
     phases: 000000000100000002000000
   - unitType: 3
@@ -2569,22 +2569,38 @@ MonoBehaviour:
   minBuildDistance: 5
   maxBuildDistance: 30
   placeTryCount: 30
+  populationMargin: 4
   constructionRules:
-  - buildingType: 3
+  - buildingType: 2
     size: {x: 2, y: 2}
-    maxCount: 5
+    maxCount: 20
     priority: 0
-    phases: 0100000002000000
-  - buildingType: 4
+    phases: 000000000100000002000000
+    whenPopulationFull: 1
+  - buildingType: 3
     size: {x: 2, y: 2}
     maxCount: 1
     priority: 1
     phases: 0100000002000000
+    whenPopulationFull: 0
+  - buildingType: 4
+    size: {x: 2, y: 2}
+    maxCount: 1
+    priority: 2
+    phases: 0100000002000000
+    whenPopulationFull: 0
   - buildingType: 5
     size: {x: 2, y: 2}
     maxCount: 1
     priority: 3
-    phases: 0100000002000000
+    phases: 02000000
+    whenPopulationFull: 0
+  - buildingType: 6
+    size: {x: 2, y: 2}
+    maxCount: 3
+    priority: 5
+    phases: 02000000
+    whenPopulationFull: 0
 --- !u!4 &628479612
 Transform:
   m_ObjectHideFlags: 0

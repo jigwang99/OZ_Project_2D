@@ -25,6 +25,8 @@ public class ConstructionRule
     public int maxCount;
     public int priority;
     public List<EnemyPhase> phases = new List<EnemyPhase>();
+    public bool whenPopulationFull;
+
 }
 public class EnemyCommander : MonoBehaviour
 {
@@ -48,6 +50,7 @@ public class EnemyCommander : MonoBehaviour
     [SerializeField] private float minBuildDistance = 5f;
     [SerializeField] private float maxBuildDistance = 30f;
     [SerializeField] private int placeTryCount = 30;
+    [SerializeField] private int populationMargin = 4;
 
     [Header("건설 규칙")]
     [SerializeField] private List<ConstructionRule> constructionRules = new List<ConstructionRule>();
@@ -80,7 +83,7 @@ public class EnemyCommander : MonoBehaviour
         HandleProduction();
         // 전투
 
-        Debug.Log($"phase = {currentPhase}, wood = {faction.Wood}, gold = {faction.Gold}, pop = {faction.CurrentPopulation}, cons = {(currentConstructing != null ? currentConstructing.Type.ToString() : "none")}");
+        Debug.Log($"phase = {currentPhase}, wood = {faction.Wood}, gold = {faction.Gold}, pop = {faction.CurrentPopulation}/{faction.MaxPopulation}, cons = {(currentConstructing != null ? currentConstructing.Type.ToString() : "none")}");
     }
     private EnemyPhase UpdateEnemyPhase()
     {
@@ -238,6 +241,8 @@ public class EnemyCommander : MonoBehaviour
             if (!rule.phases.Contains(currentPhase))
                 continue;
             if (faction.CountBuildings(rule.buildingType) >= rule.maxCount)
+                continue;
+            if (rule.whenPopulationFull && faction.MaxPopulation - faction.CurrentPopulation > populationMargin)
                 continue;
 
             BuildingStat stat = BuildingDataLoader.instance.GetBuildingStat(rule.buildingType);
