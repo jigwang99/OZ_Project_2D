@@ -6,7 +6,7 @@ public class ObjectPoolManager : MonoBehaviour
     public static ObjectPoolManager instance;
 
     // Unit, Projectile, Building
-    [SerializeField] private int poolSize = 5;
+    [SerializeField] private int poolSize;
     [SerializeField] private List<GameObject> objList;
     
 
