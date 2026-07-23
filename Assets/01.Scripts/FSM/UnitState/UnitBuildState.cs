@@ -30,7 +30,10 @@ public class UnitBuildState : UnitBaseState
     public override void FixedUpdate()
     {
         if (build.TargetBuilding == null || build.IsInRange())
+        {
+            Unit.Movement.Stop();
             return;
+        } 
         refindTimer -= Time.fixedDeltaTime;
         if(refindTimer <=0)
         {

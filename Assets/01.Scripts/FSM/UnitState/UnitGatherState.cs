@@ -124,6 +124,7 @@ public class UnitGatherState : UnitBaseState
     {
         if(Unit.Movement.HasArrived || IsNear(gather.ReturnBuilding.transform))
         {
+            Unit.Movement.Stop();
             Unit.SetRunAnimation(false);
             phase = Phase.Returning;
             timer = returnDelay;

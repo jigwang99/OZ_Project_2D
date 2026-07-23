@@ -648,7 +648,6 @@ public class EnemyCommander : MonoBehaviour
     {
         if (Vector2.Distance(unit.transform.position, destination) <= arriveDistance)
             return;
-
         if (!issue && unit.StateMachine.CurrentState == unit.MoveState && !unit.Movement.HasArrived)
             return;
 

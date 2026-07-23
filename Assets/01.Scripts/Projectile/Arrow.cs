@@ -7,7 +7,7 @@ public class Arrow : Projectile
     {
         base.Start();
     }
-    protected override void OnCollisionEnter2D(Collision2D collision)
+    protected override void OnTriggerEnter2D(Collider2D collision)
     {
         IDamageable damageable = collision.gameObject.GetComponent<IDamageable>();
         if (damageable != null)

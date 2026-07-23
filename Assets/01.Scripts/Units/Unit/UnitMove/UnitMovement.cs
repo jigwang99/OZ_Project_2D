@@ -17,6 +17,11 @@ public class UnitMovement : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         unit = GetComponent<Unit>();
     }
+    public void OnEnable()
+    {
+        Stop();
+        HasArrived = true;
+    }
     public void SetMoveSpeed(float moveSpeed)
     {
         this.moveSpeed = moveSpeed;
@@ -26,6 +31,9 @@ public class UnitMovement : MonoBehaviour
         path = PathFinder.FindPath(rb.position, destination);
         targetIndex = 0;
         HasArrived = (path == null || path.Count == 0);
+
+        if (HasArrived)
+            rb.linearVelocity = Vector2.zero;
     }
     public void SetDestinationNear(Transform target, float offset = 0.5f)
     {
@@ -41,37 +49,54 @@ public class UnitMovement : MonoBehaviour
         }
         else
             point = target.position;
+
         SetDestination(point);
+    }
+    public bool IsArrived()
+    {
+        if (path == null || targetIndex >= path.Count)
+        {
+            Stop();
+            HasArrived = true;
+            return true;
+        }
+
+        float reach = Mathf.Max(waypointReachedDistance, moveSpeed * Time.fixedDeltaTime);
+        float sqrReach = reach * reach;
+        Vector2 currentPos = rb.position;
+
+        while (targetIndex < path.Count && (path[targetIndex] - currentPos).sqrMagnitude <= sqrReach)
+            targetIndex++;
+
+        if(targetIndex >=  path.Count)
+        {
+            Stop();
+            HasArrived= true;
+            return true;
+        }
+        return false;
     }
     public void Move()
     {
-        if (HasArrived || path == null || targetIndex >= path.Count) return;
+        if (HasArrived || IsArrived())
+            return;
 
-        Vector2 currentPos = rb.position;
-        Vector2 targetPoint = path[targetIndex];
-        Vector2 toTarget = targetPoint - currentPos;
-
-        if (toTarget.magnitude <= waypointReachedDistance)
-        {
-            targetIndex++;
-            if (targetIndex >= path.Count)
-            {
-                Stop();
-                HasArrived = true;
-                return;
-            }
-            targetPoint = path[targetIndex];
-            toTarget = targetPoint - currentPos;
-        }
-
+        Vector2 toTarget = path[targetIndex] - rb.position;
         Vector2 direction = toTarget.normalized;
+
         unit.FlipSprite(direction.x);
-        Vector2 newPos = currentPos + direction * moveSpeed * Time.fixedDeltaTime;
-        rb.MovePosition(newPos);
+
+        float speed = moveSpeed;
+        if (targetIndex == path.Count - 1)
+            speed = Mathf.Min(moveSpeed, toTarget.magnitude / Time.fixedDeltaTime);
+
+        rb.linearVelocity = direction * speed;
+
     }
     public void Stop()
     {
         rb.linearVelocity = Vector2.zero;
         path = null;
+        targetIndex = 0;
     }
 }
