@@ -55,6 +55,20 @@ public class EnemyCommander : MonoBehaviour
     [Header("건설 규칙")]
     [SerializeField] private List<ConstructionRule> constructionRules = new List<ConstructionRule>();
 
+    [Header("전투")]
+    [SerializeField] private Transform rallyPoint;
+    [SerializeField] private int attackSquadSize = 10;
+    [SerializeField] private int regroupSquadSize = 3;
+    [SerializeField] private float defenseRadius = 10f;
+    [SerializeField] private float engageDistance = 10f;
+    [SerializeField] private float rallyOffset = 6f;
+    [SerializeField] private float squadSpacing = 1.1f;
+
+    private List<Unit> squad = new List<Unit>();
+    private IDamageable combatTarget;
+    private Faction playerFaction;
+    private bool hasOrder;
+
     private EnemyPhase currentPhase;
     private Faction faction;
     private float thinkTimer;
@@ -65,6 +79,7 @@ public class EnemyCommander : MonoBehaviour
     void Start()
     {
         faction = FactionManager.instance.Enemy;
+        playerFaction = FactionManager.instance.Player;
         currentPhase = EnemyPhase.Gather;
     }
 
@@ -81,7 +96,7 @@ public class EnemyCommander : MonoBehaviour
         HandleConstruction();
         PawnToGather();
         HandleProduction();
-        // 전투
+        HandleCombat();
 
         Debug.Log($"phase = {currentPhase}, wood = {faction.Wood}, gold = {faction.Gold}, pop = {faction.CurrentPopulation}/{faction.MaxPopulation}, cons = {(currentConstructing != null ? currentConstructing.Type.ToString() : "none")}");
     }
@@ -101,7 +116,7 @@ public class EnemyCommander : MonoBehaviour
     {
         return faction.CountUnits(UnitType.Lancer) + faction.CountUnits(UnitType.Archer) + faction.CountUnits(UnitType.Monk) + faction.CountUnits(UnitType.Warrior);
     }
-    //자원 채집
+    #region gathering
     private void PawnToGather()
     {
         int pawnIndex = 0;
@@ -166,7 +181,8 @@ public class EnemyCommander : MonoBehaviour
         }
         return nearest;
     }
-    // 생산
+    #endregion
+    #region Production
     private void HandleProduction()
     {
         foreach(ProductionRule rule in productionRules.OrderBy(r => r.priority))
@@ -222,7 +238,8 @@ public class EnemyCommander : MonoBehaviour
         }
         return best;
     }
-    // 건물 건설
+    #endregion
+    #region Construction
     private void HandleConstruction()
     {
         if(currentConstructing != null)
@@ -271,11 +288,8 @@ public class EnemyCommander : MonoBehaviour
             return null;
 
         Building building = ObjectPoolManager.instance.GetObject<Building>(type.ToString());
-        if(building == null)
-        {
-            // 새거 만들기
-        }
-
+        if (building == null)
+            return null;
         building.transform.position = position;
         building.SetLayer(Layer.Enemy);
         building.SetSkipBuilded(false);
@@ -306,7 +320,7 @@ public class EnemyCommander : MonoBehaviour
     }
     private Vector2 GetCenter()
     {
-        Castle castle = Castle.FindNearestCastle(transform.position, FactionType.Enemy);
+        Castle castle = Castle.FindNearestCastle(transform.position, FactionType.Enemy);    
         return castle != null ? (Vector2)castle.transform.position : (Vector2)transform.position;
     }
     private bool CanPlaceAt(Vector2 center, Vector2 size)
@@ -353,6 +367,204 @@ public class EnemyCommander : MonoBehaviour
         }
         return find;
     }
-    // 전투
+    #endregion
+    #region Combat
+    private void HandleCombat()
+    {
+        CollectSquad();
 
+        if(squad.Count == 0)
+        {
+            combatTarget = null;
+            hasOrder = false;
+            return;
+        }
+        IDamageable intruder = FindIntruder();
+        if(intruder != null)
+        {
+            combatTarget = intruder;
+            // 이동후 공격
+        }
+
+        bool canAttack = currentPhase == EnemyPhase.Combat && squad.Count >= attackSquadSize;
+
+        if(!canAttack)
+        {
+            combatTarget = null;
+            // 집결
+            return;
+        }
+
+
+        // 이동
+        Vector2 center = GetSquadCenter();
+
+        if (!IsValidTarget(combatTarget))
+            combatTarget = FindAttackTarget(center);
+
+        if(combatTarget == null)
+        {
+            //
+            return;
+        }
+    }
+    private void CollectSquad()
+    {
+        squad.Clear();
+
+        foreach(Unit unit in faction.Units)
+        {
+            if (unit == null || !unit.IsAlive || unit is Pawn)
+                continue;
+            if (squad.Contains(unit))
+                continue;
+            squad.Add(unit);
+        }
+    }
+    private bool IsValidTarget(IDamageable target)
+    {
+        GameObject targetObject = target.transform.gameObject;
+
+        if (target == null || !target.IsAlive || targetObject.activeInHierarchy)
+            return false;
+
+        return targetObject.layer == (int)Layer.Player || targetObject.layer == (int)Layer.PlayerBuilding;
+    }
+    private IDamageable FindIntruder()
+    {
+        IDamageable nearest = null;
+        float minDistance = defenseRadius;
+
+        foreach(Unit unit in playerFaction.Units)
+        {
+            if (!IsValidTarget(unit))
+                continue;
+
+            float distance = DistanceToBase(unit.transform.position);
+            if(distance < minDistance)
+            {
+                minDistance = distance;
+                nearest = unit;
+            }
+        }
+        return nearest;
+    }
+    private float DistanceToBase(Vector2 position)
+    {
+        float minDistance = float.MaxValue;
+
+        foreach(Building building in faction.Buildings)
+        {
+            if (building == null || !building.IsAlive)
+                continue;
+
+            float distance = Vector2.Distance(position, building.transform.position);
+            if(distance < minDistance)
+                minDistance = distance;
+        }
+        return minDistance;
+    }
+    private Vector2 GetSquadCenter()
+    {
+        Vector2 sum = Vector2.zero;
+        foreach (Unit unit in squad)
+            sum += (Vector2)unit.transform.position;
+        return sum / squad.Count;
+    }
+    private IDamageable FindAttackTarget(Vector2 from)
+    {
+        Unit nearestUnit = null;
+        float minUnitDistance = float.MaxValue;
+
+        foreach(Unit unit in playerFaction.Units)
+        {
+            if (!IsValidTarget(unit))
+                continue;
+
+            float distance = Vector2.Distance(from, unit.transform.position);
+            if(distance < minUnitDistance)
+            {
+                minUnitDistance = distance;
+                nearestUnit = unit;
+            }
+        }
+        if(nearestUnit != null && minUnitDistance <= engageDistance)
+            return nearestUnit;
+
+        Building nearestBuilding = null;
+        float minBuildingDistance = float.MaxValue;
+
+        foreach(Building building in playerFaction.Buildings)
+        {
+            if (!IsValidTarget(building))
+                continue;
+
+            float distance = Vector2.Distance(from, building.transform.position) - GetTargetBonus(building);
+            if(distance < minBuildingDistance)
+            {
+                minBuildDistance = distance;
+                nearestBuilding = building;
+            }    
+        }
+        if(nearestBuilding != null)
+            return nearestBuilding;
+
+        return nearestUnit;
+    }
+    private float GetTargetBonus(Building building)
+    {
+        if (building is Tower)
+            return 12f;
+        if (building is ProductionBuilding)
+            return 8f;
+        return 0f;
+    }
+    private Vector2 GetPlayerBasePosition()
+    {
+        Castle castle = Castle.FindNearestCastle(GetCenter(), FactionType.Player);
+        if (IsValidTarget(castle))
+            return castle.transform.position;
+
+        foreach(Building building in playerFaction.Buildings)
+            if(IsValidTarget(building))
+                return building.transform.position;
+
+        return Vector2.zero;
+    }
+    private Vector2 GetRallyPoint()
+    {
+        Vector2 center = GetCenter();
+        Vector2 dir = GetPlayerBasePosition() - center;
+
+        return center + dir.normalized * rallyOffset;
+    }
+    private void CommandSquad(Vector2 destination, IDamageable target)
+    {
+
+        int column = Mathf.CeilToInt(Mathf.Sqrt(squad.Count));
+        int row = Mathf.CeilToInt((float)squad.Count / column);
+        for (int i = 0; i < squad.Count; i++)
+        {
+            int x = i % column;
+            int y = i / column;
+
+            Vector2 offset = new Vector2(
+                (x - (column - 1) * 0.5f) * squadSpacing,
+                ((row - 1) * 0.5f - y) * squadSpacing);
+
+            
+        }
+
+    }
+    private void CommandUnit(Unit unit, Vector2 destination, IDamageable target)
+    {
+        if(unit is Monk monk)
+        {
+            if (monk.StateMachine.CurrentState == monk.HealState)
+                return;
+
+            
+        }
+    }
+    #endregion
 }
