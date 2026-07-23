@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.InputSystem;
+using Unity.VisualScripting;
 
 public class CameraManager : MonoBehaviour
 {
@@ -16,6 +17,8 @@ public class CameraManager : MonoBehaviour
     [SerializeField] private Vector2 mapMin = new Vector2(-25f, -25f);
     [SerializeField] private Vector2 mapMax = new Vector2(25f, 25f);
 
+    [SerializeField] private Transform startPosition;
+
     private int focusIndex;
     private void Awake()
     {
@@ -27,6 +30,10 @@ public class CameraManager : MonoBehaviour
 
         if (mainCamera == null)
             mainCamera = Camera.main;
+    }
+    private void Start()
+    {
+        mainCamera.transform.position = new Vector3(startPosition.position.x, startPosition.position.y, mainCamera.transform.position.z);
     }
     // Update is called once per frame
     void Update()
