@@ -2,12 +2,20 @@
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using Mono.Cecil.Cil;
 
 public enum EnemyPhase
 {
     Gather,
     Build,
     Combat,
+}
+public enum SquadOrder
+{
+    None,
+    Defend,
+    Attack,
+    Regroup
 }
 [Serializable]
 public class ProductionRule
@@ -41,7 +49,7 @@ public class EnemyCommander : MonoBehaviour
     [SerializeField] private LayerMask resourceLayerMask;
     [SerializeField] private float resourceSearchRadius = 30f;
 
-    
+
     [Header("생산 규칙")]
     [SerializeField] private List<ProductionRule> productionRules = new List<ProductionRule>();
 
@@ -59,7 +67,7 @@ public class EnemyCommander : MonoBehaviour
     [SerializeField] private Transform rallyPoint;
     [SerializeField] private int attackSquadSize = 10;
     [SerializeField] private int regroupSquadSize = 3;
-    [SerializeField] private float defenseRadius = 10f;
+    [SerializeField] private float defenseRadius = 15f;
     [SerializeField] private float engageDistance = 10f;
     [SerializeField] private float rallyOffset = 6f;
     [SerializeField] private float squadSpacing = 1.1f;
@@ -102,7 +110,7 @@ public class EnemyCommander : MonoBehaviour
     }
     private EnemyPhase UpdateEnemyPhase()
     {
-        switch(currentPhase)
+        switch (currentPhase)
         {
             case EnemyPhase.Gather:
                 return faction.Wood >= buildCount ? EnemyPhase.Build : EnemyPhase.Gather;
@@ -121,7 +129,7 @@ public class EnemyCommander : MonoBehaviour
     {
         int pawnIndex = 0;
 
-        foreach(Unit unit in faction.Units)
+        foreach (Unit unit in faction.Units)
         {
             if (!(unit is Pawn pawn) || !pawn.IsAlive)
                 continue;
@@ -146,7 +154,7 @@ public class EnemyCommander : MonoBehaviour
     }
     private ResourceType DecideResourceType(int pawnIndex)
     {
-        switch(currentPhase)
+        switch (currentPhase)
         {
             case EnemyPhase.Gather:
                 return ResourceType.Wood;
@@ -154,7 +162,7 @@ public class EnemyCommander : MonoBehaviour
                 return (pawnIndex % 4 == 3) ? ResourceType.Gold : ResourceType.Wood;
             case EnemyPhase.Combat:
                 return (pawnIndex % 2 == 1) ? ResourceType.Gold : ResourceType.Wood;
-            default: 
+            default:
                 return ResourceType.Wood;
         }
     }
@@ -164,16 +172,16 @@ public class EnemyCommander : MonoBehaviour
 
         Resource nearest = null;
         float minDistance = float.MaxValue;
-        foreach(Collider2D hit in hits)
+        foreach (Collider2D hit in hits)
         {
             Resource res = hit.GetComponent<Resource>();
-            if(res == null || res.IsDepleted)
+            if (res == null || res.IsDepleted)
                 continue;
-            if(res.Type != type)
+            if (res.Type != type)
                 continue;
 
             float dist = Vector2.Distance(from, res.transform.position);
-            if(dist < minDistance)
+            if (dist < minDistance)
             {
                 minDistance = dist;
                 nearest = res;
@@ -185,11 +193,11 @@ public class EnemyCommander : MonoBehaviour
     #region Production
     private void HandleProduction()
     {
-        foreach(ProductionRule rule in productionRules.OrderBy(r => r.priority))
+        foreach (ProductionRule rule in productionRules.OrderBy(r => r.priority))
         {
             if (!rule.phases.Contains(currentPhase))
                 continue;
-            
+
             int current = faction.CountUnits(rule.unitType) + QueueCount(rule.unitType);
             if (current >= rule.maxCount)
                 continue;
@@ -205,12 +213,12 @@ public class EnemyCommander : MonoBehaviour
     private int QueueCount(UnitType type)  //생산큐에있는 유닛 수
     {
         int count = 0;
-        foreach(Building building in faction.Buildings)
+        foreach (Building building in faction.Buildings)
         {
-            if(building is ProductionBuilding pb)
+            if (building is ProductionBuilding pb)
             {
-                foreach(UnitType queued in pb.ProductList)
-                    if(queued == type)
+                foreach (UnitType queued in pb.ProductList)
+                    if (queued == type)
                         count++;
             }
         }
@@ -229,8 +237,8 @@ public class EnemyCommander : MonoBehaviour
                 continue;
             if (!productionBuilding.CanProduceType(type))
                 continue;
-            
-            if(productionBuilding.ProductList.Count < minQueue)
+
+            if (productionBuilding.ProductList.Count < minQueue)
             {
                 minQueue = productionBuilding.ProductList.Count;
                 best = productionBuilding;
@@ -242,9 +250,9 @@ public class EnemyCommander : MonoBehaviour
     #region Construction
     private void HandleConstruction()
     {
-        if(currentConstructing != null)
+        if (currentConstructing != null)
         {
-            if(currentConstructing.IsAlive && currentConstructing.IsConstruction)
+            if (currentConstructing.IsAlive && currentConstructing.IsConstruction)
             {
                 AssignPawn(currentConstructing);
                 return;
@@ -253,7 +261,7 @@ public class EnemyCommander : MonoBehaviour
             builder = null;
         }
 
-        foreach(ConstructionRule rule in constructionRules.OrderBy(r => r.priority))
+        foreach (ConstructionRule rule in constructionRules.OrderBy(r => r.priority))
         {
             if (!rule.phases.Contains(currentPhase))
                 continue;
@@ -269,8 +277,8 @@ public class EnemyCommander : MonoBehaviour
 
             if (faction.Wood < stat.WoodCost || faction.Gold < stat.GoldCost)
                 continue;
-            
-            if(!TryFindPlacePosition(rule.size, out Vector2 position))
+
+            if (!TryFindPlacePosition(rule.size, out Vector2 position))
                 continue;
 
             Building building = PlaceBuilding(rule.buildingType, position, stat);
@@ -301,7 +309,7 @@ public class EnemyCommander : MonoBehaviour
         position = Vector2.zero;
         Vector2 center = GetCenter();
 
-        for(int i = 0; i < placeTryCount; i++)
+        for (int i = 0; i < placeTryCount; i++)
         {
             float angle = UnityEngine.Random.Range(0f, Mathf.PI * 2f);
             float distance = UnityEngine.Random.Range(minBuildDistance, maxBuildDistance);
@@ -310,7 +318,7 @@ public class EnemyCommander : MonoBehaviour
 
             Vector2 candidate = GridManager.instance.FitNode(center + dir * distance);
 
-            if(!CanPlaceAt(candidate, size))
+            if (!CanPlaceAt(candidate, size))
                 continue;
 
             position = candidate;
@@ -320,7 +328,7 @@ public class EnemyCommander : MonoBehaviour
     }
     private Vector2 GetCenter()
     {
-        Castle castle = Castle.FindNearestCastle(transform.position, FactionType.Enemy);    
+        Castle castle = Castle.FindNearestCastle(transform.position, FactionType.Enemy);
         return castle != null ? (Vector2)castle.transform.position : (Vector2)transform.position;
     }
     private bool CanPlaceAt(Vector2 center, Vector2 size)
@@ -340,7 +348,7 @@ public class EnemyCommander : MonoBehaviour
 
         builder.Build.SetTarget(building);
         builder.StateMachine.ChangeState(builder.BuildState);
-        
+
     }
     private bool IsValidBuilder(Pawn pawn, Building building)
     {
@@ -348,7 +356,7 @@ public class EnemyCommander : MonoBehaviour
             return false;
         if (!pawn.gameObject.activeInHierarchy)
             return false;
-        if(pawn.StateMachine.CurrentState != pawn.BuildState)
+        if (pawn.StateMachine.CurrentState != pawn.BuildState)
             return false;
         return pawn.Build.TargetBuilding == building;
     }
@@ -356,57 +364,84 @@ public class EnemyCommander : MonoBehaviour
     {
         Pawn find = null;
 
-        foreach(Unit unit in faction.Units)
+        foreach (Unit unit in faction.Units)
         {
             if (!(unit is Pawn pawn) || !pawn.IsAlive)
                 continue;
             if (pawn.StateMachine.CurrentState == pawn.IdleState)
                 return pawn;
-            if(find == null && pawn.StateMachine.CurrentState == pawn.GatherState)
+            if (find == null && pawn.StateMachine.CurrentState == pawn.GatherState)
                 find = pawn;
         }
         return find;
     }
     #endregion
     #region Combat
+    private SquadOrder currentOrder = SquadOrder.None;
+    private IDamageable lastOrderTarget;
+    private Vector2 orderDestination;
+
+    private const float reorderDistance = 3f;
+    private const float arriveDistance = 1.5f;
+
     private void HandleCombat()
     {
         CollectSquad();
 
-        if(squad.Count == 0)
+        if (squad.Count == 0)
         {
-            combatTarget = null;
-            hasOrder = false;
+            ClearOrder();
             return;
         }
+        // 1순위 기지방어
         IDamageable intruder = FindIntruder();
-        if(intruder != null)
+        if (intruder != null)
         {
             combatTarget = intruder;
-            // 이동후 공격
-        }
-
-        bool canAttack = currentPhase == EnemyPhase.Combat && squad.Count >= attackSquadSize;
-
-        if(!canAttack)
-        {
-            combatTarget = null;
-            // 집결
+            IssueOrder(SquadOrder.Defend, intruder.transform.position, intruder);
             return;
         }
 
-
-        // 이동
-        Vector2 center = GetSquadCenter();
-
-        if (!IsValidTarget(combatTarget))
-            combatTarget = FindAttackTarget(center);
-
-        if(combatTarget == null)
+        // 2순위 병력이 모이고 combatPhase일 경우 공격
+        if(currentPhase == EnemyPhase.Combat && squad.Count >= attackSquadSize)
         {
-            //
+            if(!IsValidTarget(combatTarget))
+                combatTarget = FindAttackTarget(GetSquadCenter());
+
+            Vector2 destination = combatTarget != null ? (Vector2)combatTarget.transform.position : GetPlayerBasePosition();
+
+            IssueOrder(SquadOrder.Attack, destination, combatTarget);
             return;
         }
+
+        // 3순위 재집결
+        combatTarget = null;
+
+        if(squad.Count < regroupSquadSize)
+        {
+            ClearOrder();
+            return;
+        }
+
+        IssueOrder(SquadOrder.Regroup, GetRallyPoint(), null);
+    }
+    private void ClearOrder()
+    {
+        combatTarget = null;
+        lastOrderTarget = null;
+        currentOrder = SquadOrder.None;
+        hasOrder = false;
+    }
+    private void IssueOrder(SquadOrder order, Vector2 destination, IDamageable target)
+    {
+        bool issue = !hasOrder || order != currentOrder || !ReferenceEquals(target, lastOrderTarget) || Vector2.Distance(destination, orderDestination) > reorderDistance;
+
+        currentOrder = order;
+        lastOrderTarget = target;
+        orderDestination = destination;
+        hasOrder = true;
+
+        CommandSquad(destination, target, issue);
     }
     private void CollectSquad()
     {
@@ -416,6 +451,8 @@ public class EnemyCommander : MonoBehaviour
         {
             if (unit == null || !unit.IsAlive || unit is Pawn)
                 continue;
+            if (!unit.gameObject.activeInHierarchy)
+                continue;
             if (squad.Contains(unit))
                 continue;
             squad.Add(unit);
@@ -423,9 +460,12 @@ public class EnemyCommander : MonoBehaviour
     }
     private bool IsValidTarget(IDamageable target)
     {
+        if (target == null || !target.IsAlive)
+            return false;
+
         GameObject targetObject = target.transform.gameObject;
 
-        if (target == null || !target.IsAlive || targetObject.activeInHierarchy)
+        if (!targetObject.activeInHierarchy)
             return false;
 
         return targetObject.layer == (int)Layer.Player || targetObject.layer == (int)Layer.PlayerBuilding;
@@ -466,6 +506,9 @@ public class EnemyCommander : MonoBehaviour
     }
     private Vector2 GetSquadCenter()
     {
+        if(squad.Count == 0)
+            return GetCenter();
+
         Vector2 sum = Vector2.zero;
         foreach (Unit unit in squad)
             sum += (Vector2)unit.transform.position;
@@ -473,6 +516,7 @@ public class EnemyCommander : MonoBehaviour
     }
     private IDamageable FindAttackTarget(Vector2 from)
     {
+        // 교전거리 안의 유닛 
         Unit nearestUnit = null;
         float minUnitDistance = float.MaxValue;
 
@@ -491,6 +535,7 @@ public class EnemyCommander : MonoBehaviour
         if(nearestUnit != null && minUnitDistance <= engageDistance)
             return nearestUnit;
 
+        // 적 건물
         Building nearestBuilding = null;
         float minBuildingDistance = float.MaxValue;
 
@@ -502,7 +547,7 @@ public class EnemyCommander : MonoBehaviour
             float distance = Vector2.Distance(from, building.transform.position) - GetTargetBonus(building);
             if(distance < minBuildingDistance)
             {
-                minBuildDistance = distance;
+                minBuildingDistance = distance;
                 nearestBuilding = building;
             }    
         }
@@ -529,16 +574,19 @@ public class EnemyCommander : MonoBehaviour
             if(IsValidTarget(building))
                 return building.transform.position;
 
-        return Vector2.zero;
+        return GetCenter();
     }
     private Vector2 GetRallyPoint()
     {
+        if (rallyPoint != null)
+            return rallyPoint.position;
+
         Vector2 center = GetCenter();
         Vector2 dir = GetPlayerBasePosition() - center;
 
         return center + dir.normalized * rallyOffset;
     }
-    private void CommandSquad(Vector2 destination, IDamageable target)
+    private void CommandSquad(Vector2 destination, IDamageable target, bool issue)
     {
 
         int column = Mathf.CeilToInt(Mathf.Sqrt(squad.Count));
@@ -552,19 +600,62 @@ public class EnemyCommander : MonoBehaviour
                 (x - (column - 1) * 0.5f) * squadSpacing,
                 ((row - 1) * 0.5f - y) * squadSpacing);
 
-            
+            CommandUnit(squad[i], destination + offset, target, issue);
         }
 
     }
-    private void CommandUnit(Unit unit, Vector2 destination, IDamageable target)
+    private void CommandUnit(Unit unit, Vector2 destination, IDamageable target, bool issue)
     {
         if(unit is Monk monk)
         {
             if (monk.StateMachine.CurrentState == monk.HealState)
                 return;
 
-            
+            Unit sick = monk.Heal.FindTarget();
+            if(sick != null && sick.IsAlive)
+            {
+                monk.Heal.SetTarget(sick);
+                monk.StateMachine.ChangeState(monk.HealState);
+                return;
+            }
+            MoveUnit(monk, destination, issue);
         }
+        if(unit.Attack != null && IsValidTarget(target))
+        {
+            float distance = Vector2.Distance(unit.transform.position, target.transform.position);
+
+            if(distance <= engageDistance)
+            {
+                if (!issue && ReferenceEquals(unit.Attack.GetTarget(), target) && IsEngaging(unit))
+                    return;
+
+                unit.Attack.SetTarget(target);
+                unit.StateMachine.ChangeState(unit.ChaseState);
+                return;
+            }
+        }
+
+        if (!issue && unit.Attack != null && unit.Attack.GetTarget() != null && IsEngaging(unit))
+            return;
+
+        MoveUnit(unit, destination, issue);
+    }
+    private bool IsEngaging(Unit unit)
+    {
+        return unit.StateMachine.CurrentState == unit.ChaseState || unit.StateMachine.CurrentState == unit.AttackState;
+    }
+    private void MoveUnit(Unit unit, Vector2 destination, bool issue)
+    {
+        if (Vector2.Distance(unit.transform.position, destination) <= arriveDistance)
+            return;
+
+        if (!issue && unit.StateMachine.CurrentState == unit.MoveState && !unit.Movement.HasArrived)
+            return;
+
+        unit.Movement.SetDestination(destination);
+
+        if(unit.StateMachine.CurrentState != unit.MoveState)
+            unit.StateMachine.ChangeState(unit.MoveState);
     }
     #endregion
 }

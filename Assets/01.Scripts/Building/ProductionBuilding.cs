@@ -132,7 +132,7 @@ public abstract class ProductionBuilding : Building
     }
     protected override void OnDisable()
     {
-        for(int i = productList.Count - 1; i >= 0; i++)
+        for(int i = productList.Count - 1; i >= 0; i--)
         {
             Refund(productList[i]);
             productList.RemoveAt(i);
