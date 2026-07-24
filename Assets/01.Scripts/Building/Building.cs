@@ -25,11 +25,15 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
     public StateMachine StateMachine { get; protected set; }
     
     public Faction OwnerFaction { get; private set; }
+
+    private SelectCircle selectCircle;
     protected virtual void Awake()
     {
         StateMachine = new StateMachine();
         IdleState = new BuildingIdleState(this);
         BuildedState = new BuildingBuildedState(this);
+
+        selectCircle = GetComponent<SelectCircle>();
     }
     protected virtual void OnEnable()
     {
@@ -41,6 +45,7 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
     public void SetSelected(bool selected)
     {
         IsSelected = selected;
+        selectCircle?.SetVisible(selected);
     }
     public void TakeDamage(int attackDamage)
     {

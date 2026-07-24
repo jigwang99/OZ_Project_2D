@@ -1042,7 +1042,7 @@ Transform:
   m_GameObject: {fileID: 271192733}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 51.76, y: -56.17, z: 0}
+  m_LocalPosition: {x: 50.78, y: -59.05, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2986,7 +2986,7 @@ TilemapRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -8
   m_MaskInteraction: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
@@ -3966,7 +3966,7 @@ Transform:
   m_GameObject: {fileID: 840059995}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 51.39, y: -59.18, z: 0}
+  m_LocalPosition: {x: 54.63, y: -60.21, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7717,7 +7717,7 @@ TilemapRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -9
   m_MaskInteraction: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
@@ -176005,8 +176005,8 @@ MonoBehaviour:
   mainCamera: {fileID: 519420031}
   moveSpeed: 10
   edgeSize: 20
-  mapMin: {x: -50, y: -50}
-  mapMax: {x: 50, y: 50}
+  mapMin: {x: -64, y: -64}
+  mapMax: {x: 64, y: 64}
   startPosition: {fileID: 1845128120}
 --- !u!4 &1932661896
 Transform:
@@ -176944,7 +176944,7 @@ Transform:
   m_GameObject: {fileID: 2118094361}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 48.27, y: -59, z: 0}
+  m_LocalPosition: {x: 55.06, y: -62.08, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

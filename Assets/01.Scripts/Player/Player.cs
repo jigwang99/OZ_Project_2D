@@ -201,6 +201,7 @@ public class Player : MonoBehaviour
         if (selectUnitList.Contains(unit))
         {
             selectUnitList.Remove(unit);
+            unit.SetSelected(false);
             OnSelectionChanged?.Invoke();
         }
     }

@@ -38,6 +38,9 @@ public abstract class Unit : MonoBehaviour, IPoolable, IDamageable
     protected int isAttack;
 
     public Faction OwnerFaction { get; protected set; }
+
+    private SelectCircle selectCircle;
+
     protected virtual void Awake()
     {
         Movement = GetComponent<UnitMovement>();
@@ -53,6 +56,8 @@ public abstract class Unit : MonoBehaviour, IPoolable, IDamageable
         isAttack = Animator.StringToHash("isAttack");
 
         spriteRenderer = GetComponent<SpriteRenderer>();
+
+        selectCircle = GetComponent<SelectCircle>();
     }
     protected void OnEnable()
     {
@@ -64,6 +69,7 @@ public abstract class Unit : MonoBehaviour, IPoolable, IDamageable
     public void SetSelected(bool selected)
     {
         IsSelected = selected;
+        selectCircle?.SetVisible(selected);
     }
     public void RestoreHP(int amount)
     {
