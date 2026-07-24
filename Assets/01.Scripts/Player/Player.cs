@@ -2,9 +2,13 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Unity.VisualScripting;
 public class Player : MonoBehaviour
 {
     public static Player instance;
+
+    
 
     [SerializeField] private List<Unit> selectUnitList = new List<Unit>();
     [SerializeField] private Building selectBuilding;
@@ -26,6 +30,10 @@ public class Player : MonoBehaviour
     public const int MaxSelectCount = 12;
 
     public event Action OnSelectionChanged;
+
+    public enum TargetingMode { None, Move, Attack }
+    public TargetingMode Targeting {  get; private set; }
+
     private void Awake()
     {
         if (instance == null)
@@ -40,30 +48,115 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        HandleProduckKeys();
         HandleRightClick();
     }
-    private void HandleProduckKeys()
+    public bool HasTargetingSource()
     {
-        if (!(selectBuilding is ProductionBuilding productionBuilding))
+        return selectUnitList.Count > 0 || selectBuilding is Tower;
+    }
+    public void BeginTargeting(TargetingMode mode)
+    {
+        if (!HasTargetingSource())
             return;
-        if (!productionBuilding.IsAlive)
+        Targeting = mode;
+    }
+    public void CancelTargeting()
+    {
+        Targeting = TargetingMode.None;
+    }
+    public void ExcuteTargeting(Vector2 worldPos)
+    {
+        TargetingMode mode = Targeting;
+        Targeting = TargetingMode.None;
+
+        if (mode == TargetingMode.None)
             return;
 
-        for (int i = 0; i < productionKeys.Length; i++)
+        if(selectBuilding is Tower tower)
         {
-            if (Keyboard.current[productionKeys[i]].wasPressedThisFrame)
-                productionBuilding.EnqueueUnitByIndex(i);
+            if(mode == TargetingMode.Attack)
+                TowerAttack(tower, worldPos);
+            return;
         }
 
-        if (Keyboard.current.escapeKey.wasPressedThisFrame)
-            productionBuilding.CancelLastProduct();
+        if (selectUnitList.Count == 0)
+            return;
+
+        if (mode == TargetingMode.Move)
+            MoveUnits(selectUnitList, worldPos);
+        else if (mode == TargetingMode.Attack)
+            AttackTo(worldPos);
+    }
+    private void AttackTo(Vector2 worldPos)
+    {
+        Collider2D hit = Physics2D.OverlapCircle(worldPos, 0.2f, enemyLayerMask);
+        Unit target = hit != null ? hit.GetComponent<Unit>() : null;
+        bool hasTarget = target != null && target.IsAlive;
+
+        List<Unit> moveUnits = new List<Unit>();
+
+        foreach (Unit unit in selectUnitList)
+        {
+            if (unit == null || !unit.IsAlive)
+                continue;
+            if (!hasTarget || unit.Attack == null)
+            {
+                moveUnits.Add(unit);
+                continue;
+            }
+            unit.Attack.SetTarget(target);
+            unit.StateMachine.ChangeState(unit.ChaseState);
+        }
+        if (moveUnits.Count > 0)
+            MoveUnits(moveUnits, worldPos); 
+    }
+    private void TowerAttack(Tower tower, Vector2 worldPos)
+    {
+        if (!tower.IsAlive)
+            return;
+
+        Collider2D hit = Physics2D.OverlapCircle(worldPos, 0.2f, enemyLayerMask);
+        Unit target = hit != null ? hit.GetComponent<Unit>() : null;
+
+        if (target == null || !target.IsAlive)
+            return;
+
+        if(!tower.IsInRange(target))
+        {
+            return;
+        }
+        tower.SetTarget(target);
+        tower.StateMachine.ChangeState(tower.AttackState);
+    }
+    public void StopUnits()
+    {
+        foreach(Unit unit in selectUnitList)
+        {
+            if (unit == null || !unit.IsAlive)
+                continue;
+            unit.Attack?.SetTarget(null);
+
+            if(unit is Pawn pawn)
+            {
+                pawn.Gather.SetTargetResource(null);
+                pawn.Build.SetTarget(null);
+            }
+            unit.Movement.Stop();
+            unit.StateMachine.ChangeState(unit.IdleState);
+        }
+        CancelTargeting();
     }
     private void HandleRightClick()
     {
         if (BuildPlacer.instance != null && BuildPlacer.instance.IsPlacing)
             return;
-
+        
+        if(Targeting != TargetingMode.None)
+        {
+            if (!Mouse.current.rightButton.wasPressedThisFrame)
+                CancelTargeting();
+            return;
+        }
         if (!Mouse.current.rightButton.wasPressedThisFrame)
             return;
         if (selectUnitList == null || selectUnitList.Count == 0)
@@ -92,7 +185,6 @@ public class Player : MonoBehaviour
                 MoveUnits(notCombatUnits, worldPos);
             return;
         }
-
         // 유닛 힐(Monk만, 나머지 이동)
         Collider2D allyHit = Physics2D.OverlapCircle(worldPos, 0.2f, allyLayerMask);
         Unit ally = allyHit != null ? allyHit.GetComponent<Unit>() : null;
@@ -193,6 +285,7 @@ public class Player : MonoBehaviour
         {
             selectUnitList.Add(unit);
             unit.SetSelected(true);
+            CancelTargeting();
             OnSelectionChanged?.Invoke();
         }
     }
@@ -202,6 +295,7 @@ public class Player : MonoBehaviour
         {
             selectUnitList.Remove(unit);
             unit.SetSelected(false);
+            CancelTargeting();
             OnSelectionChanged?.Invoke();
         }
     }
@@ -213,21 +307,9 @@ public class Player : MonoBehaviour
 
         if (CameraManager.instance != null)
             CameraManager.instance.ResetFocusIndex();
+
+        CancelTargeting();
         OnSelectionChanged?.Invoke();
-    }
-    public bool HasSelectedPawn()
-    {
-        return selectUnitList.Count == 1 && selectUnitList[0] is Pawn;
-    }
-    public void CommandBuild(Building building)
-    {
-        foreach (Unit unit in selectUnitList)
-        {
-            if (!(unit is Pawn pawn))
-                continue;
-            pawn.Build.SetTarget(building);
-            pawn.StateMachine.ChangeState(pawn.BuildState);
-        }
     }
     // 건물선택
     public void BuildingSelect(Building building)
@@ -237,6 +319,7 @@ public class Player : MonoBehaviour
 
         selectBuilding = building;
         building.SetSelected(true);
+        CancelTargeting();
         OnSelectionChanged?.Invoke();
     }
     public void DeselectBuilding()
@@ -244,6 +327,7 @@ public class Player : MonoBehaviour
         if (selectBuilding != null)
             selectBuilding.SetSelected(false);
         selectBuilding = null;
+        CancelTargeting();
         OnSelectionChanged?.Invoke();
     }
     public void SelectSingleUnit(Unit unit)
@@ -251,5 +335,35 @@ public class Player : MonoBehaviour
         ClearSelectList();
         DeselectBuilding();
         SelectUnit(unit);
+    }
+    public bool HasSelectedPawn()
+    {
+        return selectUnitList.Count == 1 && selectUnitList[0] is Pawn;
+    }
+    public bool IsAllPawnSelected()
+    {
+        if (selectUnitList.Count == 0)
+            return false;
+
+        foreach (Unit unit in selectUnitList)
+            if (!(unit is Pawn) || !unit.IsAlive)
+                return false;
+        return true;
+    }
+    private Pawn FindBuilder()
+    {
+        foreach (Unit unit in selectUnitList)
+            if (unit is Pawn pawn && pawn.IsAlive)
+                return pawn;
+        return null;
+    }
+    public void CommandBuild(Building building)
+    {
+        Pawn builder = FindBuilder();
+        if (builder == null)
+            return;
+
+        builder.Build.SetTarget(building);
+        builder.StateMachine.ChangeState(builder.BuildState);
     }
 }

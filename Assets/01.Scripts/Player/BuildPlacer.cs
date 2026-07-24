@@ -6,13 +6,6 @@ using UnityEngine.InputSystem;
 public class BuildPlacer : MonoBehaviour
 {
     public static BuildPlacer instance;
-    
-    public enum BuildMode
-    {
-        None,
-        Menu,
-        Placing,
-    }
 
     [Serializable]
     public class PlaceInfo
@@ -28,17 +21,13 @@ public class BuildPlacer : MonoBehaviour
     [SerializeField] private List<PlaceInfo> placeInfos;
     [SerializeField] private LayerMask obstacleLayerMask;
 
-    [SerializeField] private Key buildMenuKey = Key.B;
-    [SerializeField] private GameObject buildMenuUI;
-
     private PlaceInfo currentPlaceInfo;
-    private BuildMode mode = BuildMode.None;
-    private int cancelFrame = 1;
+    private bool isPlacing;
+    private int cancelFrame = -1;
 
-    public bool IsPlacing => mode == BuildMode.Placing;
-    public bool IsMenuOpen => mode == BuildMode.Menu;
-    public bool IsBuildMode => mode != BuildMode.None;
-    public bool BlockCommand => IsBuildMode || cancelFrame == Time.frameCount;
+    public bool IsPlacing => isPlacing;
+    public bool BlockCommand => isPlacing || cancelFrame == Time.frameCount;
+    public IReadOnlyList<PlaceInfo> PlaceInfos => placeInfos;
 
     private void Awake()
     {
@@ -49,57 +38,11 @@ public class BuildPlacer : MonoBehaviour
     }
     private void Update()
     {
-        switch (mode)
-        { 
-            case BuildMode.None:
-                HandleOpenKey();
-                break;
-            case BuildMode.Menu:
-                HandleMenu();
-                break;
-            case BuildMode.Placing:
-                HandlePlacing();
-                break;
-        }
-
-    }
-    private void HandleOpenKey()
-    {
-        if (!Keyboard.current[buildMenuKey].wasPressedThisFrame)
+        if (!isPlacing)
             return;
-        if (!Player.instance.HasSelectedPawn())
-            return;
-
-        OpenMenu();
-    }
-    private void HandleMenu()
-    {
-        if(!Player.instance.HasSelectedPawn())
+        if(!Player.instance.IsAllPawnSelected())
         {
-            ExitBuildMode();
-            return;
-        }
-        if (Mouse.current.rightButton.wasPressedThisFrame || Keyboard.current.escapeKey.wasPressedThisFrame)
-        {
-            ExitBuildMode();
-            return;
-        }
-        foreach(PlaceInfo info in placeInfos)
-        {
-            if (info.hotKey == Key.None)
-                continue;
-            if (Keyboard.current[info.hotKey].wasPressedThisFrame )
-            {
-                StartPlacement(info);
-                return;
-            }
-        }
-    }
-    private void HandlePlacing()
-    {
-        if(!Player.instance.HasSelectedPawn())
-        {
-            ExitBuildMode();
+            CancelPlacement();
             return;
         }
 
@@ -110,39 +53,51 @@ public class BuildPlacer : MonoBehaviour
         bool canPlace = CanPlaceAt(fitPos);
         ghost.color = canPlace ? new Color(0, 1, 0, 0.5f) : new Color(1, 0, 0, 0.5f);
 
+        bool overUI = UIBlocker.IsPointerOverUI();
+
         if (Mouse.current.leftButton.wasPressedThisFrame && canPlace)
         {
             TryPlace(fitPos);
             return;
         }
-        if (Mouse.current.rightButton.wasPressedThisFrame || Keyboard.current.escapeKey.wasPressedThisFrame)
+        if (Mouse.current.rightButton.wasPressedThisFrame)
         {
-            OpenMenu();
+            CancelPlacement();
             return;
         }
+
     }
-    private void OpenMenu()
+    public void StartPlacement(BuildingType type)
     {
-        mode = BuildMode.Menu;
-        currentPlaceInfo = null;
-        ghost.gameObject.SetActive(false);
-        buildMenuUI?.SetActive(true);
-    }
-    private void StartPlacement(PlaceInfo info)
-    {
+        if (!Player.instance.IsAllPawnSelected())
+            return;
+
+        PlaceInfo info  = placeInfos.Find(p => p.type == type);
+        if (info == null)
+            return;
+
+        BuildingStat stat = BuildingDataLoader.instance.GetBuildingStat(type);
+        Faction faction = FactionManager.instance.Player;
+
+        if(stat == null || faction.Wood < stat.WoodCost || faction.Gold < stat.GoldCost)
+        {
+            return;
+        }
+        
         currentPlaceInfo = info;
         ghost.sprite = info.ghost;
         ghost.gameObject.SetActive(true);
-        mode = BuildMode.Placing;
-        buildMenuUI?.SetActive(false);
+        isPlacing = true;
     }
-    private void ExitBuildMode()
+    public void CancelPlacement()
     {
-        mode = BuildMode.Menu;
+        if (!isPlacing)
+            return;
+
+        isPlacing = false;
         currentPlaceInfo = null;
         cancelFrame = Time.frameCount;
         ghost.gameObject.SetActive(false);
-        buildMenuUI?.SetActive(false);
     }
     private bool CanPlaceAt(Vector2 center)
     {
@@ -153,7 +108,10 @@ public class BuildPlacer : MonoBehaviour
     {
         BuildingStat stat = BuildingDataLoader.instance.GetBuildingStat(currentPlaceInfo.type);
         if (!FactionManager.instance.Player.TryReduceResource(stat.WoodCost, stat.GoldCost))
+        {
+            CancelPlacement();
             return;
+        }
 
         Building building = ObjectPoolManager.instance.GetObject<Building>(currentPlaceInfo.type.ToString());
         building.SetLayer(Layer.Player);
@@ -162,7 +120,7 @@ public class BuildPlacer : MonoBehaviour
         building.transform.position = pos;
 
         Player.instance.CommandBuild(building);
-        ExitBuildMode();
+        CancelPlacement();
     }
 
 }   

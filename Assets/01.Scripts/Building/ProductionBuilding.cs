@@ -19,6 +19,8 @@ public abstract class ProductionBuilding : Building
 
     public IReadOnlyList<UnitType> ProductList => productList;
     public event Action OnProductChanged;
+    
+    public IReadOnlyList<UnitType> ProducibleUnits => producibleUnits;
 
     public float ProductProgress
     {

@@ -129,7 +129,7 @@ public class EnemyCommander : MonoBehaviour
     {
         int pawnIndex = 0;
 
-        foreach (Unit unit in faction.Units)
+        foreach (IDamageable unit in faction.Units)
         {
             if (!(unit is Pawn pawn) || !pawn.IsAlive)
                 continue;
@@ -394,7 +394,7 @@ public class EnemyCommander : MonoBehaviour
             return;
         }
         // 1순위 기지방어
-        IDamageable intruder = FindIntruder();
+        Unit intruder = FindIntruder();
         if (intruder != null)
         {
             combatTarget = intruder;
@@ -470,9 +470,9 @@ public class EnemyCommander : MonoBehaviour
 
         return targetObject.layer == (int)Layer.Player || targetObject.layer == (int)Layer.PlayerBuilding;
     }
-    private IDamageable FindIntruder()
+    private Unit FindIntruder()
     {
-        IDamageable nearest = null;
+        Unit nearest = null;
         float minDistance = defenseRadius;
 
         foreach(Unit unit in playerFaction.Units)

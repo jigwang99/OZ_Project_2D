@@ -9,7 +9,7 @@ public class Arrow : Projectile
     }
     protected override void OnTriggerEnter2D(Collider2D collision)
     {
-        IDamageable damageable = collision.gameObject.GetComponent<IDamageable>();
+        Unit damageable = collision.gameObject.GetComponent<Unit>();
         if (damageable != null)
             damageable.TakeDamage(Damage);
         ReturnToPool();
