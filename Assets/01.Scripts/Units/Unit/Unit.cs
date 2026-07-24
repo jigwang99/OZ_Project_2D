@@ -40,6 +40,7 @@ public abstract class Unit : MonoBehaviour, IPoolable, IDamageable
     public Faction OwnerFaction { get; protected set; }
 
     private SelectCircle selectCircle;
+    private MinimapMarker minimapMarker;
 
     protected virtual void Awake()
     {
@@ -58,6 +59,7 @@ public abstract class Unit : MonoBehaviour, IPoolable, IDamageable
         spriteRenderer = GetComponent<SpriteRenderer>();
 
         selectCircle = GetComponent<SelectCircle>();
+        minimapMarker = GetComponent<MinimapMarker>();
     }
     protected void OnEnable()
     {
@@ -130,6 +132,7 @@ public abstract class Unit : MonoBehaviour, IPoolable, IDamageable
         }
         OwnerFaction.RegisterUnit(this);
         GetComponent<UnitVisual>()?.ApplyAnime();
+        minimapMarker?.ApplyFaction((int)layer);
     }
     public virtual void Init()
     {

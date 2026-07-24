@@ -3,6 +3,18 @@ using UnityEngine;
 
 public class UnitMovement : MonoBehaviour
 {
+    [Header("끼임 처리")]
+    [SerializeField] private float stuckCheckTime = 0.5f;
+    [SerializeField] private float stuckDistance = 0.1f;
+    [SerializeField] private float escapeDistance = 1.0f;
+    [SerializeField] private float escapeTimeout = 1.0f;
+    [SerializeField] private float blockCheckRadius = 0.3f;
+    [SerializeField] private LayerMask blockLayerMask;
+
+    private const float destinationChangeThreshold = 0.3f;
+
+    private static Vector2[] escapeDirection = { Vector2.up, Vector2.down, Vector2.left, Vector2.right };
+
     private Rigidbody2D rb;
     private Unit unit;
     private float moveSpeed;
@@ -11,7 +23,18 @@ public class UnitMovement : MonoBehaviour
     private List<Vector2> path = new List<Vector2>();
     private int targetIndex;
 
+    private Vector2 finalDestination;
+    private bool hasFinalDestination;
+
+    private Vector2 lastCheckPosition;
+    private float stuckTimer;
+
+    private bool isEscaping;
+    private Vector2 escapeTarget;
+    private float escapeTimer;
+
     public bool HasArrived { get; private set; } = true;
+    public bool IsEscaping => isEscaping;
     public void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -21,6 +44,7 @@ public class UnitMovement : MonoBehaviour
     {
         Stop();
         HasArrived = true;
+        hasFinalDestination = false;
     }
     public void SetMoveSpeed(float moveSpeed)
     {
@@ -28,12 +52,25 @@ public class UnitMovement : MonoBehaviour
     }
     public void SetDestination(Vector2 destination)
     {
+        bool changed = !hasFinalDestination || Vector2.Distance(destination, finalDestination) > destinationChangeThreshold;
+
+        finalDestination = destination;
+        hasFinalDestination = true;
+
+        if (isEscaping && !changed)
+            return;
+
+        isEscaping = false;
+
         path = PathFinder.FindPath(rb.position, destination);
         targetIndex = 0;
         HasArrived = (path == null || path.Count == 0);
 
         if (HasArrived)
             rb.linearVelocity = Vector2.zero;
+
+        if (changed)
+            ResetStuck();
     }
     public void SetDestinationNear(Transform target, float offset = 0.5f)
     {
@@ -78,6 +115,11 @@ public class UnitMovement : MonoBehaviour
     }
     public void Move()
     {
+        if(isEscaping)
+        {
+            MoveEscape();
+            return;
+        }
         if (HasArrived || IsArrived())
             return;
 
@@ -92,11 +134,112 @@ public class UnitMovement : MonoBehaviour
 
         rb.linearVelocity = direction * speed;
 
+        CheckStuck();
     }
     public void Stop()
     {
         rb.linearVelocity = Vector2.zero;
         path = null;
         targetIndex = 0;
+        isEscaping = false;
+        stuckTimer = 0f;
     }
+    #region stuck
+    private void ResetStuck()
+    {
+        stuckTimer = 0f;
+        lastCheckPosition = rb.position;
+    }
+    private void CheckStuck()
+    {
+        stuckTimer += Time.fixedDeltaTime;
+        if (stuckTimer < stuckCheckTime)
+            return;
+        if (Vector2.Distance(rb.position, lastCheckPosition) < stuckDistance)
+        {
+            Debug.Log($"{Vector2.Distance(rb.position, lastCheckPosition)} / {stuckDistance}");
+            BeginEscape();
+        }
+
+        lastCheckPosition = rb.position;
+        stuckTimer = 0f;
+    }
+    private void BeginEscape()
+    {
+        Debug.Log("끼임");
+        Vector2 origin = rb.position;
+        Vector2 best = Vector2.zero;
+
+        float bestDistance = float.MaxValue;
+        bool found = false;
+
+        int start = Random.Range(0, escapeDirection.Length);
+
+        for(int i = 0; i < escapeDirection.Length; i++)
+        {
+            Vector2 dir = escapeDirection[(start + i) % escapeDirection.Length];
+            Vector2 candidate = origin + dir * escapeDistance;
+
+            if (!CanMoveTo(candidate))
+                continue;
+
+            float distance = hasFinalDestination ? Vector2.Distance(candidate, finalDestination) : 0f;
+
+            if(distance < bestDistance)
+            {
+                bestDistance = distance;
+                best = candidate;
+                found = true;
+            }
+        }
+
+        if (!found)
+            return;
+
+        isEscaping = true;
+        escapeTarget = best;
+        escapeTimer = escapeTimeout;
+        rb.linearVelocity = Vector2.zero;
+    }
+    private bool CanMoveTo(Vector2 position)
+    {
+        if (GridManager.instance != null && !GridManager.instance.NodeFromWorldPoint(position).walkable)
+            return false;
+        if (blockLayerMask != 0 && Physics2D.OverlapCircle(position, blockCheckRadius, blockLayerMask) != null)
+            return false;
+
+        return true;
+    }
+    private void MoveEscape()
+    {
+        escapeTimer -= Time.fixedDeltaTime;
+
+        Vector2 toTarget = escapeTarget - rb.position;
+
+        if(escapeTimer <= 0f || toTarget.magnitude <= waypointReachedDistance)
+        {
+            EndEscape();
+            return;
+        }
+        Vector2 direction = toTarget.normalized;
+        unit.FlipSprite(direction.x);
+        rb.linearVelocity = direction * moveSpeed;
+    }
+    private void EndEscape()
+    {
+        isEscaping = false;
+        rb.linearVelocity = Vector2.zero;
+
+        if (hasFinalDestination)
+        {
+            path = PathFinder.FindPath(rb.position, finalDestination);
+            targetIndex = 0;
+            HasArrived = (path == null || path.Count == 0);
+        }
+        else
+            HasArrived = true;
+
+        ResetStuck();
+    }
+    #endregion
 }

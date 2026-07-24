@@ -14,12 +14,15 @@ public class CameraManager : MonoBehaviour
     [SerializeField] private float edgeSize = 20f;     // 가장자리 감지
 
     [Header("맵 경계")]
-    [SerializeField] private Vector2 mapMin = new Vector2(-25f, -25f);
-    [SerializeField] private Vector2 mapMax = new Vector2(25f, 25f);
+    [SerializeField] private Vector2 mapMin;
+    [SerializeField] private Vector2 mapMax;
 
     [SerializeField] private Transform startPosition;
 
     private int focusIndex;
+
+    public Vector2 MapMin => mapMin;
+    public Vector2 MapMax => mapMax;
     private void Awake()
     {
         if (instance == null)
@@ -137,5 +140,9 @@ public class CameraManager : MonoBehaviour
     public void ResetFocusIndex()
     {
         focusIndex = 0;
+    }
+    public void FocusPosition(Vector2 position)
+    {
+        SetCameraPosition(position);
     }
 }

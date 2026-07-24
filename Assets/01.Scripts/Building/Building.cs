@@ -27,6 +27,7 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
     public Faction OwnerFaction { get; private set; }
 
     private SelectCircle selectCircle;
+    private MinimapMarker minimapMarker;
     protected virtual void Awake()
     {
         StateMachine = new StateMachine();
@@ -34,6 +35,7 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
         BuildedState = new BuildingBuildedState(this);
 
         selectCircle = GetComponent<SelectCircle>();
+        minimapMarker = GetComponent<MinimapMarker>();
     }
     protected virtual void OnEnable()
     {
@@ -113,6 +115,7 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
 
         OwnerFaction = FactionManager.instance.FromLayer(gameObject.layer);
         GetComponent<BuildingVisual>()?.ApplySprite();
+        minimapMarker?.ApplyFaction(gameObject.layer);
     }
     private void RegisterOwner()
     {
