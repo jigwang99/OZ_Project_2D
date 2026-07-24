@@ -13,10 +13,6 @@ public static class UIBlocker
         EventSystem eventSystem = EventSystem.current;
         if (eventSystem == null)
             return false;
-
-        if (eventSystem.IsPointerOverGameObject())
-            return true;
-
         if (Mouse.current == null)
             return false;
 
@@ -29,6 +25,6 @@ public static class UIBlocker
         results.Clear();
         eventSystem.RaycastAll(pointerData, results);
 
-        return results.Count > 0;
+        return eventSystem.IsPointerOverGameObject();
     }
 }

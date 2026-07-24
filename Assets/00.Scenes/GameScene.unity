@@ -548,7 +548,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -5505,7 +5505,6 @@ GameObject:
   - component: {fileID: 869696846}
   - component: {fileID: 869696847}
   - component: {fileID: 869696849}
-  - component: {fileID: 869696848}
   m_Layer: 0
   m_Name: CommandCard
   m_TagString: Untagged
@@ -5531,7 +5530,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -60, y: 25}
+  m_AnchoredPosition: {x: -37, y: 31}
   m_SizeDelta: {x: 400, y: 320}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &869696847
@@ -5561,36 +5560,6 @@ MonoBehaviour:
   attackIcon: {fileID: 21300000, guid: 23450567bedfb472eb6f8efd4ad515da, type: 3}
   buildIcon: {fileID: 21300000, guid: 1c0647c9dba61414898ffc20ac2d2e5b, type: 3}
   cancelIcon: {fileID: 21300000, guid: ca89e4a7c1618426e8458f6eb7fc1444, type: 3}
---- !u!114 &869696848
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 869696845}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
-  m_Material: {fileID: 0}
-  m_Color: {r: 0.40000004, g: 0.40000004, b: 0.40000004, a: 0}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
 --- !u!222 &869696849
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -10936,16 +10905,6 @@ Tilemap:
       m_TileObjectToInstantiateIndex: 65535
       dummyAlignment: 0
       m_AllTileFlags: 1073741825
-  - first: {x: 27, y: -46, z: 0}
-    second:
-      serializedVersion: 2
-      m_TileIndex: 6
-      m_TileSpriteIndex: 0
-      m_TileMatrixIndex: 0
-      m_TileColorIndex: 0
-      m_TileObjectToInstantiateIndex: 65535
-      dummyAlignment: 0
-      m_AllTileFlags: 1073741825
   - first: {x: 26, y: -45, z: 0}
     second:
       serializedVersion: 2
@@ -10997,16 +10956,6 @@ Tilemap:
       dummyAlignment: 0
       m_AllTileFlags: 1073741825
   - first: {x: 25, y: -42, z: 0}
-    second:
-      serializedVersion: 2
-      m_TileIndex: 6
-      m_TileSpriteIndex: 0
-      m_TileMatrixIndex: 0
-      m_TileColorIndex: 0
-      m_TileObjectToInstantiateIndex: 65535
-      dummyAlignment: 0
-      m_AllTileFlags: 1073741825
-  - first: {x: 26, y: -42, z: 0}
     second:
       serializedVersion: 2
       m_TileIndex: 6
@@ -13830,14 +13779,14 @@ Tilemap:
     m_Data: {fileID: 11400000, guid: 074f262c903714358bf92f5f50958995, type: 2}
   - m_RefCount: 16
     m_Data: {fileID: 11400000, guid: 40d7f3263fc0d440da94ca41dd56f891, type: 2}
-  - m_RefCount: 29
+  - m_RefCount: 27
     m_Data: {fileID: 11400000, guid: e98246c83711249c4ab04e294cef155a, type: 2}
   - m_RefCount: 0
     m_Data: {fileID: 0}
   - m_RefCount: 181
     m_Data: {fileID: 11400000, guid: ab40de2f0156a4e208fad1347f35016b, type: 2}
   m_TileSpriteArray:
-  - m_RefCount: 29
+  - m_RefCount: 27
     m_Data: {fileID: -1432443044, guid: 2eb2b1f913d3245c9aa29f6d6126c080, type: 3}
   - m_RefCount: 16
     m_Data: {fileID: 1010717502, guid: a6bd68eeaaa69466ea138e72504a1886, type: 3}
@@ -13856,7 +13805,7 @@ Tilemap:
   - m_RefCount: 181
     m_Data: {fileID: 21300000, guid: 7764f19de4c0b4d509138107e1b72dcd, type: 3}
   m_TileMatrixArray:
-  - m_RefCount: 322
+  - m_RefCount: 320
     m_Data:
       e00: 1
       e01: 0
@@ -13893,7 +13842,7 @@ Tilemap:
       e32: 5.25e-43
       e33: 5.21e-43
   m_TileColorArray:
-  - m_RefCount: 322
+  - m_RefCount: 320
     m_Data: {r: 1, g: 1, b: 1, a: 1}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1

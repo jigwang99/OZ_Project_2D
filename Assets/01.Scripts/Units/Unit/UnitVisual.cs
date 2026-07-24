@@ -1,12 +1,10 @@
-﻿using UnityEditor.Animations;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class UnitVisual : MonoBehaviour
 {
     // 애니메이션 컨트롤러
-    [SerializeField] AnimatorController allyController;
-    [SerializeField] AnimatorController enemyController;
-
+    [SerializeField] RuntimeAnimatorController allyController;
+    [SerializeField] RuntimeAnimatorController enemyController;
 
     private Animator animator;
 

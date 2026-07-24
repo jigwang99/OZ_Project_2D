@@ -55,7 +55,7 @@ public class BuildPlacer : MonoBehaviour
 
         bool overUI = UIBlocker.IsPointerOverUI();
 
-        if (Mouse.current.leftButton.wasPressedThisFrame && canPlace)
+        if (Mouse.current.leftButton.wasPressedThisFrame && canPlace && !overUI)
         {
             TryPlace(fitPos);
             return;
@@ -116,8 +116,8 @@ public class BuildPlacer : MonoBehaviour
         Building building = ObjectPoolManager.instance.GetObject<Building>(currentPlaceInfo.type.ToString());
         building.SetLayer(Layer.Player);
         building.SetSkipBuilded(false);
-        building.Init();
         building.transform.position = pos;
+        building.Init();
 
         Player.instance.CommandBuild(building);
         CancelPlacement();

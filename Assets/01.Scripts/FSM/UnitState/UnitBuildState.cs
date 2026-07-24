@@ -67,8 +67,6 @@ public class UnitBuildState : UnitBaseState
         {
             Collider2D col = build.TargetBuilding.GetComponent<Collider2D>();
             float dist = Vector2.Distance(Unit.transform.position, col.ClosestPoint(Unit.transform.position));
-
-            Debug.Log($"{dist:F2}, range : {Unit.UnitStat.AttackRange}");
         }
     }
 }

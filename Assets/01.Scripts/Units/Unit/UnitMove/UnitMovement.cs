@@ -157,7 +157,6 @@ public class UnitMovement : MonoBehaviour
             return;
         if (Vector2.Distance(rb.position, lastCheckPosition) < stuckDistance)
         {
-            Debug.Log($"{Vector2.Distance(rb.position, lastCheckPosition)} / {stuckDistance}");
             BeginEscape();
         }
 
@@ -166,7 +165,6 @@ public class UnitMovement : MonoBehaviour
     }
     private void BeginEscape()
     {
-        Debug.Log("끼임");
         Vector2 origin = rb.position;
         Vector2 best = Vector2.zero;
 

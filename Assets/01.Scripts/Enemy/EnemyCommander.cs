@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System;
 using System.Linq;
-using Mono.Cecil.Cil;
 
 public enum EnemyPhase
 {
@@ -105,8 +104,6 @@ public class EnemyCommander : MonoBehaviour
         PawnToGather();
         HandleProduction();
         HandleCombat();
-
-        Debug.Log($"phase = {currentPhase}, wood = {faction.Wood}, gold = {faction.Gold}, pop = {faction.CurrentPopulation}/{faction.MaxPopulation}, cons = {(currentConstructing != null ? currentConstructing.Type.ToString() : "none")}");
     }
     private EnemyPhase UpdateEnemyPhase()
     {

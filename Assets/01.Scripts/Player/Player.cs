@@ -2,8 +2,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Unity.VisualScripting;
 public class Player : MonoBehaviour
 {
     public static Player instance;
@@ -19,8 +17,6 @@ public class Player : MonoBehaviour
     [SerializeField] LayerMask allyBuildingLayerMask;
 
     private const float spacing = 1.1f;
-
-    private static readonly Key[] productionKeys = { Key.A, Key.S, Key.D, Key.F };
 
     public IReadOnlyList<Unit> SelectUnitList => selectUnitList;
     public Building SelectBuilding => selectBuilding;
@@ -90,7 +86,7 @@ public class Player : MonoBehaviour
     private void AttackTo(Vector2 worldPos)
     {
         Collider2D hit = Physics2D.OverlapCircle(worldPos, 0.2f, enemyLayerMask);
-        Unit target = hit != null ? hit.GetComponent<Unit>() : null;
+        IDamageable target = hit != null ? hit.GetComponent<IDamageable>() : null;
         bool hasTarget = target != null && target.IsAlive;
 
         List<Unit> moveUnits = new List<Unit>();
@@ -148,12 +144,12 @@ public class Player : MonoBehaviour
     }
     private void HandleRightClick()
     {
-        if (BuildPlacer.instance != null && BuildPlacer.instance.IsPlacing)
+        if (BuildPlacer.instance != null && BuildPlacer.instance.BlockCommand)
             return;
         
         if(Targeting != TargetingMode.None)
         {
-            if (!Mouse.current.rightButton.wasPressedThisFrame)
+            if (Mouse.current.rightButton.wasPressedThisFrame)
                 CancelTargeting();
             return;
         }
@@ -336,10 +332,7 @@ public class Player : MonoBehaviour
         DeselectBuilding();
         SelectUnit(unit);
     }
-    public bool HasSelectedPawn()
-    {
-        return selectUnitList.Count == 1 && selectUnitList[0] is Pawn;
-    }
+
     public bool IsAllPawnSelected()
     {
         if (selectUnitList.Count == 0)

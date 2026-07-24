@@ -2,7 +2,6 @@
 using UnityEngine.InputSystem;
 using System;
 using System.Collections.Generic;
-using NUnit.Framework.Internal.Commands;
 
 public class CommandCardUI : MonoBehaviour
 {
@@ -47,7 +46,7 @@ public class CommandCardUI : MonoBehaviour
         Player.instance.OnSelectionChanged += OnSelectionChanged;
         Refresh();
     }
-    private void OnDestory()
+    private void OnDestroy()
     {
         if(Player.instance != null)
             Player.instance.OnSelectionChanged -= OnSelectionChanged;
@@ -78,7 +77,7 @@ public class CommandCardUI : MonoBehaviour
         else if(BuildPlacer.instance != null && BuildPlacer.instance.IsPlacing)
             BuildPlacer.instance.CancelPlacement();
         else if(page == Page.Build)
-            page = Page.Build;
+            page = Page.Root;
 
         Refresh();
     }
