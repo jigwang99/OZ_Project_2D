@@ -82,10 +82,18 @@ public class GridManager : MonoBehaviour
                 int checkX = node.gridX + x;
                 int checkY = node.gridY + y;
 
-                if (checkX >= 0 && checkX < gridSizeX && checkY >= 0 && checkY < gridSizeY)
+                if (checkX < 0 || checkX >= gridSizeX || checkY < 0 || checkY >= gridSizeY)
+                    continue;
+
+                if(x != 0 && y != 0)
                 {
-                    neighbours.Add(grid[checkX, checkY]);
+                    Node sideA = grid[node.gridX + x, node.gridY];
+                    Node sideB = grid[node.gridX, node.gridY + y];
+
+                    if (!sideA.walkable || !sideB.walkable)
+                        continue;
                 }
+                neighbours.Add(grid[checkX, checkY]);
             }
         }
         return neighbours;

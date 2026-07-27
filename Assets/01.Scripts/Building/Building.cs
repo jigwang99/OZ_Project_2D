@@ -27,6 +27,9 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
 
     private SelectCircle selectCircle;
     private MinimapMarker minimapMarker;
+
+    private BuildingEffect effect;
+
     protected virtual void Awake()
     {
         StateMachine = new StateMachine();
@@ -35,6 +38,8 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
 
         selectCircle = GetComponent<SelectCircle>();
         minimapMarker = GetComponent<MinimapMarker>();
+        
+        effect = GetComponent<BuildingEffect>();
     }
     protected virtual void OnEnable()
     {
@@ -59,6 +64,7 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
             CurrentHp = 0;
             Die();
         }
+        effect?.UpdateFire((float)CurrentHp / buildingStat.MaxHp);
     }
     protected void Die()
     {
@@ -69,6 +75,7 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
             Player.instance.DeselectBuilding();
 
         WithdrawPopulation();
+        effect?.PlayExplosion();
         ReturnToPool();
         GridManager.instance.UpdateArea(transform.position, obstacleSize);
     }
@@ -141,6 +148,7 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
         StateMachine.ChangeState(IsSkipBuilded ? IdleState : BuildedState);
         if(IsSkipBuilded)
             ProvidePopulation();
+        effect?.UpdateFire(1f);
     }
     public virtual void ReturnToPool()
     {
