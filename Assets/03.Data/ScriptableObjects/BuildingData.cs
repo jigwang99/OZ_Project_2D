@@ -4,6 +4,7 @@ using UnityEngine;
 
 public enum BuildingType
 {
+    None,
     Castle,
     House,
     Barracks,
@@ -31,6 +32,9 @@ public class BuildingStat
     [SerializeField] private int goldCost;
     [SerializeField] private float buildTime;
 
+    [Header("Icon")]
+    [SerializeField] private Sprite icon;
+
     public BuildingType BuildingType => buildingType;
     public int MaxHp => maxHp;
     public int Defense => defense;
@@ -41,8 +45,8 @@ public class BuildingStat
     public int WoodCost => woodCost;
     public int GoldCost => goldCost;
     public float BuildTime => buildTime;
-
-    public BuildingStat(BuildingType buildingType, int maxHp, int defense, int populationProvide, int attackDamage, float attackRange, float attackCooldown, int woodCost, int goldCost, float buildTime)
+    public Sprite Icon => icon;
+    public BuildingStat(BuildingType buildingType, int maxHp, int defense, int populationProvide, int attackDamage, float attackRange, float attackCooldown, int woodCost, int goldCost, float buildTime, Sprite icon)
     {
         this.buildingType = buildingType;
 
@@ -57,10 +61,12 @@ public class BuildingStat
         this.woodCost = woodCost;
         this.goldCost = goldCost;
         this.buildTime = buildTime;
+
+        this.icon = icon;
     }
     public BuildingStat Clone()
     {
-        return new BuildingStat(buildingType, maxHp, defense, populationProvide, attackDamage, attackRange, attackCooldown, woodCost, goldCost, buildTime);
+        return new BuildingStat(buildingType, maxHp, defense, populationProvide, attackDamage, attackRange, attackCooldown, woodCost, goldCost, buildTime, icon);
     }
 }
 

@@ -5,7 +5,7 @@ public class Tower : Building
     public override BuildingType Type => BuildingType.Tower;
 
     [SerializeField] private LayerMask enemyLayerMask;
-    private Unit target;
+    private IDamageable target;
 
     Collider2D hit;
     public BuildingAttackState AttackState { get; private set; }
@@ -15,30 +15,40 @@ public class Tower : Building
         base.Awake();
         AttackState = new BuildingAttackState(this);
     }
-    public Unit GetTarget()
+    public IDamageable GetTarget()
     {
         return target;
     }
-    public void SetTarget(Unit target)
+    public void SetTarget(IDamageable target)
     {
         this.target = target;
     }
-    public bool IsInRange(Unit unit)
+    public bool IsInRange(IDamageable targete)
     {
-        return Vector2.Distance(transform.position, unit.transform.position) <= BuildingStat.AttackRange;
+        return Vector2.Distance(transform.position, target.transform.position) <= BuildingStat.AttackRange;
     }
     public Unit FindTarget()
     {
         hit = Physics2D.OverlapCircle(transform.position, buildingStat.AttackRange, enemyLayerMask);
         return hit != null ? hit.GetComponent<Unit>() : null;
     }
-    public void Fire(Unit target)
+    public void Fire(IDamageable target)
     {
-        Transform arrow = ObjectPoolManager.instance.GetObject<Transform>("Arrow");
-        arrow.position = transform.position;
-        Vector2 dir = (target.transform.position - arrow.position).normalized;
-        //arrow.rotation = Quaternion.
-        arrow.GetComponent<Arrow>().SetDamageAndLayer(buildingStat.AttackDamage, gameObject.layer);
+        if(target == null || !target.IsAlive)
+            return;
+
+        Arrow arrow = ObjectPoolManager.instance.GetObject<Arrow>("Arrow");
+        if (arrow == null)
+            return;
+
+        Vector2 origin = transform.position;
+        Vector2 dir = ((Vector2)target.transform.position - origin).normalized;
+        if (dir == Vector2.zero)
+            dir = Vector2.right;
+
+        arrow.transform.position = origin + dir * 0.3f;
+        arrow.transform.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg);
+        arrow.SetDamageAndLayer(buildingStat.AttackDamage, gameObject.layer);
     }
     public override void Init()
     {

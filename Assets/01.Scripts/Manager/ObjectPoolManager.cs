@@ -6,9 +6,10 @@ public class ObjectPoolManager : MonoBehaviour
     public static ObjectPoolManager instance;
 
     // Unit, Projectile, Building
+    [SerializeField] private int poolSize;
     [SerializeField] private List<GameObject> objList;
+    
 
-    private int size = 5;
     private Dictionary<string, Pool> pools = new Dictionary<string, Pool>();
     private void Awake()
     {
@@ -26,7 +27,7 @@ public class ObjectPoolManager : MonoBehaviour
             GameObject parentObject = new GameObject($"{go.name}_Pool");
             parentObject.transform.SetParent(transform);
 
-            Pool pool = new Pool(go, parentObject.transform, size);
+            Pool pool = new Pool(go, parentObject.transform, poolSize);
 
             pools.Add(go.name, pool);
         }

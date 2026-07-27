@@ -19,10 +19,10 @@ TagManager:
   - EnemyBuilding
   - 
   - 
-  - 
+  - Ground
   - Resource
-  - 
-  - 
+  - Obstacle
+  - Minimap
   - 
   - 
   - 

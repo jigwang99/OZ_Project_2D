@@ -31,9 +31,13 @@ public class UnitStat
     [SerializeField] private int woodCost;
     [SerializeField] private int goldCost;
     [SerializeField] private float productTime;
+    [SerializeField] private BuildingType requiredBuilding;
 
     [Header("Gather")]
     [SerializeField] private int gatherAmount;
+
+    [Header("Icon")]
+    [SerializeField] private Sprite icon;
 
     public UnitType UnitType => unitType;
 
@@ -50,11 +54,13 @@ public class UnitStat
     public int GoldCost => goldCost;
     public int WoodCost => woodCost;
     public float ProductTime => productTime;
+    public BuildingType RequiredBuilding => requiredBuilding;
 
     public int GatherAmount => gatherAmount;
 
+    public Sprite Icon => icon;
     public UnitStat(UnitType unitType, int maxHP, int attackDamage, int defense, int population, float moveSpeed, float attackRange, 
-        float attackCooldown,float vision, int woodCost, int goldCost, float buildTime, int gatherAmount)
+        float attackCooldown,float vision, int woodCost, int goldCost, float buildTime, BuildingType requiredBuilding, int gatherAmount, Sprite icon)
     {
         this.unitType = unitType;
 
@@ -71,12 +77,14 @@ public class UnitStat
         this.woodCost = woodCost;
         this.goldCost = goldCost;
         this.productTime = buildTime;
+        this.requiredBuilding = requiredBuilding;
 
         this.gatherAmount = gatherAmount;
+        this.icon = icon;
     }
     public UnitStat Clone()
     {
-        return new UnitStat(unitType, maxHp, attackDamage, defense, population, moveSpeed, attackRange, attackCooldown, vision, woodCost, goldCost, productTime, gatherAmount);
+        return new UnitStat(unitType, maxHp, attackDamage, defense, population, moveSpeed, attackRange, attackCooldown, vision, woodCost, goldCost, productTime, requiredBuilding, gatherAmount, icon);
     }
 }
 

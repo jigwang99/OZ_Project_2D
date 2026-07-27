@@ -5,11 +5,12 @@
     public override void Enter()
     {
         Unit.Movement.SetMoveSpeed(Unit.UnitStat.MoveSpeed);
+        Unit.SetRunAnimation(true);
     }
 
     public override void Update()
     {
-        // 애니메이션
+        
     }
 
     public override void FixedUpdate()
@@ -25,5 +26,6 @@
     public override void Exit()
     {
         Unit.Movement.Stop();
+        Unit.SetRunAnimation(false);
     }
 }

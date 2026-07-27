@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-public class BuildingManager : MonoBehaviour
+public class BuildingDataLoader : MonoBehaviour
 {
-    public static BuildingManager instance;
+    public static BuildingDataLoader instance;
 
     [SerializeField] private BuildingData buildingData;
     private Dictionary<BuildingType, BuildingStat> buildingDictionary = new Dictionary<BuildingType, BuildingStat> ();

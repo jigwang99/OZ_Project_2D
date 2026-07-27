@@ -13,17 +13,22 @@ public class BuildPlacer : MonoBehaviour
         public BuildingType type;
         public Vector2 size;
         public Sprite ghost;
+        public Key hotKey = Key.None;
     }
 
     [SerializeField] private Camera camera;
     [SerializeField] private SpriteRenderer ghost;
     [SerializeField] private List<PlaceInfo> placeInfos;
-    [SerializeField] private LayerMask obstacleLayerMask; 
+    [SerializeField] private LayerMask obstacleLayerMask;
 
     private PlaceInfo currentPlaceInfo;
     private bool isPlacing;
+    private int cancelFrame = -1;
 
     public bool IsPlacing => isPlacing;
+    public bool BlockCommand => isPlacing || cancelFrame == Time.frameCount;
+    public IReadOnlyList<PlaceInfo> PlaceInfos => placeInfos;
+
     private void Awake()
     {
         if (instance == null)
@@ -33,10 +38,13 @@ public class BuildPlacer : MonoBehaviour
     }
     private void Update()
     {
-        HandleKeys();
-
         if (!isPlacing)
             return;
+        if(!Player.instance.IsAllPawnSelected())
+        {
+            CancelPlacement();
+            return;
+        }
 
         Vector2 mousePos = camera.ScreenToWorldPoint(Mouse.current.position.ReadValue());
         Vector2 fitPos = GridManager.instance.FitNode(mousePos);
@@ -45,44 +53,50 @@ public class BuildPlacer : MonoBehaviour
         bool canPlace = CanPlaceAt(fitPos);
         ghost.color = canPlace ? new Color(0, 1, 0, 0.5f) : new Color(1, 0, 0, 0.5f);
 
-        if(Mouse.current.leftButton.wasPressedThisFrame && canPlace)
+        bool overUI = UIBlocker.IsPointerOverUI();
+
+        if (Mouse.current.leftButton.wasPressedThisFrame && canPlace && !overUI)
+        {
             TryPlace(fitPos);
-
-        if (Mouse.current.rightButton.wasPressedThisFrame || Keyboard.current.escapeKey.wasPressedThisFrame)
+            return;
+        }
+        if (Mouse.current.rightButton.wasPressedThisFrame)
+        {
             CancelPlacement();
+            return;
+        }
+
     }
-    private void HandleKeys()
+    public void StartPlacement(BuildingType type)
     {
-        if(Keyboard.current.cKey.wasPressedThisFrame)
-            StartPlacement(BuildingType.Castle);
-        if(Keyboard.current.bKey.wasPressedThisFrame)
-            StartPlacement(BuildingType.Barracks);
-        if (Keyboard.current.hKey.wasPressedThisFrame)
-            StartPlacement(BuildingType.House);
-        if (Keyboard.current.tKey.wasPressedThisFrame)
-            StartPlacement(BuildingType.Tower);
-        if (Keyboard.current.aKey.wasPressedThisFrame)
-            StartPlacement(BuildingType.Archery);
-        if (Keyboard.current.mKey.wasPressedThisFrame)
-            StartPlacement(BuildingType.Monastery);
-    }
-    private void StartPlacement(BuildingType type)
-    {
-        if (!Player.instance.HasSelectedPawn())
+        if (!Player.instance.IsAllPawnSelected())
             return;
 
-        currentPlaceInfo = placeInfos.Find(p => p.type == type);
-        if (currentPlaceInfo == null)
+        PlaceInfo info  = placeInfos.Find(p => p.type == type);
+        if (info == null)
             return;
 
-        ghost.sprite = currentPlaceInfo.ghost;
-        isPlacing = true;
+        BuildingStat stat = BuildingDataLoader.instance.GetBuildingStat(type);
+        Faction faction = FactionManager.instance.Player;
+
+        if(stat == null || faction.Wood < stat.WoodCost || faction.Gold < stat.GoldCost)
+        {
+            return;
+        }
+        
+        currentPlaceInfo = info;
+        ghost.sprite = info.ghost;
         ghost.gameObject.SetActive(true);
+        isPlacing = true;
     }
-    private void CancelPlacement()
+    public void CancelPlacement()
     {
+        if (!isPlacing)
+            return;
+
         isPlacing = false;
         currentPlaceInfo = null;
+        cancelFrame = Time.frameCount;
         ghost.gameObject.SetActive(false);
     }
     private bool CanPlaceAt(Vector2 center)
@@ -92,15 +106,18 @@ public class BuildPlacer : MonoBehaviour
     }
     private void TryPlace(Vector2 pos)
     {
-        BuildingStat stat = BuildingManager.instance.GetBuildingStat(currentPlaceInfo.type);
-        if (!Player.instance.TryReduceResource(stat.WoodCost, stat.GoldCost))
+        BuildingStat stat = BuildingDataLoader.instance.GetBuildingStat(currentPlaceInfo.type);
+        if (!FactionManager.instance.Player.TryReduceResource(stat.WoodCost, stat.GoldCost))
+        {
+            CancelPlacement();
             return;
+        }
 
         Building building = ObjectPoolManager.instance.GetObject<Building>(currentPlaceInfo.type.ToString());
         building.SetLayer(Layer.Player);
         building.SetSkipBuilded(false);
-        building.Init();
         building.transform.position = pos;
+        building.Init();
 
         Player.instance.CommandBuild(building);
         CancelPlacement();

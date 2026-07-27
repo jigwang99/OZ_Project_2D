@@ -22,13 +22,18 @@ public class UnitBuildState : UnitBaseState
     {
         
         Unit.Movement.Stop();
+        Unit.SetRunAnimation(false);
+        pawn.StopInteractAnimation();
         build.SetTarget(null);
     }
 
     public override void FixedUpdate()
     {
         if (build.TargetBuilding == null || build.IsInRange())
+        {
+            Unit.Movement.Stop();
             return;
+        } 
         refindTimer -= Time.fixedDeltaTime;
         if(refindTimer <=0)
         {
@@ -40,28 +45,28 @@ public class UnitBuildState : UnitBaseState
 
     public override void Update()
     {
-        if (build.TargetBuilding != null)
-        {
-            Debug.Log($"Alive: {build.TargetBuilding.IsAlive}, " + $"UnderConstruction: {build.TargetBuilding.IsConstruction}, " + $"State : {build.TargetBuilding.StateMachine.CurrentState}");
-        }
-        else
-            Debug.Log("TargetBuilding is null");
-
         if (!build.HasValidTarget())
         {
             Unit.StateMachine.ChangeState(Unit.IdleState);
             return;
         }
-        if (build.IsInRange())
+        
+        bool inRange = build.IsInRange();
+        Unit.SetRunAnimation(!inRange);
+
+        if (inRange)
+        {
+            pawn.SetInteractAnimation(PawnTool.Hammer);
             build.Construct();
+        }
+        else
+            pawn.StopInteractAnimation();
 
         // test 
-        if(build.TargetBuilding != null && Unit.Movement.HasArrived)
+        if (build.TargetBuilding != null && Unit.Movement.HasArrived)
         {
             Collider2D col = build.TargetBuilding.GetComponent<Collider2D>();
             float dist = Vector2.Distance(Unit.transform.position, col.ClosestPoint(Unit.transform.position));
-
-            Debug.Log($"{dist:F2}, range : {Unit.UnitStat.AttackRange}");
         }
     }
 }

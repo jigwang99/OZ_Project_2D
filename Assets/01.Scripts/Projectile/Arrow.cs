@@ -7,16 +7,18 @@ public class Arrow : Projectile
     {
         base.Start();
     }
-    protected override void OnCollisionEnter2D(Collision2D collision)
+    protected override void OnTriggerEnter2D(Collider2D collision)
     {
-        IDamageable damageable = collision.gameObject.GetComponent<IDamageable>();
+        Unit damageable = collision.gameObject.GetComponent<Unit>();
         if (damageable != null)
             damageable.TakeDamage(Damage);
         ReturnToPool();
     }
     public override void ReturnToPool()
     {
+        if (isReturned)
+            return;
+        isReturned = true;
         ObjectPoolManager.instance.ReturnObject("Arrow", this.gameObject);
-        transform.rotation = Quaternion.identity;
     }
 }

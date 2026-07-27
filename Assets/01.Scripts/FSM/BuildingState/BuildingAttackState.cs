@@ -26,7 +26,7 @@ public class BuildingAttackState : BuildingBaseState
 
     public override void Update()
     {
-        Unit target = tower.GetTarget();
+        IDamageable target = tower.GetTarget();
 
         if(target == null || !target.IsAlive || !tower.IsInRange(target))
         {

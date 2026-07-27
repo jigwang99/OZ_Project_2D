@@ -7,6 +7,8 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
     [SerializeField] private Vector2 obstacleSize;
 
     private bool populationProvided;
+    private bool IsRegistered;
+
     public abstract BuildingType Type { get; }
     public BuildingStat BuildingStat => buildingStat;
 
@@ -21,16 +23,22 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
     public BuildingBuildedState BuildedState { get; protected set; }
     public StateMachine StateMachine { get; protected set; }
     
+    public Faction OwnerFaction { get; private set; }
+
+    private SelectCircle selectCircle;
+    private MinimapMarker minimapMarker;
     protected virtual void Awake()
     {
         StateMachine = new StateMachine();
         IdleState = new BuildingIdleState(this);
         BuildedState = new BuildingBuildedState(this);
+
+        selectCircle = GetComponent<SelectCircle>();
+        minimapMarker = GetComponent<MinimapMarker>();
     }
     protected virtual void OnEnable()
     {
         SetSelected(false);
-        Init();
         StartCoroutine(RegisterObtacleNextFrame());
     }
     protected void Update() => StateMachine.Update();
@@ -38,6 +46,7 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
     public void SetSelected(bool selected)
     {
         IsSelected = selected;
+        selectCircle?.SetVisible(selected);
     }
     public void TakeDamage(int attackDamage)
     {
@@ -54,6 +63,11 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
     protected void Die()
     {
         IsAlive = false;
+        UnregisterOwner();
+
+        if(Player.instance.SelectBuilding == this)
+            Player.instance.DeselectBuilding();
+
         WithdrawPopulation();
         ReturnToPool();
         GridManager.instance.UpdateArea(transform.position, obstacleSize);
@@ -70,16 +84,15 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
     public void Construct(float amount)
     {
         BuildProgress += amount;
-        Debug.Log($"진행도 : {BuildProgress:F2} / {BuildingStat.BuildTime}");
     }
     public void ProvidePopulation()
     {
+        RegisterOwner();
         if (populationProvided || buildingStat.PopulationProvide <= 0)
             return;
 
         populationProvided = true;
-        Player.instance.AddMaxPopulation(buildingStat.PopulationProvide);
-
+        OwnerFaction.AddMaxPopulation(buildingStat.PopulationProvide);
     }
     public void WithdrawPopulation()
     {
@@ -87,7 +100,7 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
             return;
 
         populationProvided = false;
-        Player.instance.AddMaxPopulation(-buildingStat.PopulationProvide);
+        OwnerFaction.AddMaxPopulation(-buildingStat.PopulationProvide);
     }
     public void SetSkipBuilded(bool skip)
     {
@@ -98,14 +111,31 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
         gameObject.layer = (int)(ownerLayer == Layer.Player || ownerLayer == Layer.PlayerBuilding
             ? Layer.PlayerBuilding : Layer.EnemyBuilding);
 
+        OwnerFaction = FactionManager.instance.FromLayer(gameObject.layer);
         GetComponent<BuildingVisual>()?.ApplySprite();
+        minimapMarker?.ApplyFaction(gameObject.layer);
+    }
+    private void RegisterOwner()
+    {
+        if (IsRegistered)
+            return;
+        IsRegistered = true;
+        OwnerFaction.RegisterBuilding(this);
+    }
+    private void UnregisterOwner()
+    {
+        if (!IsRegistered)
+            return;
+        IsRegistered = false;
+        OwnerFaction.UnregisterBuilding(this);
     }
     public virtual void Init()
     {
         if (buildingStat == null)
-            buildingStat = BuildingManager.instance.GetBuildingStat(Type);
+            buildingStat = BuildingDataLoader.instance.GetBuildingStat(Type);
 
         populationProvided = false;
+        IsRegistered = false;
         CurrentHp = buildingStat.MaxHp;
         IsAlive = true;
         StateMachine.ChangeState(IsSkipBuilded ? IdleState : BuildedState);
@@ -113,4 +143,5 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
             ProvidePopulation();
     }
     public abstract void ReturnToPool();
+    protected virtual void OnDisable() { }
 }

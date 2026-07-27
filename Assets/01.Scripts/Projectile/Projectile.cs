@@ -5,7 +5,7 @@ public abstract class Projectile : MonoBehaviour, IPoolable
     protected ProjectileStat projectileStat;
     protected float timer;
     protected Rigidbody2D rb;
-
+    protected bool isReturned;
     public abstract ProjectileType Type { get; }
     public Vector2 Direction { get; protected set; }
 
@@ -20,6 +20,9 @@ public abstract class Projectile : MonoBehaviour, IPoolable
     }
     protected void Update()
     {
+        if (projectileStat == null)
+            return;
+
         if(timer > projectileStat.LifeTime)
             ReturnToPool();
     }
@@ -35,14 +38,15 @@ public abstract class Projectile : MonoBehaviour, IPoolable
         gameObject.layer = shooterLayer == (int)Layer.Player || shooterLayer == (int)Layer.PlayerBuilding 
             ? (int)Layer.PlayerProjectile : (int)Layer.EnemyProjectile;
     }
-    protected abstract void OnCollisionEnter2D(Collision2D collision);
+    protected abstract void OnTriggerEnter2D(Collider2D collision);
     public virtual void Init()
     {
         if(projectileStat == null)
-            projectileStat = ProjectileManager.instance.GetProjectileStat(Type);
+            projectileStat = ProjectileDataLoader.instance.GetProjectileStat(Type);
         timer = 0f;
         Direction = Vector2.zero;
         Damage = 0;
+        isReturned = false;
     }
     public abstract void ReturnToPool();
 }

@@ -12,6 +12,7 @@ public class SelectManager : MonoBehaviour
 
     private const float drag = 10f;
     private bool isDrag;
+    private bool ignoreClick;
 
     // selectBox Vector
     private Vector2 startPos;
@@ -33,11 +34,27 @@ public class SelectManager : MonoBehaviour
         if (BuildPlacer.instance != null && BuildPlacer.instance.IsPlacing)
             return;
 
+        if(Player.instance.Targeting != Player.TargetingMode.None)
+        {
+            if (Mouse.current.leftButton.wasPressedThisFrame && !UIBlocker.IsPointerOverUI())
+            {
+                Vector2 targetPos = camera.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+                Player.instance.ExcuteTargeting(targetPos);
+            }
+            return;
+        }
         // 드래그 시작
         if (Mouse.current.leftButton.wasPressedThisFrame)
-        {   
+        {
+            ignoreClick = UIBlocker.IsPointerOverUI();
             startPos = Mouse.current.position.ReadValue();
             isDrag = false;
+        }
+        if(ignoreClick)
+        {
+            if (Mouse.current.leftButton.wasReleasedThisFrame)
+                ignoreClick = false;
+            return;
         }
         // 드래그 중
         if (Mouse.current.leftButton.isPressed)
@@ -62,8 +79,15 @@ public class SelectManager : MonoBehaviour
         if (Mouse.current.leftButton.wasReleasedThisFrame)
         {
             selectBox.gameObject.SetActive(false);
-            Player.instance.ClearSelectList();
 
+            if(!isDrag && UIBlocker.IsPointerOverUI())
+            {
+                isDrag = false;
+                return;
+            }
+            Player.instance.ClearSelectList();
+            Player.instance.DeselectBuilding();
+            
             if (isDrag)
                 DragSelect();
             else
@@ -112,7 +136,7 @@ public class SelectManager : MonoBehaviour
 
         if(building != null && building.IsAlive)
         {
-            Player.instance.SelectBuilding(building);
+            Player.instance.BuildingSelect(building);
         }
     }
 }

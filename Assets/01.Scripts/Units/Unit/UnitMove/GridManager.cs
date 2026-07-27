@@ -8,8 +8,8 @@ public class GridManager : MonoBehaviour
 {
     public static GridManager instance;
 
-    [SerializeField] private Vector2 gridWorldSize = new Vector2(50, 50);
-    [SerializeField] private float nodeRadius = 0.5f;    // 노드 반지름
+    [SerializeField] private Vector2 gridWorldSize; // world size
+    [SerializeField] private float nodeRadius; // 노드 반지름
     [SerializeField] private LayerMask obstacleLayerMask;  // 장애물 레이어마스크
 
     private Node[,] grid;

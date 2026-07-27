@@ -16,8 +16,10 @@ public class UnitGatherState : UnitBaseState
     private Phase phase;
     private float timer;
 
-    private const float range = 1.5f;
-    private const float Delay = 0.3f;
+    private const float range = 0.5f;
+    private const float gatherDelay = 2f;
+    private const float returnDelay = 1f;
+
     public UnitGatherState(Unit unit) : base(unit)
     {
         pawn = unit as Pawn;
@@ -32,6 +34,8 @@ public class UnitGatherState : UnitBaseState
     public override void Exit()
     {
         Unit.Movement.Stop();
+        Unit.SetRunAnimation(false);
+        pawn.StopInteractAnimation();
     }
 
     public override void FixedUpdate()
@@ -75,6 +79,8 @@ public class UnitGatherState : UnitBaseState
             return;
 
         phase = Phase.MoveToResource;
+        pawn.StopInteractAnimation();
+        Unit.SetRunAnimation(true);
         Unit.Movement.SetDestinationNear(gather.TargetResource.transform);
     }
     private void CheckArrivedAtResource()
@@ -87,13 +93,18 @@ public class UnitGatherState : UnitBaseState
         if(Unit.Movement.HasArrived || IsNear(gather.TargetResource.transform))
         {
             Unit.Movement.Stop();
+
+            Unit.SetRunAnimation(false);
+            PawnTool tool = gather.TargetResource.Type == ResourceType.Wood ? PawnTool.Axe : PawnTool.Pickaxe;
+            pawn.SetInteractAnimation(tool);
+
             phase = Phase.Gathering;
-            timer = Delay;
+            timer = gatherDelay;
         }
     }
     private void MoveToBuilding()
     {
-        Castle castle = Castle.FindNearestCastle(Unit.transform.position);
+        Castle castle = Castle.FindNearestCastle(Unit.transform.position, pawn.OwnerFaction.Type);
         gather.SetReturnBuilding(castle);
 
         if (castle == null)
@@ -101,6 +112,11 @@ public class UnitGatherState : UnitBaseState
             Unit.StateMachine.ChangeState(Unit.IdleState);
             return;
         }
+
+        pawn.StopInteractAnimation();
+        pawn.SetCarryAnimation(gather.CarryResourceType, true);
+        Unit.SetRunAnimation(true);
+
         phase = Phase.MoveToBuilding;
         Unit.Movement.SetDestinationNear(gather.ReturnBuilding.transform);
     }
@@ -108,8 +124,10 @@ public class UnitGatherState : UnitBaseState
     {
         if(Unit.Movement.HasArrived || IsNear(gather.ReturnBuilding.transform))
         {
+            Unit.Movement.Stop();
+            Unit.SetRunAnimation(false);
             phase = Phase.Returning;
-            timer = Delay;
+            timer = returnDelay;
         }
     }
     private void Gathering()
@@ -134,6 +152,7 @@ public class UnitGatherState : UnitBaseState
         if (timer > 0f) return;
 
         gather.ReturnResource();
+        pawn.ClearCarryAnimation();
 
         if (gather.TargetResource != null && !gather.TargetResource.IsDepleted)
             MoveToResource();

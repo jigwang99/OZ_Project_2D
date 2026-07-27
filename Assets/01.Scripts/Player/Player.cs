@@ -6,6 +6,8 @@ public class Player : MonoBehaviour
 {
     public static Player instance;
 
+    
+
     [SerializeField] private List<Unit> selectUnitList = new List<Unit>();
     [SerializeField] private Building selectBuilding;
     [SerializeField] Camera camera;
@@ -16,18 +18,18 @@ public class Player : MonoBehaviour
 
     private const float spacing = 1.1f;
 
-    private static readonly Key[] productionKeys = { Key.A, Key.S, Key.D, Key.F };
-    
+    public IReadOnlyList<Unit> SelectUnitList => selectUnitList;
+    public Building SelectBuilding => selectBuilding;
 
-    public int Wood {  get; private set; }
-    public int Gold { get; private set; }
+    public Faction Faction => FactionManager.instance.Player;
 
-    private const int limitPopulation = 200;
-    public int CurrentPopulation { get; private set; }
-    public int MaxPopulation { get; private set; }
+    public const int MaxSelectCount = 12;
 
-    public event Action OnPopulationChanged;
-    public event Action OnResourceChanged;
+    public event Action OnSelectionChanged;
+
+    public enum TargetingMode { None, Move, Attack }
+    public TargetingMode Targeting {  get; private set; }
+
     private void Awake()
     {
         if (instance == null)
@@ -38,44 +40,119 @@ public class Player : MonoBehaviour
         }
         DontDestroyOnLoad(gameObject);
     }
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        Wood = 500;
-        Gold = 0;
-        MaxPopulation = 0;
-
-        OnResourceChanged?.Invoke();
-        OnPopulationChanged?.Invoke();
-    }
 
     // Update is called once per frame
     private void Update()
     {
-        HandleProduckKeys();
         HandleRightClick();
     }
-    private void HandleProduckKeys()
+    public bool HasTargetingSource()
     {
-        if (!(selectBuilding is ProductionBuilding productionBuilding))
+        return selectUnitList.Count > 0 || selectBuilding is Tower;
+    }
+    public void BeginTargeting(TargetingMode mode)
+    {
+        if (!HasTargetingSource())
             return;
-        if (!productionBuilding.IsAlive)
+        Targeting = mode;
+    }
+    public void CancelTargeting()
+    {
+        Targeting = TargetingMode.None;
+    }
+    public void ExcuteTargeting(Vector2 worldPos)
+    {
+        TargetingMode mode = Targeting;
+        Targeting = TargetingMode.None;
+
+        if (mode == TargetingMode.None)
             return;
 
-        for(int i = 0; i < productionKeys.Length; i++)
+        if(selectBuilding is Tower tower)
         {
-            if (Keyboard.current[productionKeys[i]].wasPressedThisFrame)
-                productionBuilding.EnqueueUnitByIndex(i);
+            if(mode == TargetingMode.Attack)
+                TowerAttack(tower, worldPos);
+            return;
         }
 
-        if (Keyboard.current.escapeKey.wasPressedThisFrame)
-            productionBuilding.CancelLastProduct();
+        if (selectUnitList.Count == 0)
+            return;
+
+        if (mode == TargetingMode.Move)
+            MoveUnits(selectUnitList, worldPos);
+        else if (mode == TargetingMode.Attack)
+            AttackTo(worldPos);
+    }
+    private void AttackTo(Vector2 worldPos)
+    {
+        Collider2D hit = Physics2D.OverlapCircle(worldPos, 0.2f, enemyLayerMask);
+        IDamageable target = hit != null ? hit.GetComponent<IDamageable>() : null;
+        bool hasTarget = target != null && target.IsAlive;
+
+        List<Unit> moveUnits = new List<Unit>();
+
+        foreach (Unit unit in selectUnitList)
+        {
+            if (unit == null || !unit.IsAlive)
+                continue;
+            if (!hasTarget || unit.Attack == null)
+            {
+                moveUnits.Add(unit);
+                continue;
+            }
+            unit.Attack.SetTarget(target);
+            unit.StateMachine.ChangeState(unit.ChaseState);
+        }
+        if (moveUnits.Count > 0)
+            MoveUnits(moveUnits, worldPos); 
+    }
+    private void TowerAttack(Tower tower, Vector2 worldPos)
+    {
+        if (!tower.IsAlive)
+            return;
+
+        Collider2D hit = Physics2D.OverlapCircle(worldPos, 0.2f, enemyLayerMask);
+        Unit target = hit != null ? hit.GetComponent<Unit>() : null;
+
+        if (target == null || !target.IsAlive)
+            return;
+
+        if(!tower.IsInRange(target))
+        {
+            return;
+        }
+        tower.SetTarget(target);
+        tower.StateMachine.ChangeState(tower.AttackState);
+    }
+    public void StopUnits()
+    {
+        foreach(Unit unit in selectUnitList)
+        {
+            if (unit == null || !unit.IsAlive)
+                continue;
+            unit.Attack?.SetTarget(null);
+
+            if(unit is Pawn pawn)
+            {
+                pawn.Gather.SetTargetResource(null);
+                pawn.Build.SetTarget(null);
+            }
+            unit.Movement.Stop();
+            unit.StateMachine.ChangeState(unit.IdleState);
+        }
+        CancelTargeting();
     }
     private void HandleRightClick()
     {
-        if (BuildPlacer.instance != null && BuildPlacer.instance.IsPlacing)
+        if (BuildPlacer.instance != null && BuildPlacer.instance.BlockCommand)
             return;
-
+        
+        if(Targeting != TargetingMode.None)
+        {
+            if (Mouse.current.rightButton.wasPressedThisFrame)
+                CancelTargeting();
+            return;
+        }
         if (!Mouse.current.rightButton.wasPressedThisFrame)
             return;
         if (selectUnitList == null || selectUnitList.Count == 0)
@@ -92,7 +169,7 @@ public class Player : MonoBehaviour
             List<Unit> notCombatUnits = new List<Unit>();
             foreach (Unit unit in selectUnitList)
             {
-                if(unit.Attack == null)
+                if (unit.Attack == null)
                 {
                     notCombatUnits.Add(unit);
                     continue;
@@ -104,18 +181,17 @@ public class Player : MonoBehaviour
                 MoveUnits(notCombatUnits, worldPos);
             return;
         }
-
         // 유닛 힐(Monk만, 나머지 이동)
         Collider2D allyHit = Physics2D.OverlapCircle(worldPos, 0.2f, allyLayerMask);
         Unit ally = allyHit != null ? allyHit.GetComponent<Unit>() : null;
 
-        if(ally != null && ally.IsAlive)
+        if (ally != null && ally.IsAlive)
         {
             List<Unit> moveUnits = new List<Unit>();
 
             foreach (Unit unit in selectUnitList)
             {
-                if(unit is Monk monk && unit != ally)
+                if (unit is Monk monk && unit != ally)
                 {
                     monk.Heal.SetTarget(ally);
                     monk.StateMachine.ChangeState(monk.HealState);
@@ -129,25 +205,25 @@ public class Player : MonoBehaviour
                 MoveUnits(moveUnits, worldPos);
             return;
         }
-        
+
         Collider2D buildHit = Physics2D.OverlapCircle(worldPos, 0.2f, allyBuildingLayerMask);
         Building ConstructionBuilding = buildHit != null ? buildHit.GetComponent<Building>() : null;
 
-        if(ConstructionBuilding != null && ConstructionBuilding.IsAlive && ConstructionBuilding.IsConstruction)
+        if (ConstructionBuilding != null && ConstructionBuilding.IsAlive && ConstructionBuilding.IsConstruction)
         {
             List<Unit> nonPawns = new List<Unit>();
-            foreach(Unit unit in selectUnitList)
+            foreach (Unit unit in selectUnitList)
             {
-                if(!(unit is Pawn))
+                if (!(unit is Pawn))
                     nonPawns.Add(unit);
             }
             CommandBuild(ConstructionBuilding);
-            if(nonPawns.Count > 0)
+            if (nonPawns.Count > 0)
                 MoveUnits(nonPawns, worldPos);
             return;
         }
-        
-            // 자원채집 (Pawn)
+
+        // 자원채집 (Pawn)
         Collider2D resourceHit = Physics2D.OverlapCircle(worldPos, 0.2f, resourceLayerMask);
         Resource resource = resourceHit != null ? resourceHit.GetComponent<Resource>() : null;
 
@@ -159,7 +235,7 @@ public class Player : MonoBehaviour
                     continue;
 
                 pawn.Gather.SetTargetResource(resource);
-                pawn.Gather.SetReturnBuilding(Castle.FindNearestCastle(pawn.transform.position));
+                pawn.Gather.SetReturnBuilding(Castle.FindNearestCastle(pawn.transform.position, pawn.OwnerFaction.Type));
                 pawn.StateMachine.ChangeState(pawn.GatherState);
             }
             return;
@@ -198,99 +274,89 @@ public class Player : MonoBehaviour
     // 유닛선택
     public void SelectUnit(Unit unit)
     {
-        if(!selectUnitList.Contains(unit))
+        if (selectUnitList.Count >= MaxSelectCount)
+            return;
+
+        if (!selectUnitList.Contains(unit))
+        {
             selectUnitList.Add(unit);
+            unit.SetSelected(true);
+            CancelTargeting();
+            OnSelectionChanged?.Invoke();
+        }
     }
     public void DeselectUnit(Unit unit)
     {
-        if(selectUnitList.Contains(unit))
+        if (selectUnitList.Contains(unit))
+        {
             selectUnitList.Remove(unit);
+            unit.SetSelected(false);
+            CancelTargeting();
+            OnSelectionChanged?.Invoke();
+        }
     }
     public void ClearSelectList()
     {
         foreach (Unit unit in selectUnitList)
             unit.SetSelected(false);
         selectUnitList.Clear();
-    }
-    public bool HasSelectedPawn()
-    {
-        return selectUnitList.Count == 1 && selectUnitList[0] is Pawn;
-    }
-    public void CommandBuild(Building building)
-    {
-        foreach(Unit unit in selectUnitList)
-        {
-            if(!(unit is Pawn pawn))
-                continue;
-            pawn.Build.SetTarget(building);
-            pawn.StateMachine.ChangeState(pawn.BuildState);
-        }
+
+        if (CameraManager.instance != null)
+            CameraManager.instance.ResetFocusIndex();
+
+        CancelTargeting();
+        OnSelectionChanged?.Invoke();
     }
     // 건물선택
-    public void SelectBuilding(Building building)
+    public void BuildingSelect(Building building)
     {
         ClearSelectList();
         DeselectBuilding();
 
         selectBuilding = building;
         building.SetSelected(true);
+        CancelTargeting();
+        OnSelectionChanged?.Invoke();
     }
     public void DeselectBuilding()
     {
         if (selectBuilding != null)
             selectBuilding.SetSelected(false);
         selectBuilding = null;
+        CancelTargeting();
+        OnSelectionChanged?.Invoke();
     }
-    // 자원
-    public void AddResource(ResourceType resourceType, int amount)
+    public void SelectSingleUnit(Unit unit)
     {
-        switch(resourceType)
-        {
-            case ResourceType.Wood:
-                AddWood(amount);
-                break;
-            case ResourceType.Gold:
-                AddGold(amount); 
-                break;
-        }    
+        ClearSelectList();
+        DeselectBuilding();
+        SelectUnit(unit);
     }
-    public void AddWood(int amount)
+
+    public bool IsAllPawnSelected()
     {
-        Wood += amount;
-        OnResourceChanged?.Invoke();
-    }
-    public void AddGold(int amount)
-    {
-        Gold += amount;
-        OnResourceChanged?.Invoke();
-    }
-    public bool TryReduceResource(int woodCost, int goldCost)
-    {
-        if (Wood < woodCost || Gold < goldCost)
+        if (selectUnitList.Count == 0)
             return false;
 
-        Wood -= woodCost;
-        Gold -= goldCost;
-        OnResourceChanged?.Invoke();
+        foreach (Unit unit in selectUnitList)
+            if (!(unit is Pawn) || !unit.IsAlive)
+                return false;
         return true;
     }
-    // 인구수
-    public bool TryIncreasePopulation(int amount)
+    private Pawn FindBuilder()
     {
-        if (CurrentPopulation + amount > MaxPopulation)
-            return false;
-        CurrentPopulation += amount;
-        OnPopulationChanged?.Invoke();
-        return true;
+        foreach (Unit unit in selectUnitList)
+            if (unit is Pawn pawn && pawn.IsAlive)
+                return pawn;
+        return null;
     }
-    public void ReleasePopulation(int amount)
+    public void CommandBuild(Building building)
     {
-        CurrentPopulation = Mathf.Max(0, CurrentPopulation -  amount);
-        OnPopulationChanged?.Invoke();
-    }
-    public void AddMaxPopulation(int amount)
-    {
-        MaxPopulation = Mathf.Max(0, MaxPopulation + amount);
-        OnPopulationChanged?.Invoke();
+        Pawn builder = FindBuilder();
+        if (builder == null)
+            return;
+
+        builder.Build.SetTarget(building);
+        builder.StateMachine.ChangeState(builder.BuildState);
     }
 }

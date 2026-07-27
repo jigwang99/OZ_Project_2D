@@ -31,7 +31,17 @@ public abstract class Unit : MonoBehaviour, IPoolable, IDamageable
     public UnitChaseState ChaseState { get; protected set; }
     public UnitAttackState AttackState { get; protected set; }
 
-    public Animator Animator { get; protected set; }
+    private SpriteRenderer spriteRenderer;
+
+    protected Animator animator;
+    private int isRun;
+    protected int isAttack;
+
+    public Faction OwnerFaction { get; protected set; }
+
+    private SelectCircle selectCircle;
+    private MinimapMarker minimapMarker;
+
     protected virtual void Awake()
     {
         Movement = GetComponent<UnitMovement>();
@@ -42,7 +52,14 @@ public abstract class Unit : MonoBehaviour, IPoolable, IDamageable
         ChaseState = new UnitChaseState(this);
         AttackState = new UnitAttackState(this);
 
-        Animator = GetComponent<Animator>();
+        animator = GetComponent<Animator>();
+        isRun = Animator.StringToHash("isRun");
+        isAttack = Animator.StringToHash("isAttack");
+
+        spriteRenderer = GetComponent<SpriteRenderer>();
+
+        selectCircle = GetComponent<SelectCircle>();
+        minimapMarker = GetComponent<MinimapMarker>();
     }
     protected void OnEnable()
     {
@@ -54,6 +71,7 @@ public abstract class Unit : MonoBehaviour, IPoolable, IDamageable
     public void SetSelected(bool selected)
     {
         IsSelected = selected;
+        selectCircle?.SetVisible(selected);
     }
     public void RestoreHP(int amount)
     {
@@ -76,12 +94,23 @@ public abstract class Unit : MonoBehaviour, IPoolable, IDamageable
     protected void Die()
     {
         IsAlive = false;
+        OwnerFaction.UnregisterUnit(this);
         if(gameObject.layer == (int)Layer.Player)
-        {
             Player.instance.DeselectUnit(this);
-            Player.instance.ReleasePopulation(unitStat.Population);
-        }
+        OwnerFaction.ReleasePopulation(unitStat.Population);
         ReturnToPool();
+    }
+    public void SetRunAnimation(bool isRun)
+    {
+        animator.SetBool(this.isRun, isRun);
+    }
+    public virtual void PlayAttackAnimation()
+    {
+        animator.SetTrigger(isAttack);
+    }
+    public void FlipSprite(float directionX)
+    {
+        spriteRenderer.flipX = directionX < 0;
     }
     public LayerMask GetEnemyLayerMask()
     {
@@ -90,7 +119,7 @@ public abstract class Unit : MonoBehaviour, IPoolable, IDamageable
     public void SetLayer(Layer layer)
     {
         gameObject.layer = (int)layer;
-
+        OwnerFaction = FactionManager.instance.FromLayer((int)layer);
         if(layer == Layer.Player)
         {
             allianceMask = (1 << (int)Layer.Player) | (1 << (int)Layer.PlayerBuilding);
@@ -101,12 +130,14 @@ public abstract class Unit : MonoBehaviour, IPoolable, IDamageable
             allianceMask = (1 << (int)Layer.Enemy) | (1 << (int)Layer.EnemyBuilding);
             enemyMask = (1 << (int)Layer.Player) | (1 << (int)Layer.PlayerBuilding);
         }
+        OwnerFaction.RegisterUnit(this);
         GetComponent<UnitVisual>()?.ApplyAnime();
+        minimapMarker?.ApplyFaction((int)layer);
     }
     public virtual void Init()
     {
         if (unitStat == null)
-            unitStat = UnitManager.instance.GetUnitStat(Type);
+            unitStat = UnitDataLoader.instance.GetUnitStat(Type);
         SetSelected(false);
         CurrentHp = unitStat.MaxHp;
         IsAlive = true;

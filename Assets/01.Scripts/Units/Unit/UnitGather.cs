@@ -46,7 +46,7 @@ public class UnitGather : MonoBehaviour
         if(CarryAmount <= 0)
             return;
 
-        Player.instance.AddResource(CarryResourceType, CarryAmount);
+        unit.OwnerFaction.AddResource(CarryResourceType, CarryAmount);
         CarryAmount = 0;
     }
     private void HandleTargetDepleted()

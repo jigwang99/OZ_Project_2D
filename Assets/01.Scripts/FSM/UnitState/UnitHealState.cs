@@ -26,11 +26,11 @@ public class UnitHealState : UnitBaseState
     public override void FixedUpdate()
     {
         Unit target = heal.GetTarget();
-        if (target == null)
+        if (target == null || heal.IsInRange())
+        {
+            Unit.Movement.Stop();
             return;
-
-        if (heal.IsInRange())
-            return;
+        }
 
         refindTimer -= Time.fixedDeltaTime;
         if(refindTimer <= 0f)
@@ -53,6 +53,10 @@ public class UnitHealState : UnitBaseState
         }
 
         if (heal.IsInRange() && heal.CanHeal())
+        {
+            monk.PlayHealAnimation();
             heal.Heal();
+        }
+        Unit.SetRunAnimation(!heal.IsInRange());
     }
 }
