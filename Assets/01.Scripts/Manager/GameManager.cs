@@ -27,6 +27,7 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
 
         Time.timeScale = 1.0f;
+        Castle.ActiveCastle.Clear();
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()

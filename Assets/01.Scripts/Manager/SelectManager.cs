@@ -26,7 +26,6 @@ public class SelectManager : MonoBehaviour
             instance = this;
         else
             Destroy(gameObject);
-        DontDestroyOnLoad(gameObject);
     }
     // Update is called once per frame
     void Update()

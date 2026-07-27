@@ -17,8 +17,6 @@ public abstract class DataLoader<TSelf, TKey, TStat> : MonoBehaviour where TSelf
             instance = (TSelf)this;
         else
             Destroy(gameObject);
-        DontDestroyOnLoad(gameObject);
-
         Load();
     }
     private void Load()
