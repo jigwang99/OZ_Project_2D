@@ -23,7 +23,7 @@ public class Tower : Building
     {
         this.target = target;
     }
-    public bool IsInRange(IDamageable targete)
+    public bool IsInRange(IDamageable target)
     {
         return Vector2.Distance(transform.position, target.transform.position) <= BuildingStat.AttackRange;
     }

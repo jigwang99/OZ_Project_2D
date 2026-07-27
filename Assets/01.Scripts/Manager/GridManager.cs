@@ -11,6 +11,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] private Vector2 gridWorldSize; // world size
     [SerializeField] private float nodeRadius; // 노드 반지름
     [SerializeField] private LayerMask obstacleLayerMask;  // 장애물 레이어마스크
+    [SerializeField] private float unitRadius = 0.4f;
 
     private Node[,] grid;
     private float nodeDiameter;        // 노드 지름
@@ -36,7 +37,7 @@ public class GridManager : MonoBehaviour
     }
     public Node GetNode(int x, int y)
     {
-        if (x < 0 || x >= gridSizeX || y < 0 || y > gridSizeY)
+        if (x < 0 || x >= gridSizeX || y < 0 || y >= gridSizeY)
             return null;
         return grid[x, y];
     }
@@ -108,7 +109,7 @@ public class GridManager : MonoBehaviour
     }
     private bool CheckWalkable(Vector2 worldPoint)
     {
-        return !Physics2D.OverlapCircle(worldPoint, nodeRadius * 0.9f, obstacleLayerMask);
+        return !Physics2D.OverlapCircle(worldPoint, 0.9f * nodeRadius + unitRadius, obstacleLayerMask);
     }
     public void UpdateArea(Vector2 center, Vector2 size)
     {
