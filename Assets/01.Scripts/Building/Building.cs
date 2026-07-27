@@ -108,7 +108,7 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
     }
     public void SetLayer(Layer ownerLayer)
     {
-        gameObject.layer = (int)(ownerLayer == Layer.Player || ownerLayer == Layer.PlayerBuilding
+        gameObject.layer = (int)(LayerUtility.IsPlayerSide((int)ownerLayer)
             ? Layer.PlayerBuilding : Layer.EnemyBuilding);
 
         OwnerFaction = FactionManager.instance.FromLayer(gameObject.layer);

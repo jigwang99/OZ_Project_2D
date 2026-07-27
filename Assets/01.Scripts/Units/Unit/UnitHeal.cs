@@ -39,7 +39,7 @@ public class UnitHeal : MonoBehaviour
         if(target == null)
             return false;
 
-        return Vector2.Distance(unit.transform.position, target.transform.position) <= unit.UnitStat.AttackRange;
+        return RangeUtility.IsNear(unit.transform.position, target.transform, unit.UnitStat.AttackRange);
     }
     public Unit FindTarget()
     {

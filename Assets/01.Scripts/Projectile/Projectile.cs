@@ -35,8 +35,7 @@ public abstract class Projectile : MonoBehaviour, IPoolable
     {
         Damage = damage;
 
-        gameObject.layer = shooterLayer == (int)Layer.Player || shooterLayer == (int)Layer.PlayerBuilding 
-            ? (int)Layer.PlayerProjectile : (int)Layer.EnemyProjectile;
+        gameObject.layer = LayerUtility.IsPlayerSide(shooterLayer) ? (int)Layer.PlayerProjectile : (int)Layer.EnemyProjectile;
     }
     protected abstract void OnTriggerEnter2D(Collider2D collision);
     public virtual void Init()

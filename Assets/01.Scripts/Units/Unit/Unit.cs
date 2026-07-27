@@ -1,14 +1,5 @@
 ﻿using UnityEngine;
 
-public enum Layer
-{
-    Player = 6,
-    Enemy = 7,
-    PlayerProjectile = 8,
-    EnemyProjectile = 9,
-    PlayerBuilding = 10,
-    EnemyBuilding = 11,
-}
 public abstract class Unit : MonoBehaviour, IPoolable, IDamageable
 {
     protected UnitStat unitStat;

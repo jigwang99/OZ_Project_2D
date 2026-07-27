@@ -36,12 +36,10 @@ public abstract class UnitAttack : MonoBehaviour
     }
     public bool IsInRange()
     {
-        if(target == null) return false;
+        if (target == null)
+            return false;
 
-        Collider2D col = target.transform.GetComponent<Collider2D>();
-        Vector2 point = col != null ? col.ClosestPoint(unit.transform.position) : (Vector2)target.transform.position;
-
-        return Vector2.Distance(unit.transform.position, point) <= unit.UnitStat.AttackRange;
+        return RangeUtility.IsNear(unit.transform.position, target.transform, unit.UnitStat.AttackRange);   
     }
     public Unit FindTarget()
     {

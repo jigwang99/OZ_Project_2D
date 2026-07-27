@@ -67,10 +67,7 @@ public class UnitGatherState : UnitBaseState
     }
     public bool IsNear(Transform target)
     {
-        Collider2D col = target.GetComponent<Collider2D>();
-        Vector2 point = col != null ? col.ClosestPoint(Unit.transform.position) : (Vector2)target.position;
-
-        return Vector2.Distance(Unit.transform.position, point) <= range;
+        return RangeUtility.IsNear(Unit.transform.position, target, range);
     }
 
     private void MoveToResource()

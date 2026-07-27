@@ -10,7 +10,7 @@ public class MinimapMarker : MonoBehaviour
     {
         if (marker == null)
             return;
-        bool isAlly = layer == (int)Layer.Player || layer == (int)Layer.PlayerBuilding;
+        bool isAlly = LayerUtility.IsPlayerSide(layer);
         marker.color = isAlly ? allyColor : enemyColor;
     }
 }

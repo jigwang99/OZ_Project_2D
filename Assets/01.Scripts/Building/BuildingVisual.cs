@@ -13,7 +13,7 @@ public class BuildingVisual : MonoBehaviour
     }
     public void ApplySprite()
     {
-        bool isAlly = gameObject.layer ==(int)Layer.PlayerBuilding;
+        bool isAlly = LayerUtility.IsPlayerBuilding(gameObject.layer);
         sr.sprite = isAlly ? allySprite : enemySprite;
     }
 }
