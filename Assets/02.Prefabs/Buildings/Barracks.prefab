@@ -116,7 +116,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c412ef722f6a6e44b0515547d3c0c1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Barrack
-  obstacleSize: {x: 3, y: 3}
+  obstacleSize: {x: 2, y: 3}
   producibleUnits: 03000000020000000400000001000000
   productList: 
   spawnPosition: {fileID: 6936730175346076632}
@@ -181,7 +181,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.021909952, y: -0.43876302}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -191,7 +191,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.8168619, y: 2.7224739}
+  m_Size: {x: 2, y: 3}
   m_EdgeRadius: 0
 --- !u!114 &-3737050698746819864
 MonoBehaviour:

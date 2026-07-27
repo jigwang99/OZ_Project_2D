@@ -101,6 +101,8 @@ public class BuildPlacer : MonoBehaviour
     }
     private bool CanPlaceAt(Vector2 center)
     {
+        if(!MapBounds.Contains(center, currentPlaceInfo.size))
+            return false;
         return Physics2D.OverlapBox(center, currentPlaceInfo.size, 0f, obstacleLayerMask) == null
             && GridManager.instance.IsAreaWalkable(center, currentPlaceInfo.size);
     }

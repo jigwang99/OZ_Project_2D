@@ -31,14 +31,19 @@ public class UnitGather : MonoBehaviour
 
     public void Gather()
     {
-        if (TargetResource == null)
+        Resource resource = TargetResource;
+
+        if (resource == null)
             return;
-        int gatherd = TargetResource.Gathered(unit.UnitStat.GatherAmount);
+
+        ResourceType type = resource.Type;
+
+        int gatherd = resource.Gathered(unit.UnitStat.GatherAmount);
 
         if (gatherd == 0)
             return;
 
-        CarryResourceType = TargetResource.Type;
+        CarryResourceType = type;
         CarryAmount = gatherd;
     }
     public void ReturnResource()

@@ -13,6 +13,9 @@ public class Node : IHeapItem<Node>
     public int hCost;              // 현재 노드부터 목표 노드 까지의 예상 비용
     public Node parent;            // 이전 노드
 
+    public int searchVersion = 0;
+    public bool closed;
+
     public int FCost => gCost + hCost;
     
     public int HeapIndex { get; set; }

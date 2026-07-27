@@ -330,6 +330,8 @@ public class EnemyCommander : MonoBehaviour
     }
     private bool CanPlaceAt(Vector2 center, Vector2 size)
     {
+        if(!MapBounds.Contains(center, size))
+            return false;
         if (Physics2D.OverlapBox(center, size, 0f, obstacleLayerMask) != null)
             return false;
         return GridManager.instance.IsAreaWalkable(center, size);

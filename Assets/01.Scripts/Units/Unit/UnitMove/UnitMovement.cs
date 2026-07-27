@@ -115,7 +115,7 @@ public class UnitMovement : MonoBehaviour
     }
     public void Move()
     {
-        if(isEscaping)
+        if (isEscaping)
         {
             MoveEscape();
             return;
@@ -173,7 +173,7 @@ public class UnitMovement : MonoBehaviour
 
         int start = Random.Range(0, escapeDirection.Length);
 
-        for(int i = 0; i < escapeDirection.Length; i++)
+        for (int i = 0; i < escapeDirection.Length; i++)
         {
             Vector2 dir = escapeDirection[(start + i) % escapeDirection.Length];
             Vector2 candidate = origin + dir * escapeDistance;
@@ -183,7 +183,7 @@ public class UnitMovement : MonoBehaviour
 
             float distance = hasFinalDestination ? Vector2.Distance(candidate, finalDestination) : 0f;
 
-            if(distance < bestDistance)
+            if (distance < bestDistance)
             {
                 bestDistance = distance;
                 best = candidate;
@@ -214,7 +214,7 @@ public class UnitMovement : MonoBehaviour
 
         Vector2 toTarget = escapeTarget - rb.position;
 
-        if(escapeTimer <= 0f || toTarget.magnitude <= waypointReachedDistance)
+        if (escapeTimer <= 0f || toTarget.magnitude <= waypointReachedDistance)
         {
             EndEscape();
             return;

@@ -3,6 +3,19 @@ using UnityEngine;
 
 public static class PathFinder
 {
+    private static int currentVersion = 0;
+
+    private static void NodeInit(Node node)
+    {
+        if(node.searchVersion != currentVersion)
+        {
+            node.searchVersion = currentVersion;
+            node.gCost = int.MaxValue;
+            node.hCost = 0;
+            node.parent = null;
+            node.closed = false;
+        }
+    }
     public static List<Vector2> FindPath(Vector2 startPos, Vector2 targetPos)
     {
         if(GridManager.instance == null)
@@ -10,6 +23,8 @@ public static class PathFinder
             Debug.Log("그리드 매니저가 없음");
             return null;
         }
+
+        currentVersion++;
 
         Node startNode = GridManager.instance.NodeFromWorldPoint(startPos);
         Node targetNode = GridManager.instance.NodeFromWorldPoint(targetPos);
@@ -23,36 +38,39 @@ public static class PathFinder
         }
 
         Heap<Node> openSet = new Heap<Node>(GridManager.instance.MaxSize);
-        HashSet<Node> closedSet = new HashSet<Node>();
         openSet.Add(startNode);
        
+        NodeInit(startNode);
         startNode.gCost = 0;
         startNode.hCost = GetDistance(startNode, targetNode);
-        startNode.parent = null;
 
         while (openSet.Count > 0)
         {
             // FCost가 가장 낮은 노드 추출
             Node currentNode = openSet.RemoveFirst();
-            closedSet.Add(currentNode);
+            currentNode.closed = true;
 
             if (currentNode == targetNode)
                 return RetracePath(startNode, targetNode);
 
             foreach(Node neighbour in GridManager.instance.GetNeighbours(currentNode))
             {
-                if (!neighbour.walkable || closedSet.Contains(neighbour))
+                NodeInit(neighbour);
+
+                if (!neighbour.walkable || neighbour.closed)
                     continue;
 
                 int newCostToNeighbour = currentNode.gCost + GetDistance(currentNode, neighbour);
 
-                if(newCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour))
+                if(newCostToNeighbour < neighbour.gCost)
                 {
+                    bool isOpen = neighbour.gCost != int.MaxValue;
+
                     neighbour.gCost = newCostToNeighbour;
                     neighbour.hCost = GetDistance(neighbour, targetNode);
                     neighbour.parent = currentNode;
 
-                    if(!openSet.Contains(neighbour))
+                    if(!isOpen)
                         openSet.Add(neighbour);
                     else
                         openSet.UpdateItem(neighbour);
@@ -64,15 +82,20 @@ public static class PathFinder
     // 목표지점이 장애물일 경우 가장 가까운 곳 반환
     private static Node FindNearestWalkableNode(Node from)
     {
-        for(int radius = 1; radius < 20; radius++)
+        GridManager grid = GridManager.instance;
+        int maxRadius = Mathf.Max(grid.SizeX, grid.SizeY);
+
+        for(int radius = 1; radius < maxRadius; radius++)
         {
             for(int x = -radius; x <= radius; x++)
             {
                 for(int y = -radius; y <= radius; y++)
                 {
-                    Node node = GridManager.instance.NodeFromWorldPoint(from.worldPos + new Vector2(x, y) * 0.5f);
+                    if (Mathf.Abs(x) != radius && Mathf.Abs(y) != radius)
+                        continue;
+                    Node node =grid.GetNode(from.gridX + x, from.gridY + y);
 
-                    if (node.walkable)
+                    if (node != null && node.walkable)
                         return node;
                 }
             }

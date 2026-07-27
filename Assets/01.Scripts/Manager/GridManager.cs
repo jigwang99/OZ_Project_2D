@@ -16,6 +16,8 @@ public class GridManager : MonoBehaviour
     private float nodeDiameter;        // 노드 지름
     private int gridSizeX, gridSizeY;
 
+    public int SizeX => gridSizeX;
+    public int SizeY => gridSizeY;
     public int MaxSize => gridSizeX * gridSizeY;
 
     private void Awake()
@@ -31,6 +33,12 @@ public class GridManager : MonoBehaviour
         gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
         
         CreateGrid();
+    }
+    public Node GetNode(int x, int y)
+    {
+        if (x < 0 || x >= gridSizeX || y < 0 || y > gridSizeY)
+            return null;
+        return grid[x, y];
     }
     // 그리드 생성
     private void CreateGrid()
