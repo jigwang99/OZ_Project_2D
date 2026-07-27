@@ -132,7 +132,7 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
     public virtual void Init()
     {
         if (buildingStat == null)
-            buildingStat = BuildingDataLoader.instance.GetBuildingStat(Type);
+            buildingStat = BuildingDataLoader.instance.Get(Type);
 
         populationProvided = false;
         IsRegistered = false;
@@ -142,6 +142,9 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
         if(IsSkipBuilded)
             ProvidePopulation();
     }
-    public abstract void ReturnToPool();
+    public virtual void ReturnToPool()
+    {
+        ObjectPoolManager.instance.ReturnObject(Type.ToString(), gameObject);
+    }
     protected virtual void OnDisable() { }
 }

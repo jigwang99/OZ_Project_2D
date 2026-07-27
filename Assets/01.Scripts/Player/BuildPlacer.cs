@@ -76,7 +76,7 @@ public class BuildPlacer : MonoBehaviour
         if (info == null)
             return;
 
-        BuildingStat stat = BuildingDataLoader.instance.GetBuildingStat(type);
+        BuildingStat stat = BuildingDataLoader.instance.Get(type);
         Faction faction = FactionManager.instance.Player;
 
         if(stat == null || faction.Wood < stat.WoodCost || faction.Gold < stat.GoldCost)
@@ -106,7 +106,7 @@ public class BuildPlacer : MonoBehaviour
     }
     private void TryPlace(Vector2 pos)
     {
-        BuildingStat stat = BuildingDataLoader.instance.GetBuildingStat(currentPlaceInfo.type);
+        BuildingStat stat = BuildingDataLoader.instance.Get(currentPlaceInfo.type);
         if (!FactionManager.instance.Player.TryReduceResource(stat.WoodCost, stat.GoldCost))
         {
             CancelPlacement();

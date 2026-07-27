@@ -24,7 +24,6 @@ public class GridManager : MonoBehaviour
             instance = this;
         else
             Destroy(gameObject);
-        DontDestroyOnLoad(gameObject);
 
         nodeDiameter = nodeRadius * 2;
         // 전체 크기를 가로세로 몇칸인지 계산

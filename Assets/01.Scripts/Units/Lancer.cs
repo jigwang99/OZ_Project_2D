@@ -8,8 +8,4 @@ public class Lancer : Unit
         base.Awake();
         Attack = GetComponent<MeleeAttack>();
     }
-    public override void ReturnToPool()
-    {
-        ObjectPoolManager.instance.ReturnObject("Lancer", this.gameObject);
-    }
 }

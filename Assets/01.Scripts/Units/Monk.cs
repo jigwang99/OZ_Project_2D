@@ -19,8 +19,4 @@ public class Monk : Unit
     {
         animator.SetTrigger(IsHeal);
     }
-    public override void ReturnToPool()
-    {
-        ObjectPoolManager.instance.ReturnObject("Monk", this.gameObject);
-    }
 }

@@ -35,10 +35,7 @@ public class Player : MonoBehaviour
         if (instance == null)
             instance = this;
         else
-        {
             Destroy(gameObject);
-        }
-        DontDestroyOnLoad(gameObject);
     }
 
     // Update is called once per frame
@@ -248,27 +245,15 @@ public class Player : MonoBehaviour
     {
         if (units.Count == 0)
             return;
-
-        int column = Mathf.CeilToInt(Mathf.Sqrt(units.Count));
-        int row = Mathf.CeilToInt((float)units.Count / column);
         for (int i = 0; i < units.Count; i++)
         {
-            int x = i % column;
-            int y = i / column;
-
-            Vector2 offset = new Vector2(
-                (x - (column - 1) * 0.5f) * spacing,
-                ((row - 1) * 0.5f - y) * spacing);
-
             Unit unit = units[i];
 
-            unit.Movement.SetDestination(destination + offset);
+            unit.Movement.SetDestination(destination + Formation.Offset(i, units.Count, spacing));
 
             // 이동 중이라면 상태변화 없음
             if (unit.StateMachine.CurrentState != unit.MoveState)
-            {
                 unit.StateMachine.ChangeState(unit.MoveState);
-            }
         }
     }
     // 유닛선택

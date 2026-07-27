@@ -42,7 +42,7 @@ public abstract class Projectile : MonoBehaviour, IPoolable
     public virtual void Init()
     {
         if(projectileStat == null)
-            projectileStat = ProjectileDataLoader.instance.GetProjectileStat(Type);
+            projectileStat = ProjectileDataLoader.instance.Get(Type);
         timer = 0f;
         Direction = Vector2.zero;
         Damage = 0;

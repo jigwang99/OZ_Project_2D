@@ -1,32 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-public class ProjectileDataLoader : MonoBehaviour
+public class ProjectileDataLoader : DataLoader<ProjectileDataLoader, ProjectileType, ProjectileStat>
 {
-    public static ProjectileDataLoader instance;
-
     [SerializeField] private ProjectileData projectileData;
-    private Dictionary<ProjectileType, ProjectileStat> projectileDictionary = new Dictionary<ProjectileType, ProjectileStat>();
 
-    private void Awake()
-    {
-        if(instance == null)
-            instance = this;
-        else
-            Destroy(gameObject);
-        DontDestroyOnLoad(gameObject);
-        LoadProjectileData();
-    }
-    private void LoadProjectileData()
-    {
-        projectileDictionary.Clear();
-        for(int i = 0; i < projectileData.projectileList.Count; i++)
-        {
-            ProjectileStat projectileStat = projectileData.projectileList[i].Clone();
-            projectileDictionary[projectileStat.ProjectileType] = projectileStat;
-        }
-    }
-    public ProjectileStat GetProjectileStat(ProjectileType type)
-    {
-        return projectileDictionary.GetValueOrDefault(type);
-    }
+    protected override IReadOnlyList<ProjectileStat> StatList => projectileData.projectileList;
+    protected override ProjectileType Key(ProjectileStat stat) => stat.ProjectileType;
+    protected override ProjectileStat Clone(ProjectileStat stat) => stat.Clone();
 }

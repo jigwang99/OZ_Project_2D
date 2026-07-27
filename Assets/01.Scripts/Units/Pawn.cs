@@ -63,6 +63,6 @@ public class Pawn : Unit
     {
         Gather.SetTargetResource(null);
         Build.SetTarget(null);
-        ObjectPoolManager.instance.ReturnObject("Pawn", this.gameObject);
+        base.ReturnToPool();
     }
 }

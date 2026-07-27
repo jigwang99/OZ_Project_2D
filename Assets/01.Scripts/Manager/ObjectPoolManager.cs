@@ -17,7 +17,7 @@ public class ObjectPoolManager : MonoBehaviour
             instance = this;
         else
             Destroy(gameObject);
-        DontDestroyOnLoad(gameObject);
+
         InitializePools();
     }
     private void InitializePools()

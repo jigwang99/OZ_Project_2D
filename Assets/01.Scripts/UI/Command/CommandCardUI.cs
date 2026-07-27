@@ -162,7 +162,7 @@ public class CommandCardUI : MonoBehaviour
             if(!pb.CanProduce(type))
                 continue;
 
-            UnitStat unitStat = UnitDataLoader.instance.GetUnitStat(type);
+            UnitStat unitStat = UnitDataLoader.instance.Get(type);
             if(unitStat == null)
                 continue;
 
@@ -184,7 +184,7 @@ public class CommandCardUI : MonoBehaviour
             if (index >= CancelIndex)
                 break;
 
-            BuildingStat stat = BuildingDataLoader.instance.GetBuildingStat(info.type);
+            BuildingStat stat = BuildingDataLoader.instance.Get(info.type);
             if (stat == null)
                 continue;
 

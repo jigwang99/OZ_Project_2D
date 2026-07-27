@@ -51,20 +51,13 @@ public abstract class Resource : MonoBehaviour, IPoolable
     {
         if (resourceStat == null)
         {
-            if (ResourceDataLoader.instance == null)
-            {
-                Debug.LogError("ResourceManager가 씬에 없거나 아직 초기화 전입니다.", this);
-                return;
-            }
-            resourceStat = ResourceDataLoader.instance.GetResourceStat(Type);
-            if (resourceStat == null)
-            {
-                Debug.LogError($"{Type} 데이터가 ResourceData에 없습니다.", this);
-                return;
-            }
+            resourceStat = ResourceDataLoader.instance.Get(Type);
         }
         remainAmount = resourceStat.MaxAmount;
         IsDepleted = false;
     }
-    public abstract void ReturnToPool();
+    public virtual void ReturnToPool()
+    {
+        ObjectPoolManager.instance.ReturnObject(Type.ToString(), gameObject);
+    }
 }

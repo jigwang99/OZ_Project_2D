@@ -8,8 +8,4 @@ public class Archer : Unit
         base.Awake();
         Attack = GetComponent<RangedAttack>();
     }
-    public override void ReturnToPool()
-    {
-        ObjectPoolManager.instance.ReturnObject("Archer", this.gameObject);
-    }
 }

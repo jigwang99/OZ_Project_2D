@@ -267,7 +267,7 @@ public class EnemyCommander : MonoBehaviour
             if (rule.whenPopulationFull && faction.MaxPopulation - faction.CurrentPopulation > populationMargin)
                 continue;
 
-            BuildingStat stat = BuildingDataLoader.instance.GetBuildingStat(rule.buildingType);
+            BuildingStat stat = BuildingDataLoader.instance.Get(rule.buildingType);
 
             if (stat == null)
                 continue;
@@ -585,19 +585,9 @@ public class EnemyCommander : MonoBehaviour
     }
     private void CommandSquad(Vector2 destination, IDamageable target, bool issue)
     {
-
-        int column = Mathf.CeilToInt(Mathf.Sqrt(squad.Count));
-        int row = Mathf.CeilToInt((float)squad.Count / column);
         for (int i = 0; i < squad.Count; i++)
         {
-            int x = i % column;
-            int y = i / column;
-
-            Vector2 offset = new Vector2(
-                (x - (column - 1) * 0.5f) * squadSpacing,
-                ((row - 1) * 0.5f - y) * squadSpacing);
-
-            CommandUnit(squad[i], destination + offset, target, issue);
+            CommandUnit(squad[i], destination + Formation.Offset(i, squad.Count, squadSpacing), target, issue);
         }
 
     }
