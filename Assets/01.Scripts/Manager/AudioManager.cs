@@ -1,6 +1,5 @@
 ﻿using System;
 using UnityEngine;
-using UnityEngine.AdaptivePerformance;
 
 public class AudioManager : MonoBehaviour
 {
@@ -93,6 +92,9 @@ public class AudioManager : MonoBehaviour
     {
         if (bgmSource == null || clip == null)
             return;
+        if (bgmSource.clip == clip && bgmSource.isPlaying)
+            return;
+
         bgmSource.clip = clip;
         bgmSource.loop = true;
         bgmSource.Play();

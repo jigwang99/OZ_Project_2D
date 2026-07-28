@@ -10,6 +10,9 @@ public class GameEndUI : MonoBehaviour
     [SerializeField] private Button menuButton;
     [SerializeField] private string menuSceneName = "StartScene";
 
+    [SerializeField] private AudioClip victoryClip;
+    [SerializeField] private AudioClip defeatClip;
+
     private void Awake()
     {
         panel.SetActive(false);
@@ -28,7 +31,13 @@ public class GameEndUI : MonoBehaviour
     private void Show(GameManager.Result result)
     {
         panel.SetActive(true);
-        resultTMP.text = result == GameManager.Result.Victory ? "Victory!!" : "Defeat";
+
+        bool win = result == GameManager.Result.Victory;
+        resultTMP.text = win ? "Victory!!" : "Defeat";
+
+        AudioClip clip = win ? victoryClip : defeatClip;
+        if(clip != null)
+            AudioManager.instance?.PlaySFX(clip);
     }
     private void OnClickMenu()
     {
