@@ -8,5 +8,6 @@ public class MeleeAttack : UnitAttack
             return;
         target.TakeDamage(unit.UnitStat.AttackDamage);
         remainCooldown = unit.UnitStat.AttackCooldown;
+        PlayAttackSound();
     }
 }

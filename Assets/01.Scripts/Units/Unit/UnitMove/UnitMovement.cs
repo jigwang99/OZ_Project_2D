@@ -11,6 +11,11 @@ public class UnitMovement : MonoBehaviour
     [SerializeField] private float blockCheckRadius = 0.3f;
     [SerializeField] private LayerMask blockLayerMask;
 
+    [Header("Audio")]
+    [SerializeField] private AudioClip footStepClip;
+    [SerializeField] private float footStepInterval = 0.3f;
+    private float footStepTimer;
+
     private const float destinationChangeThreshold = 0.3f;
 
     private static Vector2[] escapeDirection = { Vector2.up, Vector2.down, Vector2.left, Vector2.right };
@@ -115,6 +120,8 @@ public class UnitMovement : MonoBehaviour
     }
     public void Move()
     {
+        PlayFootStep();
+
         if (isEscaping)
         {
             MoveEscape();
@@ -143,6 +150,23 @@ public class UnitMovement : MonoBehaviour
         targetIndex = 0;
         isEscaping = false;
         stuckTimer = 0f;
+        footStepTimer = 0f;
+    }
+    private void PlayFootStep()
+    {
+        if (footStepClip == null)
+            return;
+        if(rb.linearVelocity.sqrMagnitude < 0.01f)
+        {
+            footStepTimer = 0f;
+            return;
+        }
+        footStepTimer -= Time.fixedDeltaTime;
+        if(footStepTimer <= 0f)
+        {
+            AudioManager.instance?.PlaySFXAt(footStepClip, rb.position);
+            footStepTimer = footStepInterval;
+        }
     }
     #region stuck
     private void ResetStuck()

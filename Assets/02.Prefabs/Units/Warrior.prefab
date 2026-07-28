@@ -199,6 +199,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce80647c690e2c649882997255f7c9dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MeleeAttack
+  attackClip: {fileID: 8300000, guid: 323e15cfe809e114ab92c9f4b25e8bc2, type: 3}
 --- !u!114 &1310393444078180729
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -219,6 +220,8 @@ MonoBehaviour:
   blockLayerMask:
     serializedVersion: 2
     m_Bits: 101376
+  footStepClip: {fileID: 8300000, guid: df7087e4d8a8bb546bc08ce68632903f, type: 3}
+  footStepInterval: 0.3
 --- !u!95 &-6866064464305501289
 Animator:
   serializedVersion: 7

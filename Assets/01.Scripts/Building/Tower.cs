@@ -10,6 +10,8 @@ public class Tower : Building
     Collider2D hit;
     public BuildingAttackState AttackState { get; private set; }
 
+    [SerializeField] private AudioClip fireClip;
+
     protected override void Awake()
     {
         base.Awake();
@@ -35,6 +37,8 @@ public class Tower : Building
     public void Fire(IDamageable target)
     {
         ArrowLauncher.Fire(transform.position, target, buildingStat.AttackDamage, gameObject.layer, 0.3f);
+        if(fireClip != null)
+            AudioManager.instance?.PlaySFXAt(fireClip, transform.position);
     }
     public override void Init()
     {

@@ -247,6 +247,7 @@ MonoBehaviour:
   - {fileID: 139124078243187418}
   explosionKey: Explosion
   fireThreshold: 0.33333334
+  explosionClip: {fileID: 8300000, guid: a652877b012108e41871f867ada9f176, type: 3}
 --- !u!1001 &1115306027480380846
 PrefabInstance:
   m_ObjectHideFlags: 0

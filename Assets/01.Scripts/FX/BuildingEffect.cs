@@ -7,6 +7,8 @@ public class BuildingEffect : MonoBehaviour
     [SerializeField] private string explosionKey = "Explosion";
     [SerializeField, Range(0f, 1f)] private float fireThreshold = 1f / 3f;
 
+    [SerializeField] private AudioClip explosionClip;
+
     private void OnDisable()
     {
         SetFire(false);
@@ -28,6 +30,8 @@ public class BuildingEffect : MonoBehaviour
     public void PlayExplosion()
     {
         SetFire(false);
+        if(explosionClip != null)
+            AudioManager.instance?.PlaySFXAt(explosionClip, transform.position);
         PooldEffect explosion = ObjectPoolManager.instance.GetObject<PooldEffect>(explosionKey);
         if (explosion == null)
             return;

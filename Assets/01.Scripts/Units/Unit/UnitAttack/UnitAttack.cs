@@ -6,6 +6,8 @@ public abstract class UnitAttack : MonoBehaviour
     protected IDamageable target;
     protected float remainCooldown;
 
+    [SerializeField] protected AudioClip attackClip;
+
     private Collider2D hit;
 
     private void Awake()
@@ -45,6 +47,11 @@ public abstract class UnitAttack : MonoBehaviour
     {
         hit = Physics2D.OverlapCircle(transform.position, unit.UnitStat.Vision, unit.GetEnemyLayerMask());
         return hit != null ? hit.GetComponent<Unit>() : null;
+    }
+    protected void PlayAttackSound()
+    {
+        if (attackClip != null)
+            AudioManager.instance?.PlaySFXAt(attackClip, unit.transform.position);
     }
     public abstract void Attack();
 }

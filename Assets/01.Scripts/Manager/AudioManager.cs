@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.AdaptivePerformance;
 
 public class AudioManager : MonoBehaviour
 {
@@ -17,13 +18,19 @@ public class AudioManager : MonoBehaviour
     [SerializeField, Range(0f, 1f)] private float defaultBGM = 1f;
     [SerializeField, Range(0f, 1f)] private float defaultSFX = 1f;
 
+    [Header("location based reduction")]
+    [SerializeField] private float minDistance = 6f;
+    [SerializeField] private float maxDistance = 25f;
+
     private const string MasterKey = "vol_master";
     private const string BGMKey = "vol_bgm";
     private const string SFXKey = "vol_sfx";
     private const string MutKey = "vol_mute";
 
-    public event Action OnVolumeChanged;
+    private Camera listerCamera;
 
+    public event Action OnVolumeChanged;
+   
     public float  MasterVolume {  get; private set; }
     public float BgmVolume { get; private set; }
     public float SFXVolume { get; private set; }
@@ -82,14 +89,46 @@ public class AudioManager : MonoBehaviour
         PlayerPrefs.SetInt(MutKey, mute ? 1 : 0);
         ApplyVolume();
     }
-    public void PlayBGM()
+    public void PlayBGM(AudioClip clip)
     {
+        if (bgmSource == null || clip == null)
+            return;
+        bgmSource.clip = clip;
+        bgmSource.loop = true;
         bgmSource.Play();
     }
-    public void PlaySFX(AudioClip clip)
+    public void PlaySFX(AudioClip clip, float scale = 1f)
     {
         if (sfxSource == null || clip == null)
             return;
-        sfxSource.PlayOneShot(clip);
+        sfxSource.PlayOneShot(clip, Mathf.Clamp01(scale));
+    }
+    public void PlaySFXAt(AudioClip clip, Vector2 position, float scale = 1f)
+    {
+        if (clip == null)
+            return;
+
+        float reduce = DistanceReduce(position);
+
+        if (reduce <= 0f)
+            return;
+
+        PlaySFX(clip, scale * reduce);
+    }
+    private float DistanceReduce(Vector2 position)
+    {
+        float dist = Vector2.Distance(ListnerPosition(), position);
+
+        if (dist <= minDistance)
+            return 1f;
+        if (dist >= maxDistance)
+            return 0f;
+        return 1f - (dist - minDistance) / (maxDistance - minDistance);
+    }
+    private Vector2 ListnerPosition()
+    {
+        if(listerCamera == null)
+            listerCamera = Camera.main;
+        return listerCamera != null ? (Vector2)listerCamera.transform.position : Vector2.zero;
     }
 }
