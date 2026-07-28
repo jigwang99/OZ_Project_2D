@@ -4,6 +4,9 @@ public class UnitHeal : MonoBehaviour
 {
     [SerializeField] private LayerMask allyLayerMask;
 
+    [Header("Audio")]
+    [SerializeField] private AudioClip healClip;
+
     private Unit unit;
     private Unit target;
     private float remainCooldown;
@@ -71,6 +74,7 @@ public class UnitHeal : MonoBehaviour
         if (target == null || !target.IsAlive)
             return;
 
+        AudioManager.instance?.PlaySFXAt(healClip, transform.position);
         target.RestoreHP(unit.UnitStat.AttackDamage);
         remainCooldown = unit.UnitStat.AttackCooldown;
     }

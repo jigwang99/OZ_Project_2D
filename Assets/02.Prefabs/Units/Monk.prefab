@@ -224,6 +224,7 @@ MonoBehaviour:
   allyLayerMask:
     serializedVersion: 2
     m_Bits: 64
+  healClip: {fileID: 8300000, guid: cfce0cea076109f478783201b2a9f57f, type: 3}
 --- !u!114 &-3146704469842494254
 MonoBehaviour:
   m_ObjectHideFlags: 0
