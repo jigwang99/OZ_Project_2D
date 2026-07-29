@@ -1,4 +1,5 @@
-﻿    using UnityEngine;
+﻿using UnityEngine;
+using System;
 
 public abstract class Projectile : MonoBehaviour, IPoolable
 {
@@ -10,6 +11,7 @@ public abstract class Projectile : MonoBehaviour, IPoolable
     public Vector2 Direction { get; protected set; }
 
     public int Damage { get; set; }
+    public Enum PoolKey => Type;
     protected virtual void Start()
     {
         rb = GetComponent<Rigidbody2D>();

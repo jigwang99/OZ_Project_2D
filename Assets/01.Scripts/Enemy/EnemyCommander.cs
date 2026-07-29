@@ -292,7 +292,7 @@ public class EnemyCommander : MonoBehaviour
         if (!faction.TryReduceResource(stat.WoodCost, stat.GoldCost))
             return null;
 
-        Building building = ObjectPoolManager.instance.GetObject<Building>(type.ToString());
+        Building building = ObjectPoolManager.instance.GetObject<Building>(type);
         if (building == null)
             return null;
         building.transform.position = position;

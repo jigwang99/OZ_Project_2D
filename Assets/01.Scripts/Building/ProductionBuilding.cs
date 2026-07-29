@@ -106,7 +106,7 @@ public abstract class ProductionBuilding : Building
         OnProductChanged?.Invoke();
 
         //유닛스폰
-        Unit unit = ObjectPoolManager.instance.GetObject<Unit>(unitType.ToString());
+        Unit unit = ObjectPoolManager.instance.GetObject<Unit>(unitType);
         unit.SetLayer(gameObject.layer == (int)Layer.PlayerBuilding ? Layer.Player : Layer.Enemy);
         unit.transform.position = spawnPosition.position;
     }

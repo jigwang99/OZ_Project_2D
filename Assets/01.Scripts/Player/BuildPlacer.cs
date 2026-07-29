@@ -115,7 +115,7 @@ public class BuildPlacer : MonoBehaviour
             return;
         }
 
-        Building building = ObjectPoolManager.instance.GetObject<Building>(currentPlaceInfo.type.ToString());
+        Building building = ObjectPoolManager.instance.GetObject<Building>(currentPlaceInfo.type);
         building.SetLayer(Layer.Player);
         building.SetSkipBuilded(false);
         building.transform.position = pos;

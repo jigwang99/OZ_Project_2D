@@ -22,7 +22,7 @@ public class UnitSpawner : MonoBehaviour
     {
         foreach (SpawnUnit spawn in spawnList)
         {
-            Unit unit = ObjectPoolManager.instance.GetObject<Unit>(spawn.unitType.ToString());
+            Unit unit = ObjectPoolManager.instance.GetObject<Unit>(spawn.unitType);
 
             if (unit == null)
                 continue;

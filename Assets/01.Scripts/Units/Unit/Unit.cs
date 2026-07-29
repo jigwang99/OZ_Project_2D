@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public abstract class Unit : MonoBehaviour, IPoolable, IDamageable
 {
@@ -33,6 +34,9 @@ public abstract class Unit : MonoBehaviour, IPoolable, IDamageable
     private SelectCircle selectCircle;
     private MinimapMarker minimapMarker;
 
+    public event Action<Unit> OnDied;
+
+    public Enum PoolKey => Type;
     protected virtual void Awake()
     {
         Movement = GetComponent<UnitMovement>();
@@ -84,11 +88,14 @@ public abstract class Unit : MonoBehaviour, IPoolable, IDamageable
     }
     protected void Die()
     {
+        if (!IsAlive)
+            return;
         IsAlive = false;
+
         OwnerFaction.UnregisterUnit(this);
-        if(gameObject.layer == (int)Layer.Player)
-            Player.instance.DeselectUnit(this);
         OwnerFaction.ReleasePopulation(unitStat.Population);
+
+        OnDied?.Invoke(this);
         ReturnToPool();
     }
     public void SetRunAnimation(bool isRun)
@@ -142,6 +149,6 @@ public abstract class Unit : MonoBehaviour, IPoolable, IDamageable
     }
     public virtual void ReturnToPool()
     {
-        ObjectPoolManager.instance.ReturnObject(Type.ToString(), gameObject);
+        ObjectPoolManager.instance.ReturnObject(PoolKey, gameObject);
     }
 }

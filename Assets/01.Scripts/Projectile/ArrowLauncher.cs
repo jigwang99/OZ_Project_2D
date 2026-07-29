@@ -7,7 +7,7 @@ public static class ArrowLauncher
         if (target == null || !target.IsAlive)
             return false;
 
-        Arrow arrow = ObjectPoolManager.instance.GetObject<Arrow>("Arrow");
+        Arrow arrow = ObjectPoolManager.instance.GetObject<Arrow>(ProjectileType.Arrow);
         if (arrow == null)
             return false;
 

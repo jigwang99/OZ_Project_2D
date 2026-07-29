@@ -1,11 +1,19 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+
+public enum EffectType
+{
+    Explosion,
+}
 
 public class PooldEffect : MonoBehaviour, IPoolable
 {
-    [SerializeField] private string poolKey;
+    [SerializeField] private EffectType effectType;
     [SerializeField] private float liftTime = 1.0f;
 
     private float timer;
+
+    public Enum PoolKey => effectType;
 
     public void Init()
     {
@@ -23,6 +31,6 @@ public class PooldEffect : MonoBehaviour, IPoolable
     }
     public void ReturnToPool()
     {
-        ObjectPoolManager.instance.ReturnObject(poolKey, gameObject);
+        ObjectPoolManager.instance.ReturnObject(PoolKey, gameObject);
     }
 }

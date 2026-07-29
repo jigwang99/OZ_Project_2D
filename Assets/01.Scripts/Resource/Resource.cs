@@ -13,6 +13,9 @@ public abstract class Resource : MonoBehaviour, IPoolable
     
     public abstract ResourceType Type { get; }
     public bool IsDepleted;
+
+    public Enum PoolKey => Type;
+
     protected void OnEnable()
     {
         Init();
@@ -58,6 +61,6 @@ public abstract class Resource : MonoBehaviour, IPoolable
     }
     public virtual void ReturnToPool()
     {
-        ObjectPoolManager.instance.ReturnObject(Type.ToString(), gameObject);
+        ObjectPoolManager.instance.ReturnObject(PoolKey, gameObject);
     }
 }

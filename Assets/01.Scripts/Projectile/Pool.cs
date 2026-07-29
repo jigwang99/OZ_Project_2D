@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System;
 public interface IPoolable
 {
+    Enum PoolKey { get; }
     void Init();
     void ReturnToPool();
 }
@@ -25,7 +27,7 @@ public class Pool
 
     private GameObject Create()
     {
-        GameObject go = Object.Instantiate(prefab, parent);
+        GameObject go = UnityEngine.Object.Instantiate(prefab, parent);
         go.gameObject.SetActive(false);
         pool.Enqueue(go);
         return go;

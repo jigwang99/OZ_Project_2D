@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System;
 using UnityEngine;
 
 public abstract class Building : MonoBehaviour, IPoolable, IDamageable
@@ -29,6 +30,8 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
     private MinimapMarker minimapMarker;
 
     private BuildingEffect effect;
+
+    public Enum PoolKey => Type;
 
     protected virtual void Awake()
     {
@@ -152,7 +155,7 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
     }
     public virtual void ReturnToPool()
     {
-        ObjectPoolManager.instance.ReturnObject(Type.ToString(), gameObject);
+        ObjectPoolManager.instance.ReturnObject(PoolKey, gameObject);
     }
     protected virtual void OnDisable() { }
 }

@@ -6,8 +6,6 @@ public class Player : MonoBehaviour
 {
     public static Player instance;
 
-    
-
     [SerializeField] private List<Unit> selectUnitList = new List<Unit>();
     [SerializeField] private Building selectBuilding;
     [SerializeField] Camera camera;
@@ -261,24 +259,30 @@ public class Player : MonoBehaviour
     {
         if (selectUnitList.Count >= MaxSelectCount)
             return;
+        if (selectUnitList.Contains(unit))
+            return;
 
-        if (!selectUnitList.Contains(unit))
-        {
-            selectUnitList.Add(unit);
-            unit.SetSelected(true);
-            CancelTargeting();
-            OnSelectionChanged?.Invoke();
-        }
+        selectUnitList.Add(unit);
+        unit.SetSelected(true);
+        unit.OnDied += HandleUnitDied;
+
+        CancelTargeting();
+        OnSelectionChanged?.Invoke();
     }
     public void DeselectUnit(Unit unit)
     {
-        if (selectUnitList.Contains(unit))
-        {
-            selectUnitList.Remove(unit);
-            unit.SetSelected(false);
-            CancelTargeting();
-            OnSelectionChanged?.Invoke();
-        }
+        if(!selectUnitList.Contains(unit)) return;
+
+        selectUnitList.Remove(unit);
+        unit.SetSelected(false);
+        unit.OnDied -= HandleUnitDied;
+
+        CancelTargeting();
+        OnSelectionChanged?.Invoke();
+    }
+    private void HandleUnitDied(Unit unit)
+    {
+        DeselectUnit(unit);
     }
     public void ClearSelectList()
     {

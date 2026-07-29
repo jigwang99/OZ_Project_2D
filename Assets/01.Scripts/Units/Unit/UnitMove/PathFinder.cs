@@ -4,6 +4,7 @@ using UnityEngine;
 public static class PathFinder
 {
     private static int currentVersion = 0;
+    private static Heap<Node> openSet;
 
     private static void NodeInit(Node node)
     {
@@ -20,9 +21,12 @@ public static class PathFinder
     {
         if(GridManager.instance == null)
         {
-            Debug.Log("그리드 매니저가 없음");
             return null;
         }
+        if (openSet == null || openSet.Capacity < GridManager.instance.MaxSize)
+            openSet = new Heap<Node>(GridManager.instance.MaxSize);
+        else
+            openSet.Clear();
 
         currentVersion++;
 
@@ -36,8 +40,6 @@ public static class PathFinder
             if (targetNode == null)
                 return null;
         }
-
-        Heap<Node> openSet = new Heap<Node>(GridManager.instance.MaxSize);
         openSet.Add(startNode);
        
         NodeInit(startNode);

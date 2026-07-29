@@ -4,7 +4,7 @@ using UnityEngine;
 public class BuildingEffect : MonoBehaviour
 {
     [SerializeField] private List<GameObject> fireObjects = new List<GameObject>();
-    [SerializeField] private string explosionKey = "Explosion";
+    [SerializeField] private EffectType explosionKey = EffectType.Explosion;
     [SerializeField, Range(0f, 1f)] private float fireThreshold = 1f / 3f;
 
     [SerializeField] private AudioClip explosionClip;

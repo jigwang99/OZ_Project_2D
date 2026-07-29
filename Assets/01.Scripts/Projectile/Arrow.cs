@@ -26,6 +26,6 @@ public class Arrow : Projectile
         if (isReturned)
             return;
         isReturned = true;
-        ObjectPoolManager.instance.ReturnObject(Type.ToString(), gameObject);
+        ObjectPoolManager.instance.ReturnObject(PoolKey, gameObject);
     }
 }
