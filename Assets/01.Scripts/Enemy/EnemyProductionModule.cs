@@ -16,7 +16,7 @@ public class ProductionSetting
 {
     public List<ProductionRule> rules = new List<ProductionRule>();
 }
-public class EnemyProductionModule
+public class EnemyProductionModule : IEnemyModule
 {
     private readonly EnemyContext enemyContext;
     private readonly ProductionSetting setting;

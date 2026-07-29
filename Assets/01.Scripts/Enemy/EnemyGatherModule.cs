@@ -7,7 +7,7 @@ public class GatherSetting
     public LayerMask resourceLayerMask;
     public float resourceSearchRadius = 30f;
 }
-public class EnemyGatherModule
+public class EnemyGatherModule : IEnemyModule
 {
     private readonly EnemyContext enemyContext;
     private readonly GatherSetting setting;

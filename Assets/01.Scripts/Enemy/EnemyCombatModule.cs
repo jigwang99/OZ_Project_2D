@@ -20,7 +20,7 @@ public class CombatSetting
     public float rallyOffset = 6f;
     public float squadSpacing = 1.1f;
 }
-public class EnemyCombatModule
+public class EnemyCombatModule : IEnemyModule
 {
     private readonly EnemyContext enemyContext;
     private readonly CombatSetting setting;

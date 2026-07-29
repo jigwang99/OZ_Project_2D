@@ -23,7 +23,7 @@ public class ConstructionSetting
     public int populationMargin = 4;
     public List<ConstructionRule> rules = new List<ConstructionRule>();
 }
-public class EnemyContructionModule
+public class EnemyContructionModule : IEnemyModule
 {
     private readonly EnemyContext enemyContext;
     private readonly ConstructionSetting setting;

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class EnemyCommander : MonoBehaviour
 {
@@ -22,10 +23,7 @@ public class EnemyCommander : MonoBehaviour
     [SerializeField] private CombatSetting combatSetting = new CombatSetting();
 
     private EnemyContext context;
-    private EnemyGatherModule gatherModule;
-    private EnemyProductionModule productionModule;
-    private EnemyContructionModule constructionModule;
-    private EnemyCombatModule combatModule;
+    private readonly List<IEnemyModule> modules = new List<IEnemyModule>();
 
     private float thinkTimer;
 
@@ -38,10 +36,10 @@ public class EnemyCommander : MonoBehaviour
         context = new EnemyContext(faction, playerFaction, transform);
         context.CurrentPhase = EnemyPhase.Gather;
 
-        gatherModule = new EnemyGatherModule(context, gatherSetting);
-        productionModule = new EnemyProductionModule(context, productionSetting);
-        constructionModule = new EnemyContructionModule(context, constructionSetting);
-        combatModule = new EnemyCombatModule(context, combatSetting);
+        modules.Add(new EnemyGatherModule(context, gatherSetting));
+        modules.Add(new EnemyProductionModule(context, productionSetting));
+        modules.Add(new EnemyContructionModule(context, constructionSetting));
+        modules.Add(new EnemyCombatModule(context, combatSetting));
     }
 
     // Update is called once per frame
@@ -54,10 +52,8 @@ public class EnemyCommander : MonoBehaviour
 
         context.CurrentPhase = UpdateEnemyPhase();
 
-        constructionModule.Update();
-        gatherModule.Update();
-        productionModule.Update();
-        combatModule.Update();
+        for(int i = 0; i < modules.Count; i++)
+            modules[i].Update();
     }
     private EnemyPhase UpdateEnemyPhase()
     {
