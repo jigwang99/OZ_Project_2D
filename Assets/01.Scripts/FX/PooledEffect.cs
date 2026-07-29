@@ -1,11 +1,6 @@
 ﻿using System;
 using UnityEngine;
 
-public enum EffectType
-{
-    Explosion,
-}
-
 public class PooldEffect : MonoBehaviour, IPoolable
 {
     [SerializeField] private EffectType effectType;

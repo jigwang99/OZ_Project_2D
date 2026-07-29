@@ -2,10 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum ProjectileType
-{
-    Arrow,
-}
 [Serializable]
 public class ProjectileStat
 {

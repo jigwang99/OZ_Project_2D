@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-public class UnitAttackState : UnitBaseState
+﻿public class UnitAttackState : UnitBaseState
 {
     public UnitAttackState(Unit unit) : base(unit)
     {

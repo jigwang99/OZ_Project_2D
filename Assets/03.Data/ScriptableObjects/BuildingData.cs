@@ -2,16 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum BuildingType
-{
-    None,
-    Castle,
-    House,
-    Barracks,
-    Archery,
-    Monastery,
-    Tower,
-}
 [Serializable]
 public class BuildingStat
 {

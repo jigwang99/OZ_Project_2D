@@ -1,11 +1,6 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections.Generic;
-public enum FactionType
-{
-    Player,
-    Enemy,
-}
 public class Faction
 {
     private List<Unit> units = new List<Unit>();

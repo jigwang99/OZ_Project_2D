@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-public class MeleeAttack : UnitAttack
+﻿public class MeleeAttack : UnitAttack
 {
     public override void Attack()
     {

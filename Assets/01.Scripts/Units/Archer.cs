@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-public class Archer : Unit
+﻿public class Archer : Unit
 {
     public override UnitType Type => UnitType.Archer;
     protected override void Awake()

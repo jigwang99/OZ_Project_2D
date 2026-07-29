@@ -2,14 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum UnitType
-{
-    Pawn,
-    Warrior,
-    Archer,
-    Lancer,
-    Monk,
-}
 [Serializable]
 public class UnitStat
 {

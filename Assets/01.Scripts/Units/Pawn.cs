@@ -1,12 +1,5 @@
 ﻿using UnityEngine;
 
-public enum PawnTool
-{
-    None = 0,
-    Axe,
-    Pickaxe,
-    Hammer,
-}
 public class Pawn : Unit
 {
     public override UnitType Type => UnitType.Pawn;

@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-public class BuildingIdleState : BuildingBaseState
+﻿public class BuildingIdleState : BuildingBaseState
 {
     public BuildingIdleState(Building building) : base(building)
     {
@@ -24,7 +22,7 @@ public class BuildingIdleState : BuildingBaseState
     {
         if(Building is Tower tower)
         {
-            Unit target = tower.FindTarget();
+            IDamageable target = tower.FindTarget();
             if(target != null && target.IsAlive)
             {
                 tower.SetTarget(target);

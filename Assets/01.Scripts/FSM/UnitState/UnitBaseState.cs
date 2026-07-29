@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-public abstract class UnitBaseState : IState
+﻿public abstract class UnitBaseState : IState
 {
     public Unit Unit {  get; protected set; }
     public UnitBaseState(Unit unit)

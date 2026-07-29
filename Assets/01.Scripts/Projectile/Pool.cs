@@ -1,13 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using System;
-public interface IPoolable
-{
-    Enum PoolKey { get; }
-    void Init();
-    void ReturnToPool();
-}
-
 public class Pool
 {
     private Queue<GameObject> pool = new Queue<GameObject>();
