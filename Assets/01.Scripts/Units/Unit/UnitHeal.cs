@@ -73,8 +73,8 @@ public class UnitHeal : MonoBehaviour
     {
         if (target == null || !target.IsAlive)
             return;
-
-        AudioManager.instance?.PlaySFXAt(healClip, transform.position);
+        if(healClip != null)
+            AudioManager.instance?.PlaySFXAt(healClip, transform.position);
         target.RestoreHP(unit.UnitStat.AttackDamage);
         remainCooldown = unit.UnitStat.AttackCooldown;
     }

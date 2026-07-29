@@ -27,12 +27,15 @@ public class Tower : Building
     }
     public bool IsInRange(IDamageable target)
     {
-        return Vector2.Distance(transform.position, target.transform.position) <= BuildingStat.AttackRange;
+        if (target == null)
+            return false;
+
+        return RangeUtility.IsNear(transform.position, target.transform, buildingStat.AttackRange);
     }
-    public Unit FindTarget()
+    public IDamageable FindTarget()
     {
         hit = Physics2D.OverlapCircle(transform.position, buildingStat.AttackRange, enemyLayerMask);
-        return hit != null ? hit.GetComponent<Unit>() : null;
+        return hit != null ? hit.GetComponent<IDamageable>() : null;
     }
     public void Fire(IDamageable target)
     {

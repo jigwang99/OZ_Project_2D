@@ -43,10 +43,10 @@ public abstract class UnitAttack : MonoBehaviour
 
         return RangeUtility.IsNear(unit.transform.position, target.transform, unit.UnitStat.AttackRange);   
     }
-    public Unit FindTarget()
+    public IDamageable FindTarget()
     {
         hit = Physics2D.OverlapCircle(transform.position, unit.UnitStat.Vision, unit.GetEnemyLayerMask());
-        return hit != null ? hit.GetComponent<Unit>() : null;
+        return hit != null ? hit.GetComponent<IDamageable>() : null;
     }
     protected void PlayAttackSound()
     {
