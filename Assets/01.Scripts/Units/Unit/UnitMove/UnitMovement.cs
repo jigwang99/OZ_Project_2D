@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using NUnit.Framework.Interfaces;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class UnitMovement : MonoBehaviour
@@ -24,6 +25,8 @@ public class UnitMovement : MonoBehaviour
     private Unit unit;
     private float moveSpeed;
     private float waypointReachedDistance = 0.15f;
+    private Transform cachedColliderTarget;
+    private Collider2D cachedTargetCol;
 
     private List<Vector2> path = new List<Vector2>();
     private int targetIndex;
@@ -79,13 +82,17 @@ public class UnitMovement : MonoBehaviour
     }
     public void SetDestinationNear(Transform target, float offset = 0.5f)
     {
-        Collider2D targetCol = target.GetComponent<Collider2D>();
-        Vector2 myPos = rb.position;
-
-        Vector2 point;
-        if (targetCol != null)
+        if(target != cachedColliderTarget)
         {
-            Vector2 closest = targetCol.ClosestPoint(myPos);
+            cachedColliderTarget = target;
+            target.TryGetComponent(out cachedTargetCol);
+        }
+
+        Vector2 myPos = rb.position;
+        Vector2 point;
+        if (cachedColliderTarget != null)
+        {
+            Vector2 closest = cachedTargetCol.ClosestPoint(myPos);
             Vector2 disNear = (myPos - closest).normalized;
             point = closest + disNear * offset;
         }
