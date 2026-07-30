@@ -2955,7 +2955,7 @@ MonoBehaviour:
   - type: 3
     size: {x: 2, y: 2}
     ghost: {fileID: 21300000, guid: e39c44d354e0a47ec89630128209e801, type: 3}
-    hotKey: 0
+    hotKey: 16
   - type: 4
     size: {x: 2, y: 2}
     ghost: {fileID: 21300000, guid: 5bdc3e2b64c8049f4a66e1061f28dd70, type: 3}

@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
     public enum Result { None, Victory, Defeat }
     public Result GameResult {  get; private set; } = Result.None;
 
-    public bool IsGameOver => GameResult == Result.None;
+    public bool IsGameOver => GameResult != Result.None;
 
     public event Action<Result> OnGameOver;
 
