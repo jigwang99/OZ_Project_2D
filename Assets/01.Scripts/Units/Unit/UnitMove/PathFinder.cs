@@ -40,11 +40,11 @@ public static class PathFinder
             if (targetNode == null)
                 return null;
         }
-        openSet.Add(startNode);
        
         NodeInit(startNode);
         startNode.gCost = 0;
         startNode.hCost = GetDistance(startNode, targetNode);
+        openSet.Add(startNode);
 
         while (openSet.Count > 0)
         {

@@ -7,9 +7,9 @@ public class Rock : MonoBehaviour
 
     protected void OnEnable()
     {
-        StartCoroutine(RegisterObtacleNextFrame());
+        StartCoroutine(RegisterObstacleNextFrame());
     }
-    private IEnumerator RegisterObtacleNextFrame()
+    private IEnumerator RegisterObstacleNextFrame()
     {
         yield return null;
         GridManager.instance.UpdateArea(transform.position, obstacleSize);

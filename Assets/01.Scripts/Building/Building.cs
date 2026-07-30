@@ -33,6 +33,8 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
 
     public Enum PoolKey => Type;
 
+    public event Action<Building> OnDied;
+
     protected virtual void Awake()
     {
         StateMachine = new StateMachine();
@@ -47,7 +49,7 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
     protected virtual void OnEnable()
     {
         SetSelected(false);
-        StartCoroutine(RegisterObtacleNextFrame());
+        StartCoroutine(RegisterObstacleNextFrame());
     }
     protected void Update() => StateMachine.Update();
     protected void FixedUpdate() => StateMachine.FixedUpdate();
@@ -71,18 +73,20 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
     }
     protected void Die()
     {
+        if (!IsAlive)
+            return;
+
         IsAlive = false;
         UnregisterOwner();
-
-        if(Player.instance.SelectBuilding == this)
-            Player.instance.DeselectBuilding();
-
         WithdrawPopulation();
+
+        OnDied?.Invoke(this);
+
         effect?.PlayExplosion();
         ReturnToPool();
         GridManager.instance.UpdateArea(transform.position, obstacleSize);
     }
-    private IEnumerator RegisterObtacleNextFrame()
+    private IEnumerator RegisterObstacleNextFrame()
     {
         yield return null;
         GridManager.instance.UpdateArea(transform.position, obstacleSize);
@@ -155,6 +159,8 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
     }
     public virtual void ReturnToPool()
     {
+        if(!IsAlive)
+            return;
         ObjectPoolManager.instance.ReturnObject(PoolKey, gameObject);
     }
     protected virtual void OnDisable() { }

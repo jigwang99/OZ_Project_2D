@@ -19,7 +19,7 @@ public abstract class Resource : MonoBehaviour, IPoolable
     protected void OnEnable()
     {
         Init();
-        StartCoroutine(RegisterObtacleNextFrame());
+        StartCoroutine(RegisterObstacleNextFrame());
     }
     public int Gathered(int amount)
     {
@@ -45,7 +45,7 @@ public abstract class Resource : MonoBehaviour, IPoolable
         ReturnToPool();
         GridManager.instance.UpdateArea(transform.position, obstacleSize);
     }
-    private IEnumerator RegisterObtacleNextFrame()
+    private IEnumerator RegisterObstacleNextFrame()
     {
         yield return null;
         GridManager.instance.UpdateArea(transform.position, obstacleSize);
@@ -61,6 +61,8 @@ public abstract class Resource : MonoBehaviour, IPoolable
     }
     public virtual void ReturnToPool()
     {
+        if (!IsDepleted)
+            return;
         ObjectPoolManager.instance.ReturnObject(PoolKey, gameObject);
     }
 }

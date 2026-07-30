@@ -1,10 +1,10 @@
 ﻿using System;
 using UnityEngine;
 
-public class PooldEffect : MonoBehaviour, IPoolable
+public class PooledEffect : MonoBehaviour, IPoolable
 {
     [SerializeField] private EffectType effectType;
-    [SerializeField] private float liftTime = 1.0f;
+    [SerializeField] private float lifeTime = 1.0f;
 
     private float timer;
 
@@ -21,7 +21,7 @@ public class PooldEffect : MonoBehaviour, IPoolable
     private void Update()
     {
         timer += Time.deltaTime;
-        if (timer >= liftTime)
+        if (timer >= lifeTime)
             ReturnToPool();
     }
     public void ReturnToPool()

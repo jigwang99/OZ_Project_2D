@@ -32,7 +32,7 @@ public class BuildingEffect : MonoBehaviour
         SetFire(false);
         if(explosionClip != null)
             AudioManager.instance?.PlaySFXAt(explosionClip, transform.position);
-        PooldEffect explosion = ObjectPoolManager.instance.GetObject<PooldEffect>(explosionKey);
+        PooledEffect explosion = ObjectPoolManager.instance.GetObject<PooledEffect>(explosionKey);
         if (explosion == null)
             return;
         explosion.transform.position = transform.position;

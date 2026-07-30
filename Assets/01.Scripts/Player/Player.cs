@@ -304,16 +304,25 @@ public class Player : MonoBehaviour
 
         selectBuilding = building;
         building.SetSelected(true);
+        building.OnDied += HandleBuildingDied;
         CancelTargeting();
         OnSelectionChanged?.Invoke();
     }
     public void DeselectBuilding()
     {
         if (selectBuilding != null)
+        {
             selectBuilding.SetSelected(false);
+            selectBuilding.OnDied -= HandleBuildingDied;
+        }
         selectBuilding = null;
         CancelTargeting();
         OnSelectionChanged?.Invoke();
+    }
+    private void HandleBuildingDied(Building building)
+    {
+        if (selectBuilding == building)
+            DeselectBuilding();
     }
     public void SelectSingleUnit(Unit unit)
     {
