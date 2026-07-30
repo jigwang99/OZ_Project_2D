@@ -159,8 +159,6 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
     }
     public virtual void ReturnToPool()
     {
-        if(!IsAlive)
-            return;
         ObjectPoolManager.instance.ReturnObject(PoolKey, gameObject);
     }
     protected virtual void OnDisable() { }
