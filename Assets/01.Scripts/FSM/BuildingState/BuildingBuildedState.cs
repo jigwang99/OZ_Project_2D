@@ -27,7 +27,6 @@ public class BuildingBuildedState : BuildingBaseState
     {
         if (Building.BuildProgress >= Building.BuildingStat.BuildTime)
         {
-            Debug.Log("BuildFinish");
             Building.ProvidePopulation();
             Building.StateMachine.ChangeState(Building.IdleState);
         }

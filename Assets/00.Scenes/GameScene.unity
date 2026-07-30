@@ -2968,6 +2968,7 @@ MonoBehaviour:
   obstacleLayerMask:
     serializedVersion: 2
     m_Bits: 36032
+  buildFailClip: {fileID: 8300000, guid: 1ed8fb76fc64e4e46847348138782234, type: 3}
 --- !u!4 &505118638
 Transform:
   m_ObjectHideFlags: 0
@@ -6196,6 +6197,8 @@ MonoBehaviour:
   attackIcon: {fileID: 21300000, guid: 23450567bedfb472eb6f8efd4ad515da, type: 3}
   buildIcon: {fileID: 21300000, guid: 1c0647c9dba61414898ffc20ac2d2e5b, type: 3}
   cancelIcon: {fileID: 21300000, guid: ca89e4a7c1618426e8458f6eb7fc1444, type: 3}
+  enqueueSuccessClip: {fileID: 8300000, guid: ba39bf8baf6d13046889b2d64822381a, type: 3}
+  enqueueFailClip: {fileID: 8300000, guid: 1ed8fb76fc64e4e46847348138782234, type: 3}
 --- !u!222 &869696849
 CanvasRenderer:
   m_ObjectHideFlags: 0

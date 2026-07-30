@@ -21,6 +21,9 @@ public class BuildPlacer : MonoBehaviour
     [SerializeField] private List<PlaceInfo> placeInfos;
     [SerializeField] private LayerMask obstacleLayerMask;
 
+    [Header("SFX")]
+    [SerializeField] private AudioClip buildFailClip;
+
     private PlaceInfo currentPlaceInfo;
     private bool isPlacing;
     private int cancelFrame = -1;
@@ -55,9 +58,12 @@ public class BuildPlacer : MonoBehaviour
 
         bool overUI = UIBlocker.IsPointerOverUI();
 
-        if (Mouse.current.leftButton.wasPressedThisFrame && canPlace && !overUI)
+        if (Mouse.current.leftButton.wasPressedThisFrame && !overUI)
         {
-            TryPlace(fitPos);
+            if (canPlace)
+                TryPlace(fitPos);
+            else
+                AudioManager.instance.PlaySFX(buildFailClip);
             return;
         }
         if (Mouse.current.rightButton.wasPressedThisFrame)
@@ -81,6 +87,7 @@ public class BuildPlacer : MonoBehaviour
 
         if(stat == null || faction.Wood < stat.WoodCost || faction.Gold < stat.GoldCost)
         {
+            AudioManager.instance.PlaySFX(buildFailClip);
             return;
         }
         
@@ -111,6 +118,7 @@ public class BuildPlacer : MonoBehaviour
         BuildingStat stat = BuildingDataLoader.instance.Get(currentPlaceInfo.type);
         if (!FactionManager.instance.Player.TryReduceResource(stat.WoodCost, stat.GoldCost))
         {
+            AudioManager.instance.PlaySFX(buildFailClip);
             CancelPlacement();
             return;
         }
