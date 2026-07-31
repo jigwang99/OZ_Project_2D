@@ -34,7 +34,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 0.9, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1466120488811099696}
@@ -173,7 +173,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 2, y: 2}
+  m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
 --- !u!114 &6923863429480903673
 MonoBehaviour:
@@ -201,7 +201,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 622a456cc14b95a4bae2c79ac2c62f9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::House
-  obstacleSize: {x: 2, y: 2}
 --- !u!114 &8946710951944220015
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -245,7 +244,7 @@ MonoBehaviour:
   fireObjects:
   - {fileID: 3737115442157579042}
   - {fileID: 139124078243187418}
-  explosionKey: Explosion
+  explosionKey: 0
   fireThreshold: 0.33333334
   explosionClip: {fileID: 8300000, guid: a652877b012108e41871f867ada9f176, type: 3}
 --- !u!1001 &1115306027480380846

@@ -114,7 +114,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e411d9abe1d7d524bba98b5ed58cc01b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tower
-  obstacleSize: {x: 2, y: 2}
   enemyLayerMask:
     serializedVersion: 2
     m_Bits: 0
@@ -190,7 +189,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 2, y: 2}
+  m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
 --- !u!114 &2143863510082133162
 MonoBehaviour:
@@ -249,7 +248,7 @@ MonoBehaviour:
   fireObjects:
   - {fileID: 2934825656089572914}
   - {fileID: 1484251570838891235}
-  explosionKey: Explosion
+  explosionKey: 0
   fireThreshold: 0.33333334
   explosionClip: {fileID: 8300000, guid: a652877b012108e41871f867ada9f176, type: 3}
 --- !u!1001 &1202316341010893365

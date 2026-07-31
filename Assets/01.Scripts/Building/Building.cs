@@ -5,7 +5,9 @@ using UnityEngine;
 public abstract class Building : MonoBehaviour, IPoolable, IDamageable
 {
     protected BuildingStat buildingStat;
-    [SerializeField] private Vector2 obstacleSize;
+
+    private Collider2D col;
+    private Vector2 colSize;
 
     private bool populationProvided;
     private bool IsRegistered;
@@ -45,6 +47,8 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
         minimapMarker = GetComponent<MinimapMarker>();
         
         effect = GetComponent<BuildingEffect>();
+        col = GetComponent<Collider2D>();
+        colSize = col.bounds.size;
     }
     protected virtual void OnEnable()
     {
@@ -84,12 +88,12 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
 
         effect?.PlayExplosion();
         ReturnToPool();
-        GridManager.instance.UpdateArea(transform.position, obstacleSize);
+        GridManager.instance.UpdateArea(transform.position, colSize);
     }
     private IEnumerator RegisterObstacleNextFrame()
     {
-        yield return null;
-        GridManager.instance.UpdateArea(transform.position, obstacleSize);
+        yield return new WaitForFixedUpdate();
+        GridManager.instance.UpdateArea(transform.position, colSize);
     }
     public void ResetProgress()
     {

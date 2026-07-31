@@ -163,7 +163,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: -1}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -173,7 +173,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 2, y: 3}
+  m_Size: {x: 2, y: 2}
   m_EdgeRadius: 0
 --- !u!114 &6169758418472896520
 MonoBehaviour:
@@ -201,7 +201,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e85d224992d8464f8263f91a5c2bff4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Monastery
-  obstacleSize: {x: 2, y: 3}
 --- !u!114 &6973127037578303581
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -245,7 +244,7 @@ MonoBehaviour:
   fireObjects:
   - {fileID: 6068918996699921809}
   - {fileID: 1456179941714745236}
-  explosionKey: Explosion
+  explosionKey: 0
   fireThreshold: 0.33333334
   explosionClip: {fileID: 8300000, guid: a652877b012108e41871f867ada9f176, type: 3}
 --- !u!1001 &832239122164586037

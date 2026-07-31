@@ -116,7 +116,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c412ef722f6a6e44b0515547d3c0c1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Barrack
-  obstacleSize: {x: 2, y: 3}
   producibleUnits: 03000000020000000400000001000000
   productList: 
   spawnPosition: {fileID: 6936730175346076632}
@@ -191,7 +190,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 2, y: 3}
+  m_Size: {x: 2, y: 2}
   m_EdgeRadius: 0
 --- !u!114 &-3737050698746819864
 MonoBehaviour:

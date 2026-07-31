@@ -7,7 +7,8 @@ public abstract class Resource : MonoBehaviour, IPoolable
     protected ResourceStat resourceStat;
     protected int remainAmount;
 
-    [SerializeField] private Vector2 obstacleSize;
+    private Collider2D col;
+    private Vector2 colSize;
 
     public event Action OnDepleted;
     
@@ -16,6 +17,11 @@ public abstract class Resource : MonoBehaviour, IPoolable
 
     public Enum PoolKey => Type;
 
+    protected void Awake()
+    {
+        col = GetComponent<Collider2D>();
+        colSize = col.bounds.size;
+    }
     protected void OnEnable()
     {
         Init();
@@ -43,12 +49,12 @@ public abstract class Resource : MonoBehaviour, IPoolable
         OnDepleted?.Invoke();
         OnDepleted = null;
         ReturnToPool();
-        GridManager.instance.UpdateArea(transform.position, obstacleSize);
+        GridManager.instance.UpdateArea(transform.position, colSize);
     }
     private IEnumerator RegisterObstacleNextFrame()
     {
         yield return null;
-        GridManager.instance.UpdateArea(transform.position, obstacleSize);
+        GridManager.instance.UpdateArea(transform.position, colSize);
     }
     public virtual void Init()
     {

@@ -109,7 +109,7 @@ public class GridManager : MonoBehaviour
     }
     private bool CheckWalkable(Vector2 worldPoint)
     {
-        return !Physics2D.OverlapCircle(worldPoint, 0.9f * nodeRadius + unitRadius, obstacleLayerMask);
+        return !Physics2D.OverlapCircle(worldPoint, nodeRadius, obstacleLayerMask);
     }
     public void UpdateArea(Vector2 center, Vector2 size)
     {
