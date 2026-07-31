@@ -2,11 +2,6 @@
 using System.Collections.Generic;
 using System;
 
-public enum ResourceType
-{
-    Wood,
-    Gold,
-}
 [Serializable]
 public class ResourceStat
 {

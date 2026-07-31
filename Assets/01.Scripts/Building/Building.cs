@@ -1,10 +1,13 @@
 ﻿using System.Collections;
+using System;
 using UnityEngine;
 
 public abstract class Building : MonoBehaviour, IPoolable, IDamageable
 {
     protected BuildingStat buildingStat;
-    [SerializeField] private Vector2 obstacleSize;
+
+    private Collider2D col;
+    private Vector2 colSize;
 
     private bool populationProvided;
     private bool IsRegistered;
@@ -27,6 +30,13 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
 
     private SelectCircle selectCircle;
     private MinimapMarker minimapMarker;
+
+    private BuildingEffect effect;
+
+    public Enum PoolKey => Type;
+
+    public event Action<Building> OnDied;
+
     protected virtual void Awake()
     {
         StateMachine = new StateMachine();
@@ -35,11 +45,15 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
 
         selectCircle = GetComponent<SelectCircle>();
         minimapMarker = GetComponent<MinimapMarker>();
+        
+        effect = GetComponent<BuildingEffect>();
+        col = GetComponent<Collider2D>();
+        colSize = col.bounds.size;
     }
     protected virtual void OnEnable()
     {
         SetSelected(false);
-        StartCoroutine(RegisterObtacleNextFrame());
+        StartCoroutine(RegisterObstacleNextFrame());
     }
     protected void Update() => StateMachine.Update();
     protected void FixedUpdate() => StateMachine.FixedUpdate();
@@ -59,23 +73,27 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
             CurrentHp = 0;
             Die();
         }
+        effect?.UpdateFire((float)CurrentHp / buildingStat.MaxHp);
     }
     protected void Die()
     {
+        if (!IsAlive)
+            return;
+
         IsAlive = false;
         UnregisterOwner();
-
-        if(Player.instance.SelectBuilding == this)
-            Player.instance.DeselectBuilding();
-
         WithdrawPopulation();
+
+        OnDied?.Invoke(this);
+
+        effect?.PlayExplosion();
         ReturnToPool();
-        GridManager.instance.UpdateArea(transform.position, obstacleSize);
+        GridManager.instance.UpdateArea(transform.position, colSize);
     }
-    private IEnumerator RegisterObtacleNextFrame()
+    private IEnumerator RegisterObstacleNextFrame()
     {
-        yield return null;
-        GridManager.instance.UpdateArea(transform.position, obstacleSize);
+        yield return new WaitForFixedUpdate();
+        GridManager.instance.UpdateArea(transform.position, colSize);
     }
     public void ResetProgress()
     {
@@ -108,7 +126,7 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
     }
     public void SetLayer(Layer ownerLayer)
     {
-        gameObject.layer = (int)(ownerLayer == Layer.Player || ownerLayer == Layer.PlayerBuilding
+        gameObject.layer = (int)(LayerUtility.IsPlayerSide((int)ownerLayer)
             ? Layer.PlayerBuilding : Layer.EnemyBuilding);
 
         OwnerFaction = FactionManager.instance.FromLayer(gameObject.layer);
@@ -132,7 +150,7 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
     public virtual void Init()
     {
         if (buildingStat == null)
-            buildingStat = BuildingDataLoader.instance.GetBuildingStat(Type);
+            buildingStat = BuildingDataLoader.instance.Get(Type);
 
         populationProvided = false;
         IsRegistered = false;
@@ -141,7 +159,11 @@ public abstract class Building : MonoBehaviour, IPoolable, IDamageable
         StateMachine.ChangeState(IsSkipBuilded ? IdleState : BuildedState);
         if(IsSkipBuilded)
             ProvidePopulation();
+        effect?.UpdateFire(1f);
     }
-    public abstract void ReturnToPool();
+    public virtual void ReturnToPool()
+    {
+        ObjectPoolManager.instance.ReturnObject(PoolKey, gameObject);
+    }
     protected virtual void OnDisable() { }
 }

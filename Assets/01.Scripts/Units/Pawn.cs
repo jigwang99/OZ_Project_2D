@@ -1,12 +1,5 @@
 ﻿using UnityEngine;
 
-public enum PawnTool
-{
-    None = 0,
-    Axe,
-    Pickaxe,
-    Hammer,
-}
 public class Pawn : Unit
 {
     public override UnitType Type => UnitType.Pawn;
@@ -63,6 +56,6 @@ public class Pawn : Unit
     {
         Gather.SetTargetResource(null);
         Build.SetTarget(null);
-        ObjectPoolManager.instance.ReturnObject("Pawn", this.gameObject);
+        base.ReturnToPool();
     }
 }

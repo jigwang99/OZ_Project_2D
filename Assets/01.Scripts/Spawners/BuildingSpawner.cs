@@ -22,7 +22,7 @@ public class BuildingSpawner : MonoBehaviour
     {
         foreach (SpawnBuilding spawn in spawnList)
         {
-            Building building = ObjectPoolManager.instance.GetObject<Building>(spawn.buildingType.ToString());
+            Building building = ObjectPoolManager.instance.GetObject<Building>(spawn.buildingType);
             
             building.SetLayer(spawn.layer);
             building.transform.position = spawn.spawnPoint.position;

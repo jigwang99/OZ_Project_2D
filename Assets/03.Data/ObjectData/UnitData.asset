@@ -19,7 +19,7 @@ MonoBehaviour:
     defense: 0
     population: 1
     moveSpeed: 8
-    attackRange: 1.5
+    attackRange: 1.7
     attackCooldown: 2
     vision: 5
     woodCost: 50

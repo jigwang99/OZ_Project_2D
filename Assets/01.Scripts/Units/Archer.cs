@@ -1,15 +1,9 @@
-﻿using UnityEngine;
-
-public class Archer : Unit
+﻿public class Archer : Unit
 {
     public override UnitType Type => UnitType.Archer;
     protected override void Awake()
     {
         base.Awake();
         Attack = GetComponent<RangedAttack>();
-    }
-    public override void ReturnToPool()
-    {
-        ObjectPoolManager.instance.ReturnObject("Archer", this.gameObject);
     }
 }

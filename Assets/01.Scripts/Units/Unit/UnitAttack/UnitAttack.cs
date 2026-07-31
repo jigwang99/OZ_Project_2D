@@ -6,6 +6,8 @@ public abstract class UnitAttack : MonoBehaviour
     protected IDamageable target;
     protected float remainCooldown;
 
+    [SerializeField] protected AudioClip attackClip;
+
     private Collider2D hit;
 
     private void Awake()
@@ -36,17 +38,20 @@ public abstract class UnitAttack : MonoBehaviour
     }
     public bool IsInRange()
     {
-        if(target == null) return false;
+        if (target == null)
+            return false;
 
-        Collider2D col = target.transform.GetComponent<Collider2D>();
-        Vector2 point = col != null ? col.ClosestPoint(unit.transform.position) : (Vector2)target.transform.position;
-
-        return Vector2.Distance(unit.transform.position, point) <= unit.UnitStat.AttackRange;
+        return RangeUtility.IsNear(unit.transform.position, target.transform, unit.UnitStat.AttackRange);   
     }
-    public Unit FindTarget()
+    public IDamageable FindTarget()
     {
         hit = Physics2D.OverlapCircle(transform.position, unit.UnitStat.Vision, unit.GetEnemyLayerMask());
-        return hit != null ? hit.GetComponent<Unit>() : null;
+        return hit != null ? hit.GetComponent<IDamageable>() : null;
+    }
+    protected void PlayAttackSound()
+    {
+        if (attackClip != null)
+            AudioManager.instance?.PlaySFXAt(attackClip, unit.transform.position);
     }
     public abstract void Attack();
 }

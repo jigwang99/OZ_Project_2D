@@ -3,19 +3,18 @@ using UnityEngine.SceneManagement;
 
 public class StartMenu : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    [SerializeField] private string gameSceneName = "GameScene";
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
     public void OnClickStart()
     {
-        SceneManager.LoadScene("GameScene");
+        SceneManager.LoadScene(gameSceneName);
+    }
+    public void OnClickQuit()
+    {
+    #if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+    #else
+        Application.Quit();
+    #endif
     }
 }

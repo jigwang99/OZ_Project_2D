@@ -6,8 +6,6 @@ public class Player : MonoBehaviour
 {
     public static Player instance;
 
-    
-
     [SerializeField] private List<Unit> selectUnitList = new List<Unit>();
     [SerializeField] private Building selectBuilding;
     [SerializeField] Camera camera;
@@ -35,10 +33,7 @@ public class Player : MonoBehaviour
         if (instance == null)
             instance = this;
         else
-        {
             Destroy(gameObject);
-        }
-        DontDestroyOnLoad(gameObject);
     }
 
     // Update is called once per frame
@@ -248,27 +243,15 @@ public class Player : MonoBehaviour
     {
         if (units.Count == 0)
             return;
-
-        int column = Mathf.CeilToInt(Mathf.Sqrt(units.Count));
-        int row = Mathf.CeilToInt((float)units.Count / column);
         for (int i = 0; i < units.Count; i++)
         {
-            int x = i % column;
-            int y = i / column;
-
-            Vector2 offset = new Vector2(
-                (x - (column - 1) * 0.5f) * spacing,
-                ((row - 1) * 0.5f - y) * spacing);
-
             Unit unit = units[i];
 
-            unit.Movement.SetDestination(destination + offset);
+            unit.Movement.SetDestination(destination + Formation.Offset(i, units.Count, spacing));
 
             // 이동 중이라면 상태변화 없음
             if (unit.StateMachine.CurrentState != unit.MoveState)
-            {
                 unit.StateMachine.ChangeState(unit.MoveState);
-            }
         }
     }
     // 유닛선택
@@ -276,24 +259,30 @@ public class Player : MonoBehaviour
     {
         if (selectUnitList.Count >= MaxSelectCount)
             return;
+        if (selectUnitList.Contains(unit))
+            return;
 
-        if (!selectUnitList.Contains(unit))
-        {
-            selectUnitList.Add(unit);
-            unit.SetSelected(true);
-            CancelTargeting();
-            OnSelectionChanged?.Invoke();
-        }
+        selectUnitList.Add(unit);
+        unit.SetSelected(true);
+        unit.OnDied += HandleUnitDied;
+
+        CancelTargeting();
+        OnSelectionChanged?.Invoke();
     }
     public void DeselectUnit(Unit unit)
     {
-        if (selectUnitList.Contains(unit))
-        {
-            selectUnitList.Remove(unit);
-            unit.SetSelected(false);
-            CancelTargeting();
-            OnSelectionChanged?.Invoke();
-        }
+        if(!selectUnitList.Contains(unit)) return;
+
+        selectUnitList.Remove(unit);
+        unit.SetSelected(false);
+        unit.OnDied -= HandleUnitDied;
+
+        CancelTargeting();
+        OnSelectionChanged?.Invoke();
+    }
+    private void HandleUnitDied(Unit unit)
+    {
+        DeselectUnit(unit);
     }
     public void ClearSelectList()
     {
@@ -315,16 +304,25 @@ public class Player : MonoBehaviour
 
         selectBuilding = building;
         building.SetSelected(true);
+        building.OnDied += HandleBuildingDied;
         CancelTargeting();
         OnSelectionChanged?.Invoke();
     }
     public void DeselectBuilding()
     {
         if (selectBuilding != null)
+        {
             selectBuilding.SetSelected(false);
+            selectBuilding.OnDied -= HandleBuildingDied;
+        }
         selectBuilding = null;
         CancelTargeting();
         OnSelectionChanged?.Invoke();
+    }
+    private void HandleBuildingDied(Building building)
+    {
+        if (selectBuilding == building)
+            DeselectBuilding();
     }
     public void SelectSingleUnit(Unit unit)
     {

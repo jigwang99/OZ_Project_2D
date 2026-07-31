@@ -1,4 +1,5 @@
-﻿    using UnityEngine;
+﻿using UnityEngine;
+using System;
 
 public abstract class Projectile : MonoBehaviour, IPoolable
 {
@@ -10,6 +11,7 @@ public abstract class Projectile : MonoBehaviour, IPoolable
     public Vector2 Direction { get; protected set; }
 
     public int Damage { get; set; }
+    public Enum PoolKey => Type;
     protected virtual void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -35,14 +37,13 @@ public abstract class Projectile : MonoBehaviour, IPoolable
     {
         Damage = damage;
 
-        gameObject.layer = shooterLayer == (int)Layer.Player || shooterLayer == (int)Layer.PlayerBuilding 
-            ? (int)Layer.PlayerProjectile : (int)Layer.EnemyProjectile;
+        gameObject.layer = LayerUtility.IsPlayerSide(shooterLayer) ? (int)Layer.PlayerProjectile : (int)Layer.EnemyProjectile;
     }
     protected abstract void OnTriggerEnter2D(Collider2D collision);
     public virtual void Init()
     {
         if(projectileStat == null)
-            projectileStat = ProjectileDataLoader.instance.GetProjectileStat(Type);
+            projectileStat = ProjectileDataLoader.instance.Get(Type);
         timer = 0f;
         Direction = Vector2.zero;
         Damage = 0;

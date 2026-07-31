@@ -24,8 +24,4 @@ public class Warrior : Unit
         base.Init();
         attackIndex = 0;
     }
-    public override void ReturnToPool()
-    {
-        ObjectPoolManager.instance.ReturnObject("Warrior", this.gameObject);
-    }
 }

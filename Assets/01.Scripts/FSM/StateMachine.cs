@@ -1,13 +1,4 @@
-﻿using UnityEngine;
-
-public interface IState
-{
-    public void Enter();
-    public void Exit();
-    public void Update();
-    public void FixedUpdate();
-}
-public class StateMachine
+﻿public class StateMachine
 {
     public IState CurrentState { get; private set; }
     public void ChangeState(IState state)

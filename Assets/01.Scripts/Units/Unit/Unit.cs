@@ -1,14 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
-public enum Layer
-{
-    Player = 6,
-    Enemy = 7,
-    PlayerProjectile = 8,
-    EnemyProjectile = 9,
-    PlayerBuilding = 10,
-    EnemyBuilding = 11,
-}
 public abstract class Unit : MonoBehaviour, IPoolable, IDamageable
 {
     protected UnitStat unitStat;
@@ -42,6 +34,9 @@ public abstract class Unit : MonoBehaviour, IPoolable, IDamageable
     private SelectCircle selectCircle;
     private MinimapMarker minimapMarker;
 
+    public event Action<Unit> OnDied;
+
+    public Enum PoolKey => Type;
     protected virtual void Awake()
     {
         Movement = GetComponent<UnitMovement>();
@@ -93,11 +88,14 @@ public abstract class Unit : MonoBehaviour, IPoolable, IDamageable
     }
     protected void Die()
     {
+        if (!IsAlive)
+            return;
         IsAlive = false;
+
         OwnerFaction.UnregisterUnit(this);
-        if(gameObject.layer == (int)Layer.Player)
-            Player.instance.DeselectUnit(this);
         OwnerFaction.ReleasePopulation(unitStat.Population);
+
+        OnDied?.Invoke(this);
         ReturnToPool();
     }
     public void SetRunAnimation(bool isRun)
@@ -137,7 +135,7 @@ public abstract class Unit : MonoBehaviour, IPoolable, IDamageable
     public virtual void Init()
     {
         if (unitStat == null)
-            unitStat = UnitDataLoader.instance.GetUnitStat(Type);
+            unitStat = UnitDataLoader.instance.Get(Type);
         SetSelected(false);
         CurrentHp = unitStat.MaxHp;
         IsAlive = true;
@@ -149,5 +147,8 @@ public abstract class Unit : MonoBehaviour, IPoolable, IDamageable
 
         StateMachine.ChangeState(IdleState);
     }
-    public abstract void ReturnToPool();
+    public virtual void ReturnToPool()
+    {
+        ObjectPoolManager.instance.ReturnObject(PoolKey, gameObject);
+    }
 }

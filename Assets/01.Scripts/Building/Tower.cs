@@ -10,6 +10,8 @@ public class Tower : Building
     Collider2D hit;
     public BuildingAttackState AttackState { get; private set; }
 
+    [SerializeField] private AudioClip fireClip;
+
     protected override void Awake()
     {
         base.Awake();
@@ -23,41 +25,27 @@ public class Tower : Building
     {
         this.target = target;
     }
-    public bool IsInRange(IDamageable targete)
+    public bool IsInRange(IDamageable target)
     {
-        return Vector2.Distance(transform.position, target.transform.position) <= BuildingStat.AttackRange;
+        if (target == null)
+            return false;
+
+        return RangeUtility.IsNear(transform.position, target.transform, buildingStat.AttackRange);
     }
-    public Unit FindTarget()
+    public IDamageable FindTarget()
     {
         hit = Physics2D.OverlapCircle(transform.position, buildingStat.AttackRange, enemyLayerMask);
-        return hit != null ? hit.GetComponent<Unit>() : null;
+        return hit != null ? hit.GetComponent<IDamageable>() : null;
     }
     public void Fire(IDamageable target)
     {
-        if(target == null || !target.IsAlive)
-            return;
-
-        Arrow arrow = ObjectPoolManager.instance.GetObject<Arrow>("Arrow");
-        if (arrow == null)
-            return;
-
-        Vector2 origin = transform.position;
-        Vector2 dir = ((Vector2)target.transform.position - origin).normalized;
-        if (dir == Vector2.zero)
-            dir = Vector2.right;
-
-        arrow.transform.position = origin + dir * 0.3f;
-        arrow.transform.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg);
-        arrow.SetDamageAndLayer(buildingStat.AttackDamage, gameObject.layer);
+        ArrowLauncher.Fire(transform.position, target, buildingStat.AttackDamage, gameObject.layer, 0.3f);
+        if(fireClip != null)
+            AudioManager.instance?.PlaySFXAt(fireClip, transform.position);
     }
     public override void Init()
     {
         base.Init();
         target = null;
-    }
-
-    public override void ReturnToPool()
-    {
-        ObjectPoolManager.instance.ReturnObject("Tower", this.gameObject);
     }
 }

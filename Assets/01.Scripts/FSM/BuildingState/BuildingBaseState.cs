@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-public abstract class BuildingBaseState : IState
+﻿public abstract class BuildingBaseState : IState
 {
     public Building Building {  get; protected set; }
     public BuildingBaseState(Building building)

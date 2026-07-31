@@ -21,6 +21,9 @@ public class BuildPlacer : MonoBehaviour
     [SerializeField] private List<PlaceInfo> placeInfos;
     [SerializeField] private LayerMask obstacleLayerMask;
 
+    [Header("SFX")]
+    [SerializeField] private AudioClip buildFailClip;
+
     private PlaceInfo currentPlaceInfo;
     private bool isPlacing;
     private int cancelFrame = -1;
@@ -55,9 +58,12 @@ public class BuildPlacer : MonoBehaviour
 
         bool overUI = UIBlocker.IsPointerOverUI();
 
-        if (Mouse.current.leftButton.wasPressedThisFrame && canPlace && !overUI)
+        if (Mouse.current.leftButton.wasPressedThisFrame && !overUI)
         {
-            TryPlace(fitPos);
+            if (canPlace)
+                TryPlace(fitPos);
+            else
+                AudioManager.instance.PlaySFX(buildFailClip);
             return;
         }
         if (Mouse.current.rightButton.wasPressedThisFrame)
@@ -76,11 +82,12 @@ public class BuildPlacer : MonoBehaviour
         if (info == null)
             return;
 
-        BuildingStat stat = BuildingDataLoader.instance.GetBuildingStat(type);
+        BuildingStat stat = BuildingDataLoader.instance.Get(type);
         Faction faction = FactionManager.instance.Player;
 
         if(stat == null || faction.Wood < stat.WoodCost || faction.Gold < stat.GoldCost)
         {
+            AudioManager.instance.PlaySFX(buildFailClip);
             return;
         }
         
@@ -101,19 +108,22 @@ public class BuildPlacer : MonoBehaviour
     }
     private bool CanPlaceAt(Vector2 center)
     {
+        if(!MapBounds.Contains(center, currentPlaceInfo.size))
+            return false;
         return Physics2D.OverlapBox(center, currentPlaceInfo.size, 0f, obstacleLayerMask) == null
             && GridManager.instance.IsAreaWalkable(center, currentPlaceInfo.size);
     }
     private void TryPlace(Vector2 pos)
     {
-        BuildingStat stat = BuildingDataLoader.instance.GetBuildingStat(currentPlaceInfo.type);
+        BuildingStat stat = BuildingDataLoader.instance.Get(currentPlaceInfo.type);
         if (!FactionManager.instance.Player.TryReduceResource(stat.WoodCost, stat.GoldCost))
         {
+            AudioManager.instance.PlaySFX(buildFailClip);
             CancelPlacement();
             return;
         }
 
-        Building building = ObjectPoolManager.instance.GetObject<Building>(currentPlaceInfo.type.ToString());
+        Building building = ObjectPoolManager.instance.GetObject<Building>(currentPlaceInfo.type);
         building.SetLayer(Layer.Player);
         building.SetSkipBuilded(false);
         building.transform.position = pos;

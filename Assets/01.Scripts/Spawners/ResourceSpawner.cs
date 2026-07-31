@@ -21,12 +21,7 @@ public class ResourceSpawner : MonoBehaviour
     {
         foreach(SpawnResource spawn in spawnList)
         {
-            Resource resource = ObjectPoolManager.instance.GetObject<Resource>(spawn.resourceType.ToString());
-
-            if(resource == null)
-            {
-                Debug.Log("xxx");
-            }
+            Resource resource = ObjectPoolManager.instance.GetObject<Resource>(spawn.resourceType);
             resource.transform.position = spawn.spawnPoint.position;
         }
     }

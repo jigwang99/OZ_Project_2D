@@ -11,6 +11,11 @@ public class UnitMovement : MonoBehaviour
     [SerializeField] private float blockCheckRadius = 0.3f;
     [SerializeField] private LayerMask blockLayerMask;
 
+    [Header("Audio")]
+    [SerializeField] private AudioClip footStepClip;
+    [SerializeField] private float footStepInterval = 0.3f;
+    private float footStepTimer;
+
     private const float destinationChangeThreshold = 0.3f;
 
     private static Vector2[] escapeDirection = { Vector2.up, Vector2.down, Vector2.left, Vector2.right };
@@ -19,6 +24,8 @@ public class UnitMovement : MonoBehaviour
     private Unit unit;
     private float moveSpeed;
     private float waypointReachedDistance = 0.15f;
+    private Transform cachedColliderTarget;
+    private Collider2D cachedTargetCol;
 
     private List<Vector2> path = new List<Vector2>();
     private int targetIndex;
@@ -74,13 +81,17 @@ public class UnitMovement : MonoBehaviour
     }
     public void SetDestinationNear(Transform target, float offset = 0.5f)
     {
-        Collider2D targetCol = target.GetComponent<Collider2D>();
-        Vector2 myPos = rb.position;
-
-        Vector2 point;
-        if (targetCol != null)
+        if(target != cachedColliderTarget)
         {
-            Vector2 closest = targetCol.ClosestPoint(myPos);
+            cachedColliderTarget = target;
+            target.TryGetComponent(out cachedTargetCol);
+        }
+
+        Vector2 myPos = rb.position;
+        Vector2 point;
+        if (cachedColliderTarget != null)
+        {
+            Vector2 closest = cachedTargetCol.ClosestPoint(myPos);
             Vector2 disNear = (myPos - closest).normalized;
             point = closest + disNear * offset;
         }
@@ -115,7 +126,9 @@ public class UnitMovement : MonoBehaviour
     }
     public void Move()
     {
-        if(isEscaping)
+        PlayFootStep();
+
+        if (isEscaping)
         {
             MoveEscape();
             return;
@@ -143,6 +156,23 @@ public class UnitMovement : MonoBehaviour
         targetIndex = 0;
         isEscaping = false;
         stuckTimer = 0f;
+        footStepTimer = 0f;
+    }
+    private void PlayFootStep()
+    {
+        if (footStepClip == null)
+            return;
+        if(rb.linearVelocity.sqrMagnitude < 0.01f)
+        {
+            footStepTimer = 0f;
+            return;
+        }
+        footStepTimer -= Time.fixedDeltaTime;
+        if(footStepTimer <= 0f)
+        {
+            AudioManager.instance?.PlaySFXAt(footStepClip, rb.position);
+            footStepTimer = footStepInterval;
+        }
     }
     #region stuck
     private void ResetStuck()
@@ -173,7 +203,7 @@ public class UnitMovement : MonoBehaviour
 
         int start = Random.Range(0, escapeDirection.Length);
 
-        for(int i = 0; i < escapeDirection.Length; i++)
+        for (int i = 0; i < escapeDirection.Length; i++)
         {
             Vector2 dir = escapeDirection[(start + i) % escapeDirection.Length];
             Vector2 candidate = origin + dir * escapeDistance;
@@ -183,7 +213,7 @@ public class UnitMovement : MonoBehaviour
 
             float distance = hasFinalDestination ? Vector2.Distance(candidate, finalDestination) : 0f;
 
-            if(distance < bestDistance)
+            if (distance < bestDistance)
             {
                 bestDistance = distance;
                 best = candidate;
@@ -214,7 +244,7 @@ public class UnitMovement : MonoBehaviour
 
         Vector2 toTarget = escapeTarget - rb.position;
 
-        if(escapeTimer <= 0f || toTarget.magnitude <= waypointReachedDistance)
+        if (escapeTimer <= 0f || toTarget.magnitude <= waypointReachedDistance)
         {
             EndEscape();
             return;

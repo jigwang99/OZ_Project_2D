@@ -26,7 +26,6 @@ public class SelectManager : MonoBehaviour
             instance = this;
         else
             Destroy(gameObject);
-        DontDestroyOnLoad(gameObject);
     }
     // Update is called once per frame
     void Update()
@@ -111,32 +110,22 @@ public class SelectManager : MonoBehaviour
 
         foreach (Collider2D hit in hits)
         {
-            Unit unit = hit.GetComponent<Unit>();
-
-            if (unit != null)
+            if (hit.TryGetComponent(out Unit unit))
             {
                 Player.instance.SelectUnit(unit);
             }
         }
     }
     private void ClickSelect()
-    {
+    {   
         Vector2 worldPos = camera.ScreenToWorldPoint(startPos);
+
         Collider2D unitHit = Physics2D.OverlapPoint(worldPos, layerMask);
-
-        Unit unit = unitHit != null ? unitHit.GetComponent<Unit>() : null;
-
-        if (unit != null && unit.IsAlive)
-        {
+        if (unitHit != null && unitHit.TryGetComponent(out Unit unit) && unit.IsAlive)
             Player.instance.SelectUnit(unit);
-        }
 
         Collider2D buildingHit = Physics2D.OverlapPoint(worldPos, buildingLayerMask);
-        Building building = buildingHit != null ? buildingHit.GetComponent<Building>() : null;
-
-        if(building != null && building.IsAlive)
-        {
+        if(buildingHit != null && buildingHit.TryGetComponent(out Building building) && building.IsAlive)
             Player.instance.BuildingSelect(building);
-        }
     }
 }

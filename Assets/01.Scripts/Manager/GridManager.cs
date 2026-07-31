@@ -11,11 +11,14 @@ public class GridManager : MonoBehaviour
     [SerializeField] private Vector2 gridWorldSize; // world size
     [SerializeField] private float nodeRadius; // 노드 반지름
     [SerializeField] private LayerMask obstacleLayerMask;  // 장애물 레이어마스크
+    [SerializeField] private float unitRadius = 0.4f;
 
     private Node[,] grid;
     private float nodeDiameter;        // 노드 지름
     private int gridSizeX, gridSizeY;
 
+    public int SizeX => gridSizeX;
+    public int SizeY => gridSizeY;
     public int MaxSize => gridSizeX * gridSizeY;
 
     private void Awake()
@@ -24,7 +27,6 @@ public class GridManager : MonoBehaviour
             instance = this;
         else
             Destroy(gameObject);
-        DontDestroyOnLoad(gameObject);
 
         nodeDiameter = nodeRadius * 2;
         // 전체 크기를 가로세로 몇칸인지 계산
@@ -32,6 +34,12 @@ public class GridManager : MonoBehaviour
         gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
         
         CreateGrid();
+    }
+    public Node GetNode(int x, int y)
+    {
+        if (x < 0 || x >= gridSizeX || y < 0 || y >= gridSizeY)
+            return null;
+        return grid[x, y];
     }
     // 그리드 생성
     private void CreateGrid()
@@ -83,17 +91,25 @@ public class GridManager : MonoBehaviour
                 int checkX = node.gridX + x;
                 int checkY = node.gridY + y;
 
-                if (checkX >= 0 && checkX < gridSizeX && checkY >= 0 && checkY < gridSizeY)
+                if (checkX < 0 || checkX >= gridSizeX || checkY < 0 || checkY >= gridSizeY)
+                    continue;
+
+                if(x != 0 && y != 0)
                 {
-                    neighbours.Add(grid[checkX, checkY]);
+                    Node sideA = grid[node.gridX + x, node.gridY];
+                    Node sideB = grid[node.gridX, node.gridY + y];
+
+                    if (!sideA.walkable || !sideB.walkable)
+                        continue;
                 }
+                neighbours.Add(grid[checkX, checkY]);
             }
         }
         return neighbours;
     }
     private bool CheckWalkable(Vector2 worldPoint)
     {
-        return !Physics2D.OverlapCircle(worldPoint, nodeRadius * 0.9f, obstacleLayerMask);
+        return !Physics2D.OverlapCircle(worldPoint, nodeRadius, obstacleLayerMask);
     }
     public void UpdateArea(Vector2 center, Vector2 size)
     {

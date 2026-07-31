@@ -7,16 +7,25 @@ public abstract class Resource : MonoBehaviour, IPoolable
     protected ResourceStat resourceStat;
     protected int remainAmount;
 
-    [SerializeField] private Vector2 obstacleSize;
+    private Collider2D col;
+    private Vector2 colSize;
 
     public event Action OnDepleted;
     
     public abstract ResourceType Type { get; }
     public bool IsDepleted;
+
+    public Enum PoolKey => Type;
+
+    protected void Awake()
+    {
+        col = GetComponent<Collider2D>();
+        colSize = col.bounds.size;
+    }
     protected void OnEnable()
     {
         Init();
-        StartCoroutine(RegisterObtacleNextFrame());
+        StartCoroutine(RegisterObstacleNextFrame());
     }
     public int Gathered(int amount)
     {
@@ -40,31 +49,26 @@ public abstract class Resource : MonoBehaviour, IPoolable
         OnDepleted?.Invoke();
         OnDepleted = null;
         ReturnToPool();
-        GridManager.instance.UpdateArea(transform.position, obstacleSize);
+        GridManager.instance.UpdateArea(transform.position, colSize);
     }
-    private IEnumerator RegisterObtacleNextFrame()
+    private IEnumerator RegisterObstacleNextFrame()
     {
         yield return null;
-        GridManager.instance.UpdateArea(transform.position, obstacleSize);
+        GridManager.instance.UpdateArea(transform.position, colSize);
     }
     public virtual void Init()
     {
         if (resourceStat == null)
         {
-            if (ResourceDataLoader.instance == null)
-            {
-                Debug.LogError("ResourceManager가 씬에 없거나 아직 초기화 전입니다.", this);
-                return;
-            }
-            resourceStat = ResourceDataLoader.instance.GetResourceStat(Type);
-            if (resourceStat == null)
-            {
-                Debug.LogError($"{Type} 데이터가 ResourceData에 없습니다.", this);
-                return;
-            }
+            resourceStat = ResourceDataLoader.instance.Get(Type);
         }
         remainAmount = resourceStat.MaxAmount;
         IsDepleted = false;
     }
-    public abstract void ReturnToPool();
+    public virtual void ReturnToPool()
+    {
+        if (!IsDepleted)
+            return;
+        ObjectPoolManager.instance.ReturnObject(PoolKey, gameObject);
+    }
 }

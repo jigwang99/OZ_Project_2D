@@ -6,6 +6,7 @@ public class Heap<T> where T : IHeapItem<T>
     private int count;
 
     public int Count => count;
+    public int Capacity => items.Length;
 
     public Heap(int maxSize)
     {
@@ -35,6 +36,10 @@ public class Heap<T> where T : IHeapItem<T>
     public bool Contains(T item)
     {
         return count > item.HeapIndex && Equals(items[item.HeapIndex], item);
+    }
+    public void Clear()
+    {
+        count = 0;
     }
     private void SortDown(T item)
     {

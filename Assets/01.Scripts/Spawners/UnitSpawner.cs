@@ -22,7 +22,7 @@ public class UnitSpawner : MonoBehaviour
     {
         foreach (SpawnUnit spawn in spawnList)
         {
-            Unit unit = ObjectPoolManager.instance.GetObject<Unit>(spawn.unitType.ToString());
+            Unit unit = ObjectPoolManager.instance.GetObject<Unit>(spawn.unitType);
 
             if (unit == null)
                 continue;
@@ -30,7 +30,7 @@ public class UnitSpawner : MonoBehaviour
             unit.SetLayer(spawn.layer);
             unit.transform.position = spawn.spawnPoint.position;
 
-            UnitStat unitStat = UnitDataLoader.instance.GetUnitStat(spawn.unitType);
+            UnitStat unitStat = UnitDataLoader.instance.Get(spawn.unitType);
             unit.OwnerFaction.TryIncreasePopulation(unitStat.Population);
         }
     }

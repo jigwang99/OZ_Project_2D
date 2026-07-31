@@ -179,3 +179,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09eeee1f0c925a64eb0d33f472651cab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Arrow
+  hitClip: {fileID: 8300000, guid: 42ae761708e0a2a47b0cd86f7df488be, type: 3}

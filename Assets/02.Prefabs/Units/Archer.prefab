@@ -173,7 +173,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.2, y: 1.2}
+  m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
 --- !u!114 &5304527512373481482
 MonoBehaviour:
@@ -199,6 +199,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 238c1ecb172536a4fa6b3a11fd3eb817, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RangedAttack
+  attackClip: {fileID: 8300000, guid: f11db4559b3ffff45b62e9327fc5535d, type: 3}
   offset: 0.5
 --- !u!114 &5594576915817543982
 MonoBehaviour:
@@ -220,6 +221,8 @@ MonoBehaviour:
   blockLayerMask:
     serializedVersion: 2
     m_Bits: 101376
+  footStepClip: {fileID: 8300000, guid: df7087e4d8a8bb546bc08ce68632903f, type: 3}
+  footStepInterval: 0.3
 --- !u!114 &-5692875192016905578
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -244,7 +247,7 @@ Animator:
   m_GameObject: {fileID: 9204365462264634299}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: e69e54e6f75584bf382ddbe934f532b6, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

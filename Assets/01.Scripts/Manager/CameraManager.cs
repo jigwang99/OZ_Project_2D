@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class CameraManager : MonoBehaviour
@@ -28,14 +28,13 @@ public class CameraManager : MonoBehaviour
             instance = this;
         else
             Destroy(gameObject);
-        DontDestroyOnLoad(gameObject);
 
         if (mainCamera == null)
             mainCamera = Camera.main;
     }
     private void Start()
     {
-        mainCamera.transform.position = new Vector3(startPosition.position.x, startPosition.position.y, mainCamera.transform.position.z);
+        SetCameraPosition(new Vector2(startPosition.position.x, startPosition.position.y));
     }
     // Update is called once per frame
     void Update()

@@ -33,9 +33,20 @@ public class Castle : ProductionBuilding
         }
         return nearest;
     }
+    public static int CountCastles(FactionType factionType)
+    {
+        int count = 0;
+        for(int i = 0; i < ActiveCastle.Count; i++)
+        {
+            Castle castle = ActiveCastle[i];
+            if (castle != null && castle.IsAlive && castle.OwnerFaction != null && castle.OwnerFaction.Type == factionType)
+                count++;
+        }
+        return count;
+    }
     public override void ReturnToPool()
     {
         ActiveCastle.Remove(this);
-        ObjectPoolManager.instance.ReturnObject("Castle", this.gameObject);
+        base.ReturnToPool();
     }
 }

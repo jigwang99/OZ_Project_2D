@@ -13,7 +13,6 @@ public class FactionManager : MonoBehaviour
             instance = this;
         else
             Destroy(gameObject);
-        DontDestroyOnLoad(gameObject);
 
         Player = new Faction(FactionType.Player, 50, 0);
         Enemy = new Faction(FactionType.Enemy, 50, 0);

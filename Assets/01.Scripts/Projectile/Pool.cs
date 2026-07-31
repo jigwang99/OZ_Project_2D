@@ -1,11 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-public interface IPoolable
-{
-    void Init();
-    void ReturnToPool();
-}
-
 public class Pool
 {
     private Queue<GameObject> pool = new Queue<GameObject>();
@@ -25,7 +19,7 @@ public class Pool
 
     private GameObject Create()
     {
-        GameObject go = Object.Instantiate(prefab, parent);
+        GameObject go = UnityEngine.Object.Instantiate(prefab, parent);
         go.gameObject.SetActive(false);
         pool.Enqueue(go);
         return go;

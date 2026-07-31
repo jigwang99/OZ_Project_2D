@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-public class MeleeAttack : UnitAttack
+﻿public class MeleeAttack : UnitAttack
 {
     public override void Attack()
     {
@@ -8,5 +6,6 @@ public class MeleeAttack : UnitAttack
             return;
         target.TakeDamage(unit.UnitStat.AttackDamage);
         remainCooldown = unit.UnitStat.AttackCooldown;
+        PlayAttackSound();
     }
 }

@@ -25,6 +25,10 @@ public class CommandCardUI : MonoBehaviour
     [SerializeField] private Sprite buildIcon;  //B
     [SerializeField] private Sprite cancelIcon; // C
 
+    [Header("SFX")]
+    [SerializeField] private AudioClip enqueueSuccessClip;
+    [SerializeField] private AudioClip enqueueFailClip;
+
     private static Key[] productKeys = { Key.A, Key.S, Key.D, Key.F };
 
     private Command[] commands=  new Command[SlotCount];
@@ -162,7 +166,7 @@ public class CommandCardUI : MonoBehaviour
             if(!pb.CanProduce(type))
                 continue;
 
-            UnitStat unitStat = UnitDataLoader.instance.GetUnitStat(type);
+            UnitStat unitStat = UnitDataLoader.instance.Get(type);
             if(unitStat == null)
                 continue;
 
@@ -184,7 +188,7 @@ public class CommandCardUI : MonoBehaviour
             if (index >= CancelIndex)
                 break;
 
-            BuildingStat stat = BuildingDataLoader.instance.GetBuildingStat(info.type);
+            BuildingStat stat = BuildingDataLoader.instance.Get(info.type);
             if (stat == null)
                 continue;
 
@@ -203,8 +207,10 @@ public class CommandCardUI : MonoBehaviour
     }
     private void TryEnqueue(ProductionBuilding pb, UnitType type)
     {
-        if (!pb.EnqueueUnit(type))
-            Debug.Log("자원 또는 인구 부족");
+        if (pb.EnqueueUnit(type))
+            AudioManager.instance.PlaySFX(enqueueSuccessClip);
+        else
+            AudioManager.instance.PlaySFX(enqueueFailClip);
     }
     private void SetCommand(int index, Sprite icon, Key key, string label, Action action)
     {

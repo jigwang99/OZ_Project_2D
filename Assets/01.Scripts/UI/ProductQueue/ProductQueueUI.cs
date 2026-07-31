@@ -47,7 +47,7 @@ public class ProductQueueUI : MonoBehaviour
         for(int i = 0; i< slots.Count; i++)
         {
             if (i < list.Count)
-                slots[i].Bind(UnitDataLoader.instance.GetUnitStat(list[i]).Icon);
+                slots[i].Bind(UnitDataLoader.instance.Get(list[i]).Icon);
             else
                 slots[i].Clear();
         }
